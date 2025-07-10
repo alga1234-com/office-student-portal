@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DMS Portal</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { font-family: Arial, sans-serif; background: #eef6fb; margin: 0; }
+    .container { max-width: 900px; margin: 40px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+    .hidden { display: none; }
+    .btn { padding: 8px 16px; border: none; background: #007bff; color: white; cursor: pointer; border-radius: 4px; }
+    .btn:hover { background: #0056b3; }
+    input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px; border: 1px solid #ccc; border-radius: 4px; }
+    nav { display: flex; gap: 10px; margin-bottom: 20px; }
+    h2 { color: #007bff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Auth Forms -->
+    <div id="auth-section">
+      <h2>Login</h2>
+      <input id="login-username" placeholder="Username" />
+      <input id="login-password" type="password" placeholder="Password" />
+      <button class="btn" onclick="login()">Login</button>
+
+      <p><a href="#" onclick="showReset()">Forgot Password?</a></p>
+
+      <div id="reset-section" class="hidden">
+        <h3>Password Reset</h3>
+        <input id="reset-contact" placeholder="Email or Phone" />
+        <button class="btn" onclick="requestReset()">Send Code</button>
+
+        <input id="reset-code" placeholder="Code" class="hidden" />
+        <input id="new-password" type="password" placeholder="New Password" class="hidden" />
+        <button class="btn hidden" id="reset-submit-btn" onclick="submitReset()">Reset Password</button>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+      <nav id="menu">
+        <button class="btn" onclick="showModule('documents')">Documents</button>
+        <button class="btn" onclick="showModule('results')">Results</button>
+        <button class="btn" onclick="showModule('complaints')">Complaints</button>
+        <button class="btn hidden" id="audit-btn" onclick="showModule('audit')">Audit Logs</button>
+        <button class="btn hidden" id="admin-tools-btn" onclick="showModule('admin-tools')">Admin Tools</button>
+        <button class="btn" onclick="logout()">Logout</button>
+      </nav>
+
+      <!-- Document Upload -->
+      <div id="documents" class="module hidden">
+        <h2>Upload Document</h2>
+        <form id="upload-form">
+          <input type="file" name="file" />
+          <button class="btn" type="submit">Upload</button>
+        </form>
+      </div>
+
+      <!-- Results -->
+      <div id="results" class="module hidden">
+        <h2>Results</h2>
+        <button class="btn" onclick="fetchResults()">Load My Results</button>
+        <div id="results-container"></div>
+      </div>
+
+      <!-- Complaints -->
+      <div id="complaints" class="module hidden">
+        <h2>Submit Complaint</h2>
+        <input id="complaint-subject" placeholder="Subject" />
+        <textarea id="complaint-desc" placeholder="Describe your issue..."></textarea>
+        <button class="btn" onclick="submitComplaint()">Submit</button>
+        <div id="complaint-status"></div>
+      </div>
+
+      <!-- Audit Logs (admin only) -->
+      <div id="audit" class="module hidden">
+        <h2>Audit Logs</h2>
+        <div id="audit-container">Loading logs...</div>
+      </div>
+
+      <!-- Admin Tools -->
+      <div id="admin-tools" class="module hidden">
+        <h2>Admin Tools</h2>
+        <p>Student CSV Import and More Coming Soon...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

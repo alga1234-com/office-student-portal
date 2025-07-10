@@ -1,0 +1,276 @@
+/* ========================================= */
+/*        MODULE UI + PDF Viewer Styling     */
+/* ========================================= */
+
+/* ========== BASE LAYOUT STYLING ========== */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 10px 20px;
+  background-color: #f4f8fc;
+  color: #222;
+}
+
+/* Ensure full height for vertical centering */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ========== LOGIN SECTION ========== */
+#loginSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #e6f2f8;
+}
+
+#loginForm {
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+#loginForm input[type="text"],
+#loginForm input[type="password"] {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+#loginForm input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 3px #007bff;
+}
+
+#loginForm button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#loginForm button:hover {
+  background-color: #0056b3;
+}
+
+#loginForm button:focus {
+  outline: 2px solid #004a99;
+}
+
+/* Error message */
+#loginError {
+  color: red;
+  margin-top: 10px;
+  display: none;
+}
+
+/* ========== HEADINGS ========== */
+h1 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+h2 {
+  margin: 40px 0 15px;
+  color: #004466;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+/* ========== FILTER SECTION ========== */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.filters input[type="text"] {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 180px;
+}
+
+.filters button {
+  padding: 7px 14px;
+  font-size: 0.95rem;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filters button:hover {
+  background-color: #0056b3;
+}
+
+/* ========== TABLE STYLING ========== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* ========== ACTION BUTTONS ========== */
+button.view-btn,
+button.delete-btn {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button.view-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+button.view-btn:hover {
+  background-color: #218838;
+}
+
+button.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+button.delete-btn:hover {
+  background-color: #c82333;
+}
+
+/* ========== DOCUMENT UPLOAD FORM ========== */
+#uploadForm {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+#uploadForm label {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+#uploadForm input[type="text"],
+#uploadForm input[type="file"] {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#uploadForm button[type="submit"] {
+  padding: 8px 18px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+#uploadForm button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* ========== DOCUMENT VIEWER ========== */
+#documentViewer {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  maxi-height: 600px;
+  overflow: auto;
+  padding: 10px;
+}
+
+/* ========== PDF VIEWER ========== */
+#pdfViewerContainer {
+  margin-top: 10px;
+}
+
+#pdfCanvas {
+  max-width: 100%;
+  border: 1px solid #aaa;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+#pdfControls {
+  margin-top: 5px;
+  text-align: center;
+}
+
+#pdfControls button {
+  padding: 6px 14px;
+  margin: 0 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+#pdfControls button:hover {
+  background-color: #0056b3;
+}
+
+/* ========== MEDIA QUERIES ========== */
+@media (max-width: 600px) {
+  .filters,
+  #uploadForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters input,
+  .filters button,
+  #uploadForm input,
+  #uploadForm button {
+    width: 100%;
+  }
+
+  table, th, td {
+    font-size: 0.85rem;
+  }
+}

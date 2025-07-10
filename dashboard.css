@@ -1,0 +1,220 @@
+/* ========================================= */
+/*        MODULE UI + PDF Viewer Styling     */
+/* For document upload, filters, tables,     */
+/* and in-browser PDF canvas display         */
+/* ========================================= */
+
+
+/* ========== BASE LAYOUT STYLING ========== */
+/* General body styling */
+body {
+  font-family: Arial, sans-serif;       /* Clean readable font */
+  margin: 10px 20px;                    /* Comfortable spacing around content */
+  background-color: #b9bfbd;            /* Light blue-grey background for calm UI */
+  color: #222;                          /* Dark text for readability */
+}
+
+/* Main page title styling */
+h1 {
+  text-align: center;                   /* Center the main heading */
+  margin-bottom: 40px;                  /* Large space below title */
+}
+
+/* Section headings (h2) */
+h2 {
+  margin-top: 40px;                     /* Space above sections */
+  margin-bottom: 15px;                  /* Space below headings */
+  color: #004466;                       /* Dark blue text for headings */
+  border-bottom: 2px solid #007bff;     /* Blue underline to separate sections */
+  padding-bottom: 5px;                  /* Gap between text and underline */
+}
+
+
+/* ========== FILTER SECTION ========== */
+/* Container for filter inputs and buttons */
+.filters {
+  margin-bottom: 15px;                  /* Space below filters before tables */
+  display: flex;                        /* Horizontal layout */
+  flex-wrap: wrap;                      /* Wrap on smaller screens */
+  gap: 10px;                            /* Gap between inputs/buttons */
+  align-items: center;                  /* Align vertically */
+}
+
+/* Text inputs in filter bar */
+.filters input[type="text"] {
+  padding: 6px 10px;                    /* Input spacing */
+  font-size: 0.9rem;                    /* Slightly smaller for compact layout */
+  border: 1px solid #ccc;              /* Light border */
+  border-radius: 5px;                   /* Rounded corners */
+  width: 180px;                         /* Fixed width for consistency */
+}
+
+/* Filter action buttons */
+.filters button {
+  padding: 7px 14px;
+  font-size: 0.95rem;
+  border: none;
+  background-color: #007bff;           /* Primary blue */
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Filter button hover effect */
+.filters button:hover {
+  background-color: #0056b3;
+}
+
+
+/* ========== TABLE STYLING ========== */
+/* Document listing tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #f9f9f9;            /* Soft light background */
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);  /* Subtle depth */
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Table headers and data cells */
+th, td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+/* Sticky table header */
+th {
+  background-color: #007bff;           /* Highlighted header */
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+
+/* ========== ACTION BUTTONS IN TABLE ========== */
+/* Shared button styles for view/delete */
+button.view-btn, button.delete-btn {
+  padding: 5px 12px;
+  margin-right: 6px;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* View (green) button */
+button.view-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+button.view-btn:hover {
+  background-color: #218838;
+}
+
+/* Delete (red) button */
+button.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+button.delete-btn:hover {
+  background-color: #c82333;
+}
+
+
+/* ========== DOCUMENT UPLOAD FORM ========== */
+/* Upload form layout container */
+#uploadForm {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+/* Form labels */
+#uploadForm label {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Text and file input fields */
+#uploadForm input[type="text"],
+#uploadForm input[type="file"] {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-left: 5px;
+}
+
+/* Upload submit button */
+#uploadForm button[type="submit"] {
+  padding: 8px 18px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+#uploadForm button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+
+/* ========== DOCUMENT VIEWER ========== */
+/* Container for rendered document preview (any type) */
+#documentViewer {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  max-height: 600px;
+  overflow: auto;
+  padding: 10px;
+}
+
+
+/* ========== PDF VIEWER CANVAS ========== */
+/* Hidden by default; appears when previewing PDFs */
+#pdfViewerContainer {
+  margin-top: 10px;
+}
+
+/* PDF canvas element */
+#pdfCanvas {
+  max-width: 100%;
+  border: 1px solid #aaa;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+/* Controls (prev/next) for PDF viewer */
+#pdfControls {
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* Buttons inside PDF viewer controls */
+#pdfControls button {
+  padding: 6px 14px;
+  margin: 0 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+#pdfControls button:hover {
+  background-color: #0056b3;
+}
