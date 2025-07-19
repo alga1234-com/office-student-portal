@@ -2,93 +2,1392 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DMS Portal</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Tools</title>
+  <link rel="stylesheet" href="css/style.css" />
   <style>
-    body { font-family: Arial, sans-serif; background: #eef6fb; margin: 0; }
-    .container { max-width: 900px; margin: 40px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
-    .hidden { display: none; }
-    .btn { padding: 8px 16px; border: none; background: #007bff; color: white; cursor: pointer; border-radius: 4px; }
-    .btn:hover { background: #0056b3; }
-    input, select, textarea { width: 100%; padding: 8px; margin: 5px 0 15px; border: 1px solid #ccc; border-radius: 4px; }
-    nav { display: flex; gap: 10px; margin-bottom: 20px; }
-    h2 { color: #007bff; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+    }
+
+    nav.nav-vector {
+      background: #34495e;
+      padding: 0.5rem 1rem;
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+    nav.nav-vector button {
+      background: #2c3e50;
+      border: none;
+      padding: 0.4rem 0.9rem;
+      color: #ecf0f1;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    nav.nav-vector button:hover,
+    nav.nav-vector button:focus {
+      background: #1abc9c;
+      outline: none;
+      color: #fff;
+    }
+
+    main.admin-panel {
+      max-width: 850px;
+      margin: 2rem auto 3rem;
+      padding: 1rem 2rem;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgb(0 0 0 / 0.08);
+      text-align: center;
+    }
+
+    main.admin-panel h1 {
+      font-weight: 700;
+      font-size: 1.7rem;
+      margin-bottom: 0.2rem;
+      color: #16a085;
+    }
+    main.admin-panel p {
+      margin-top: 0;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 1rem 1.2rem;
+      justify-items: center;
+    }
+
+    .admin-card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 3px 7px rgb(0 0 0 / 0.12);
+      width: 230px;
+      padding: 1rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .admin-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 18px rgb(0 0 0 / 0.18);
+    }
+
+    .admin-card h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .admin-card p {
+      font-size: 0.87rem;
+      color: #636e72;
+      text-align: center;
+      flex-grow: 1;
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .admin-card button {
+      background: #16a085;
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-weight: 700;
+      padding: 0.45rem 1.3rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      box-shadow: 0 3px 6px rgb(22 160 133 / 0.5);
+      transition: background-color 0.25s ease;
+      cursor: pointer;
+      align-self: center;
+      user-select: none;
+    }
+    .admin-card button:hover,
+    .admin-card button:focus {
+      background: #138d75;
+      outline: none;
+      box-shadow: 0 4px 10px rgb(19 141 117 / 0.7);
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <nav class="nav-vector">
+    <button data-module="Dashboard" onclick="goToModule('Dashboard')">Dashboard</button>
+    <button data-module="Documents" onclick="goToModule('Documents')">Documents</button>
+    <button data-module="Results" onclick="goToModule('Results')">Results</button>
+    <button data-module="Complaints" onclick="goToModule('Complaints')">Complaints</button>
+    <button data-module="Medical" onclick="goToModule('Medical')">Medical</button>
+    <button data-module="Timetable" onclick="goToModule('Timetable')">Timetable</button>
+    <button data-module="AdminTools" onclick="goToModule('AdminTools')">Admin Tools</button>
+  </nav>
 
-    <!-- Auth Forms -->
-    <div id="auth-section">
-      <h2>Login</h2>
-      <input id="login-username" placeholder="Username" />
-      <input id="login-password" type="password" placeholder="Password" />
-      <button class="btn" onclick="login()">Login</button>
+  <main class="admin-panel">
+    <h1>Admin Control Center</h1>
+    <p>Manage portal-wide settings and administrative functions.</p>
 
-      <p><a href="#" onclick="showReset()">Forgot Password?</a></p>
-
-      <div id="reset-section" class="hidden">
-        <h3>Password Reset</h3>
-        <input id="reset-contact" placeholder="Email or Phone" />
-        <button class="btn" onclick="requestReset()">Send Code</button>
-
-        <input id="reset-code" placeholder="Code" class="hidden" />
-        <input id="new-password" type="password" placeholder="New Password" class="hidden" />
-        <button class="btn hidden" id="reset-submit-btn" onclick="submitReset()">Reset Password</button>
-      </div>
-    </div>
-
-    <!-- Dashboard -->
-    <div id="dashboard" class="hidden">
-      <nav id="menu">
-        <button class="btn" onclick="showModule('documents')">Documents</button>
-        <button class="btn" onclick="showModule('results')">Results</button>
-        <button class="btn" onclick="showModule('complaints')">Complaints</button>
-        <button class="btn hidden" id="audit-btn" onclick="showModule('audit')">Audit Logs</button>
-        <button class="btn hidden" id="admin-tools-btn" onclick="showModule('admin-tools')">Admin Tools</button>
-        <button class="btn" onclick="logout()">Logout</button>
-      </nav>
-
-      <!-- Document Upload -->
-      <div id="documents" class="module hidden">
-        <h2>Upload Document</h2>
-        <form id="upload-form">
-          <input type="file" name="file" />
-          <button class="btn" type="submit">Upload</button>
-        </form>
+    <div class="admin-grid">
+      <div class="admin-card" tabindex="0">
+        <h2>User Management</h2>
+        <p>Manage users, roles, and permissions.</p>
+        <button onclick="openUserPanel()">Open</button>
       </div>
 
-      <!-- Results -->
-      <div id="results" class="module hidden">
-        <h2>Results</h2>
-        <button class="btn" onclick="fetchResults()">Load My Results</button>
-        <div id="results-container"></div>
+      <div class="admin-card" tabindex="0">
+        <h2>Document Oversight</h2>
+        <p>Review uploaded documents across the portal.</p>
+        <button onclick="viewDocuments()">Open</button>
       </div>
 
-      <!-- Complaints -->
-      <div id="complaints" class="module hidden">
-        <h2>Submit Complaint</h2>
-        <input id="complaint-subject" placeholder="Subject" />
-        <textarea id="complaint-desc" placeholder="Describe your issue..."></textarea>
-        <button class="btn" onclick="submitComplaint()">Submit</button>
-        <div id="complaint-status"></div>
+      <div class="admin-card" tabindex="0">
+        <h2>Results Management</h2>
+        <p>Upload and publish academic results.</p>
+        <button onclick="uploadResults()">Open</button>
       </div>
 
-      <!-- Audit Logs (admin only) -->
-      <div id="audit" class="module hidden">
+      <div class="admin-card" tabindex="0">
+        <h2>Complaint Oversight</h2>
+        <p>Review and resolve submitted complaints.</p>
+        <button onclick="reviewComplaints()">Open</button>
+      </div>
+
+      <div class="admin-card" tabindex="0">
         <h2>Audit Logs</h2>
-        <div id="audit-container">Loading logs...</div>
+        <p>Track system activity and changes.</p>
+        <button onclick="viewAuditLogs()">Open</button>
       </div>
 
-      <!-- Admin Tools -->
-      <div id="admin-tools" class="module hidden">
-        <h2>Admin Tools</h2>
-        <p>Student CSV Import and More Coming Soon...</p>
+      <div class="admin-card" tabindex="0">
+        <h2>Portal Settings</h2>
+        <p>Configure global application settings.</p>
+        <button onclick="editSettings()">Open</button>
+      </div>
+
+      <div class="admin-card" tabindex="0">
+        <h2>Notifications</h2>
+        <p>Send alerts or updates to users.</p>
+        <button onclick="sendNotification()">Open</button>
+      </div>
+
+      <div class="admin-card" tabindex="0">
+        <h2>Timetable Management</h2>
+        <p>Upload, edit, or publish student timetables.</p>
+        <button onclick="manageTimetables()">Open</button>
+      </div>
+
+      <div class="admin-card" tabindex="0">
+        <h2>Medical Management</h2>
+        <p>Manage student medical records and health services.</p>
+        <button onclick="manageMedical()">Open</button>
       </div>
     </div>
-  </div>
+  </main>
 
-  <script src="script.js"></script>
+  <script>
+    // ================== NAVIGATION LOGIC ==================
+    function goToModule(moduleName) {
+      const page = moduleName.toLowerCase().replace(/\s+/g, '-') + '.html';
+      window.location.href = page;
+    }
+
+    // ================== ADMIN AUTHENTICATION ==================
+    class AdminAuth {
+      constructor() {
+        this.currentUser = JSON.parse(localStorage.getItem('adminUser')) || null;
+        this.sessionTimeout = 30 * 60 * 1000; // 30 minutes
+        this.checkSession();
+      }
+
+      checkSession() {
+        if (this.currentUser) {
+          const lastActivity = parseInt(localStorage.getItem('lastActivity') || '0');
+          if (Date.now() - lastActivity > this.sessionTimeout) {
+            this.logout();
+            return false;
+          }
+          this.updateLastActivity();
+          return true;
+        }
+        return false;
+      }
+
+      login(username, password) {
+        // Demo credentials - replace with actual authentication
+        const validCredentials = {
+          'admin': 'admin123',
+          'registrar': 'reg123',
+          'dean': 'dean123'
+        };
+
+        if (validCredentials[username] === password) {
+          this.currentUser = {
+            username: username,
+            role: username,
+            loginTime: new Date().toISOString()
+          };
+          localStorage.setItem('adminUser', JSON.stringify(this.currentUser));
+          this.updateLastActivity();
+          return true;
+        }
+        return false;
+      }
+
+      logout() {
+        this.currentUser = null;
+        localStorage.removeItem('adminUser');
+        localStorage.removeItem('lastActivity');
+        window.location.reload();
+      }
+
+      updateLastActivity() {
+        localStorage.setItem('lastActivity', Date.now().toString());
+      }
+
+      hasPermission(action) {
+        if (!this.currentUser) return false;
+        
+        const permissions = {
+          'admin': ['all'],
+          'registrar': ['documents', 'results', 'users'],
+          'dean': ['documents', 'results', 'notifications']
+        };
+
+        const userPermissions = permissions[this.currentUser.role] || [];
+        return userPermissions.includes('all') || userPermissions.includes(action);
+      }
+    }
+
+    // Initialize authentication
+    const adminAuth = new AdminAuth();
+
+    // ================== USER MANAGEMENT ==================
+    function openUserPanel() {
+      if (!adminAuth.hasPermission('users')) {
+        showNotification('Access denied: Insufficient permissions', 'error');
+        return;
+      }
+
+      const modalHTML = `
+        <div id="userModal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>User Management</h3>
+              <span class="close" onclick="closeModal('userModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+              <div class="tab-container">
+                <button class="tab-btn active" onclick="showTab('users-list')">Users List</button>
+                <button class="tab-btn" onclick="showTab('add-user')">Add User</button>
+                <button class="tab-btn" onclick="showTab('user-roles')">Manage Roles</button>
+              </div>
+              
+              <div id="users-list" class="tab-content active">
+                <div class="search-container">
+                  <input type="text" id="userSearch" placeholder="Search users..." onkeyup="filterUsers()">
+                  <button onclick="refreshUsersList()">Refresh</button>
+                </div>
+                <table id="usersTable">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Role</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="usersTableBody"></tbody>
+                </table>
+              </div>
+
+              <div id="add-user" class="tab-content">
+                <form id="addUserForm" onsubmit="addNewUser(event)">
+                  <div class="form-group">
+                    <label for="userName">Full Name:</label>
+                    <input type="text" id="userName" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="userEmail">Email:</label>
+                    <input type="email" id="userEmail" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="userRole">Role:</label>
+                    <select id="userRole" required>
+                      <option value="">Select Role</option>
+                      <option value="student">Student</option>
+                      <option value="faculty">Faculty</option>
+                      <option value="admin">Administrator</option>
+                      <option value="registrar">Registrar</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="userPassword">Temporary Password:</label>
+                    <input type="password" id="userPassword" required>
+                  </div>
+                  <button type="submit">Add User</button>
+                </form>
+              </div>
+
+              <div id="user-roles" class="tab-content">
+                <div class="roles-container">
+                  <h4>Role Permissions</h4>
+                  <div id="rolesPermissions"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      loadUsersList();
+      loadRolesPermissions();
+    }
+
+    function loadUsersList() {
+      const users = JSON.parse(localStorage.getItem('portalUsers')) || [
+        {id: 1, name: 'John Doe', email: 'john@university.edu', role: 'student', status: 'active'},
+        {id: 2, name: 'Jane Smith', email: 'jane@university.edu', role: 'faculty', status: 'active'},
+        {id: 3, name: 'Admin User', email: 'admin@university.edu', role: 'admin', status: 'active'}
+      ];
+
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = users.map(user => `
+        <tr>
+          <td>${user.id}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td><span class="role-badge ${user.role}">${user.role}</span></td>
+          <td><span class="status-badge ${user.status}">${user.status}</span></td>
+          <td>
+            <button class="btn-small edit" onclick="editUser(${user.id})">Edit</button>
+            <button class="btn-small delete" onclick="deleteUser(${user.id})">Delete</button>
+            ${user.status === 'active' ? 
+              `<button class="btn-small suspend" onclick="suspendUser(${user.id})">Suspend</button>` : 
+              `<button class="btn-small activate" onclick="activateUser(${user.id})">Activate</button>`}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ================== DOCUMENT OVERSIGHT ==================
+    function viewDocuments() {
+      if (!adminAuth.hasPermission('documents')) {
+        showNotification('Access denied: Insufficient permissions', 'error');
+        return;
+      }
+
+      const modalHTML = `
+        <div id="documentsModal" class="modal">
+          <div class="modal-content large">
+            <div class="modal-header">
+              <h3>Document Oversight</h3>
+              <span class="close" onclick="closeModal('documentsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+              <div class="documents-filters">
+                <select id="docTypeFilter" onchange="filterDocuments()">
+                  <option value="">All Types</option>
+                  <option value="transcript">Transcripts</option>
+                  <option value="application">Applications</option>
+                  <option value="certificate">Certificates</option>
+                  <option value="complaint">Complaints</option>
+                </select>
+                <select id="docStatusFilter" onchange="filterDocuments()">
+                  <option value="">All Status</option>
+                  <option value="pending">Pending Review</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+                <button onclick="exportDocuments()">Export Report</button>
+              </div>
+              <table id="documentsTable">
+                <thead>
+                  <tr>
+                    <th>Document ID</th>
+                    <th>Student Name</th>
+                    <th>Type</th>
+                    <th>Upload Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="documentsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>`;
+
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      loadDocumentsList();
+    }
+
+    function loadDocumentsList() {
+      const documents = JSON.parse(localStorage.getItem('uploadedDocuments')) || [
+        {id: 'DOC001', studentName: 'John Doe', type: 'transcript', uploadDate: '2025-07-15', status: 'pending'},
+        {id: 'DOC002', studentName: 'Jane Smith', type: 'application', uploadDate: '2025-07-14', status: 'approved'},
+        {id: 'DOC003', studentName: 'Mike Johnson', type: 'certificate', uploadDate: '2025-07-13', status: 'rejected'}
+      ];
+
+      const tbody = document.getElementById('documentsTableBody');
+      tbody.innerHTML = documents.map(doc => `
+        <tr>
+          <td>${doc.id}</td>
+          <td>${doc.studentName}</td>
+          <td><span class="type-badge ${doc.type}">${doc.type}</span></td>
+          <td>${doc.uploadDate}</td>
+          <td><span class="status-badge ${doc.status}">${doc.status}</span></td>
+          <td>
+            <button class="btn-small view" onclick="viewDocument('${doc.id}')">View</button>
+            <button class="btn-small approve" onclick="approveDocument('${doc.id}')">Approve</button>
+            <button class="btn-small reject" onclick="rejectDocument('${doc.id}')">Reject</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ================== RESULTS MANAGEMENT ==================
+    function uploadResults() {
+      if (!adminAuth.hasPermission('results')) {
+        showNotification('Access denied: Insufficient permissions', 'error');
+        return;
+      }
+
+      const modalHTML = `
+        <div id="resultsModal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Results Management</h3>
+              <span class="close" onclick="closeModal('resultsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+              <div class="tab-container">
+                <button class="tab-btn active" onclick="showTab('upload-results')">Upload Results</button>
+                <button class="tab-btn" onclick="showTab('published-results')">Published Results</button>
+                <button class="tab-btn" onclick="showTab('result-statistics')">Statistics</button>
+              </div>
+
+              <div id="upload-results" class="tab-content active">
+                <form id="uploadResultsForm" onsubmit="processResultsUpload(event)">
+                  <div class="form-group">
+                    <label for="semester">Semester:</label>
+                    <select id="semester" required>
+                      <option value="">Select Semester</option>
+                      <option value="2025-1">Semester 1, 2025</option>
+                      <option value="2025-2">Semester 2, 2025</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="course">Course:</label>
+                    <select id="course" required>
+                      <option value="">Select Course</option>
+                      <option value="CS101">Computer Science 101</option>
+                      <option value="MATH201">Mathematics 201</option>
+                      <option value="ENG101">English 101</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="resultsFile">Results File (CSV/Excel):</label>
+                    <input type="file" id="resultsFile" accept=".csv,.xlsx,.xls" required>
+                    <small>Format: Student ID, Name, Grade, Points</small>
+                  </div>
+                  <div class="form-group">
+                    <label>
+                      <input type="checkbox" id="publishImmediately"> 
+                      Publish immediately after upload
+                    </label>
+                  </div>
+                  <button type="submit">Upload Results</button>
+                </form>
+              </div>
+
+              <div id="published-results" class="tab-content">
+                <div class="results-list" id="publishedResultsList"></div>
+              </div>
+
+              <div id="result-statistics" class="tab-content">
+                <div class="stats-container" id="resultStatistics"></div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      loadPublishedResults();
+      loadResultStatistics();
+    }
+
+    // ================== COMPLAINT OVERSIGHT ==================
+    function reviewComplaints() {
+      const modalHTML = `
+        <div id="complaintsModal" class="modal">
+          <div class="modal-content large">
+            <div class="modal-header">
+              <h3>Complaint Oversight</h3>
+              <span class="close" onclick="closeModal('complaintsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+              <div class="complaints-filters">
+                <select id="complaintStatusFilter" onchange="filterComplaints()">
+                  <option value="">All Status</option>
+                  <option value="new">New</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="closed">Closed</option>
+                </select>
+                <select id="complaintOfficeFilter" onchange="filterComplaints()">
+                  <option value="">All Offices</option>
+                  <option value="registrar">Registrar</option>
+                  <option value="bursar">Bursar</option>
+                  <option value="faculty">Faculty</option>
+                  <option value="principal">Principal</option>
+                </select>
+                <input type="date" id="dateFromFilter" onchange="filterComplaints()">
+                <input type="date" id="dateToFilter" onchange="filterComplaints()">
+              </div>
+              <table id="complaintsTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Student</th>
+                    <th>Office</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="complaintsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>`;
+
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      loadComplaintsList();
+    }
+
+    function loadComplaintsList() {
+      const complaints = JSON.parse(localStorage.getItem('submittedComplaints')) || [
+        {id: 'C001', student: 'John Doe', office: 'registrar', subject: 'Transcript Issue', date: '2025-07-18', priority: 'high', status: 'new'},
+        {id: 'C002', student: 'Jane Smith', office: 'bursar', subject: 'Fee Payment', date: '2025-07-17', priority: 'medium', status: 'in-progress'},
+        {id: 'C003', student: 'Mike Johnson', office: 'faculty', subject: 'Grade Dispute', date: '2025-07-16', priority: 'low', status: 'resolved'}
+      ];
+
+      const tbody = document.getElementById('complaintsTableBody');
+      tbody.innerHTML = complaints.map(complaint => `
+        <tr>
+          <td>${complaint.id}</td>
+          <td>${complaint.student}</td>
+          <td><span class="office-badge ${complaint.office}">${complaint.office}</span></td>
+          <td>${complaint.subject}</td>
+          <td>${complaint.date}</td>
+          <td><span class="priority-badge ${complaint.priority}">${complaint.priority}</span></td>
+          <td><span class="status-badge ${complaint.status}">${complaint.status}</span></td>
+          <td>
+            <button class="btn-small view" onclick="viewComplaint('${complaint.id}')">View</button>
+            <button class="btn-small assign" onclick="assignComplaint('${complaint.id}')">Assign</button>
+            <button class="btn-small resolve" onclick="resolveComplaint('${complaint.id}')">Resolve</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ================== AUDIT LOGS ==================
+    function viewAuditLogs() {
+      if (!adminAuth.hasPermission('audit')) {
+        showNotification('Access denied: Insufficient permissions', 'error');
+        return;
+      }
+
+      const modalHTML = `
+        <div id="auditModal" class="modal">
+          <div class="modal-content large">
+            <div class="modal-header">
+              <h3>System Audit Logs</h3>
+              <span class="close" onclick="closeModal('auditModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+              <div class="audit-filters">
+                <input type="date" id="auditDateFrom" onchange="filterAuditLogs()">
+                <input type="date" id="auditDateTo" onchange="filterAuditLogs()">
+                <select id="auditActionFilter" onchange="filterAuditLogs()">
+                  <option value="">All Actions</option>
+                  <option value="login">Login</option>
+                  <option value="logout">Logout</option>
+                  <option value="create">Create</option>
+                  <option value="update">Update</option>
+                  <option value="delete">Delete</option>
+                </select>
+                <button onclick="exportAuditLogs()">Export</button>
+              </div>
+              <table id="auditTable">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Resource</th>
+                    <th>IP Address</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody id="auditTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>`;
+
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      loadAuditLogs();
+    }
+
+    // ================== PORTAL SETTINGS ==================
+    function editSettings() {
+      if (!adminAuth.hasPermission('settings')) {
+        showNotification('Access denied: Insufficient permissions', 'error');
+        return;
+      }
+
+      const modalHTML = `
+        <div id="settingsModal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Portal Settings</h3>
+              <span class="close" onclick="closeModal('settingsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+              <div class="tab-container">
+                <button class="tab-btn active" onclick="showTab('general-settings')">General</button>
+                <button class="tab-btn" onclick="showTab('security-settings')">Security</button>
+                <button class="tab-btn" onclick="showTab('email-settings')">Email</button>
+                <button class="tab-btn" onclick="showTab('backup-settings')">Backup</button>
+              </div>
+
+              <div id="general-settings" class="tab-content active">
+                <form id="generalSettingsForm" onsubmit="saveGeneralSettings(event)">
+                  <div class="form-group">
+                    <label for="portalName">Portal Name:</label>
+                    <input type="text" id="portalName" value="Office Student Portal">
+                  </div>
+                  <div class="form-group">
+                    <label for="academicYear">Current Academic Year:</label>
+                    <input type="text" id="academicYear" value="2025/2026">
+                  </div>
+                  <div class="form-group">
+                    <label for="maxUploadSize">Max Upload Size (MB):</label>
+                    <input type="number" id="maxUploadSize" value="10" min="1" max="100">
+                  </div>
+                  <div class="form-group">
+                    <label>
+                      <input type="checkbox" id="maintenanceMode"> 
+                      Maintenance Mode
+                    </label>
+                  </div>
+                  <button type="submit">Save Settings</button>
+                </form>
+              </div>
+
+              <div id="security-settings" class="tab-content">
+                <form id="securitySettingsForm" onsubmit="saveSecuritySettings(event)">
+                  <div class="form-group">
+                    <label for="sessionTimeout">Session Timeout (minutes):</label>
+                    <input type="number" id="sessionTimeout" value="30" min="5" max="120">
+                  </div>
+                  <div class="form-group">
+                    <label for="maxLoginAttempts">Max Login Attempts:</label>
+                    <input type="number" id="maxLoginAttempts" value="3" min="1" max="10">
+                  </div>
+                  <div class="form-group">
+                    <label>
+                      <input type="checkbox" id="enforceHttps" checked> 
+                      Enforce HTTPS
+                    </label>
+                  </div>
+                  <button type="submit">Save Security Settings</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      loadCurrentSettings();
+    }
+
+    // ================== NOTIFICATIONS ==================
+    function sendNotification() {
+      if (!adminAuth.hasPermission('notifications')) {
+        showNotification('Access denied: Insufficient permissions', 'error');
+        return;
+      }
+
+      const modalHTML = `
+        <div id="notificationModal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Send Notifications</h3>
+              <span class="close" onclick="closeModal('notificationModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+              <form id="notificationForm" onsubmit="sendSystemNotification(event)">
+                <div class="form-group">
+                  <label for="notificationType">Notification Type:</label>
+                  <select id="notificationType" required>
+                    <option value="">Select Type</option>
+                    <option value="announcement">General Announcement</option>
+                    <option value="emergency">Emergency Alert</option>
+                    <option value="maintenance">Maintenance Notice</option>
+                    <option value="deadline">Deadline Reminder</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="targetAudience">Target Audience:</label>
+                  <select id="targetAudience" required>
+                    <option value="">Select Audience</option>
+                    <option value="all">All Users</option>
+                    <option value="students">Students Only</option>
+                    <option value="faculty">Faculty Only</option>
+                    <option value="admin">Administrators Only</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="notificationTitle">Title:</label>
+                  <input type="text" id="notificationTitle" required maxlength="100">
+                </div>
+                <div class="form-group">
+                  <label for="notificationMessage">Message:</label>
+                  <textarea id="notificationMessage" required maxlength="500" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="scheduleDateTime">Schedule (optional):</label>
+                  <input type="datetime-local" id="scheduleDateTime">
+                  <small>Leave empty to send immediately</small>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="emailNotification"> 
+                    Send email notification as well
+                  </label>
+                </div>
+                <button type="submit">Send Notification</button>
+              </form>
+            </div>
+          </div>
+        </div>`;
+
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    // ================== TIMETABLE MANAGEMENT ==================
+    function manageTimetables() {
+      const modalHTML = `
+        <div id="timetableModal" class="modal">
+          <div class="modal-content large">
+            <div class="modal-header">
+              <h3>Timetable Management</h3>
+              <span class="close" onclick="closeModal('timetableModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+              <div class="tab-container">
+                <button class="tab-btn active" onclick="showTab('create-timetable')">Create Timetable</button>
+                <button class="tab-btn" onclick="showTab('published-timetables')">Published</button>
+                <button class="tab-btn" onclick="showTab('timetable-templates')">Templates</button>
+              </div>
+
+              <div id="create-timetable" class="tab-content active">
+                <form id="createTimetableForm" onsubmit="createNewTimetable(event)">
+                  <div class="form-group">
+                    <label for="timetableName">Timetable Name:</label>
+                    <input type="text" id="timetableName" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="academicPeriod">Academic Period:</label>
+                    <select id="academicPeriod" required>
+                      <option value="">Select Period</option>
+                      <option value="2025-sem1">Semester 1, 2025</option>
+                      <option value="2025-sem2">Semester 2, 2025</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="targetProgram">Target Program:</label>
+                    <select id="targetProgram" required>
+                      <option value="">Select Program</option>
+                      <option value="undergraduate">Undergraduate</option>
+                      <option value="postgraduate">Postgraduate</option>
+                      <option value="diploma">Diploma</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>
+                      <input type="checkbox" id="publishImmediatelyTimetable"> 
+                      Publish immediately after creation
+                    </label>
+                  </div>
+                  <button type="submit">Create Timetable</button>
+                  <button type="button" onclick="redirectToTimetableEditor()">Open Advanced Editor</button>
+                </form>
+              </div>
+
+              <div id="published-timetables" class="tab-content">
+                <div class="timetables-list" id="publishedTimetablesList"></div>
+              </div>
+
+              <div id="timetable-templates" class="tab-content">
+                <div class="templates-list" id="timetableTemplatesList"></div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      loadPublishedTimetables();
+      loadTimetableTemplates();
+    }
+
+    function redirectToTimetableEditor() {
+      window.location.href = 'TimeTable.html';
+    }
+
+    // ================== MEDICAL MANAGEMENT ==================
+    function manageMedical() {
+      const modalHTML = `
+        <div id="medicalModal" class="modal">
+          <div class="modal-content large">
+            <div class="modal-header">
+              <h3>Medical Management</h3>
+              <span class="close" onclick="closeModal('medicalModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+              <div class="tab-container">
+                <button class="tab-btn active" onclick="showTab('medical-records')">Medical Records</button>
+                <button class="tab-btn" onclick="showTab('health-services')">Health Services</button>
+                <button class="tab-btn" onclick="showTab('emergency-contacts')">Emergency Contacts</button>
+                <button class="tab-btn" onclick="showTab('health-reports')">Reports</button>
+              </div>
+
+              <div id="medical-records" class="tab-content active">
+                <div class="medical-search">
+                  <input type="text" id="medicalSearch" placeholder="Search by student ID or name..." onkeyup="filterMedicalRecords()">
+                  <button onclick="addMedicalRecord()">Add Record</button>
+                </div>
+                <table id="medicalRecordsTable">
+                  <thead>
+                    <tr>
+                      <th>Student ID</th>
+                      <th>Name</th>
+                      <th>Blood Group</th>
+                      <th>Allergies</th>
+                      <th>Last Checkup</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="medicalRecordsBody"></tbody>
+                </table>
+              </div>
+
+              <div id="health-services" class="tab-content">
+                <div class="services-management">
+                  <h4>Available Health Services</h4>
+                  <div id="healthServicesList"></div>
+                  <button onclick="addHealthService()">Add New Service</button>
+                </div>
+              </div>
+
+              <div id="emergency-contacts" class="tab-content">
+                <div class="emergency-contacts-list" id="emergencyContactsList"></div>
+              </div>
+
+              <div id="health-reports" class="tab-content">
+                <div class="reports-container">
+                  <button onclick="generateHealthReport('monthly')">Monthly Report</button>
+                  <button onclick="generateHealthReport('semester')">Semester Report</button>
+                  <button onclick="generateHealthReport('emergency')">Emergency Statistics</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      loadMedicalRecords();
+      loadHealthServices();
+      loadEmergencyContacts();
+    }
+
+    // ================== UTILITY FUNCTIONS ==================
+    function showTab(tabId) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Remove active class from all tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Show selected tab content
+      const selectedTab = document.getElementById(tabId);
+      if (selectedTab) {
+        selectedTab.classList.add('active');
+      }
+      
+      // Activate corresponding button
+      event.target.classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.remove();
+      }
+    }
+
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()">&times;</button>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Auto remove after 5 seconds
+      setTimeout(() => {
+        if (notification.parentElement) {
+          notification.remove();
+        }
+      }, 5000);
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check authentication on page load
+      if (!adminAuth.checkSession()) {
+        // Show login modal if not authenticated
+        showLoginModal();
+      } else {
+        // Update UI for logged in user
+        updateUIForLoggedInUser();
+      }
+      
+      // Add keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'q') {
+          e.preventDefault();
+          if (confirm('Are you sure you want to logout?')) {
+            adminAuth.logout();
+          }
+        }
+      });
+    });
+
+    function showLoginModal() {
+      const loginHTML = `
+        <div id="loginModal" class="modal" style="display: flex;">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Admin Authentication Required</h3>
+            </div>
+            <div class="modal-body">
+              <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                  <label for="loginUsername">Username:</label>
+                  <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                  <label for="loginPassword">Password:</label>
+                  <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit">Login</button>
+              </form>
+              <div id="loginError" class="error-message"></div>
+              <div class="demo-credentials">
+                <small>Demo Credentials: admin/admin123, registrar/reg123, dean/dean123</small>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      
+      document.body.insertAdjacentHTML('beforeend', loginHTML);
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+      
+      if (adminAuth.login(username, password)) {
+        closeModal('loginModal');
+        updateUIForLoggedInUser();
+        showNotification('Login successful!', 'success');
+      } else {
+        document.getElementById('loginError').textContent = 'Invalid credentials. Please try again.';
+      }
+    }
+
+    function updateUIForLoggedInUser() {
+      // Add user info to header
+      const userInfo = document.createElement('div');
+      userInfo.className = 'user-info';
+      userInfo.innerHTML = `
+        <span>Welcome, ${adminAuth.currentUser.username}</span>
+        <button onclick="adminAuth.logout()">Logout</button>
+      `;
+      
+      const nav = document.querySelector('nav.nav-vector');
+      nav.appendChild(userInfo);
+    }
+
+    // Add required CSS for modals and components
+    const additionalCSS = `
+      <style>
+        .modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0,0,0,0.5);
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .modal-content {
+          background-color: #fff;
+          border-radius: 8px;
+          width: 90%;
+          max-width: 600px;
+          max-height: 90%;
+          overflow-y: auto;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .modal-content.large {
+          max-width: 900px;
+        }
+        
+        .modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 1.5rem;
+          border-bottom: 1px solid #eee;
+          background-color: #f8f9fa;
+        }
+        
+        .modal-header h3 {
+          margin: 0;
+          color: #2c3e50;
+        }
+        
+        .close {
+          font-size: 24px;
+          font-weight: bold;
+          cursor: pointer;
+          color: #666;
+        }
+        
+        .close:hover {
+          color: #000;
+        }
+        
+        .modal-body {
+          padding: 1.5rem;
+        }
+        
+        .tab-container {
+          display: flex;
+          margin-bottom: 1rem;
+          border-bottom: 1px solid #ddd;
+        }
+        
+        .tab-btn {
+          background: none;
+          border: none;
+          padding: 0.75rem 1rem;
+          cursor: pointer;
+          font-weight: 500;
+          border-bottom: 2px solid transparent;
+          transition: all 0.3s ease;
+        }
+        
+        .tab-btn.active {
+          color: #16a085;
+          border-bottom-color: #16a085;
+        }
+        
+        .tab-btn:hover {
+          background-color: #f8f9fa;
+        }
+        
+        .tab-content {
+          display: none;
+        }
+        
+        .tab-content.active {
+          display: block;
+        }
+        
+        .form-group {
+          margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+          display: block;
+          margin-bottom: 0.25rem;
+          font-weight: 500;
+          color: #555;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+          width: 100%;
+          padding: 0.5rem;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 14px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+          outline: none;
+          border-color: #16a085;
+        }
+        
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 1rem;
+        }
+        
+        table th,
+        table td {
+          padding: 0.75rem;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+        
+        table th {
+          background-color: #f8f9fa;
+          font-weight: 600;
+          color: #555;
+        }
+        
+        .btn-small {
+          padding: 0.25rem 0.5rem;
+          font-size: 12px;
+          border: none;
+          border-radius: 3px;
+          cursor: pointer;
+          margin-right: 0.25rem;
+          font-weight: 500;
+        }
+        
+        .btn-small.edit {
+          background-color: #f39c12;
+          color: white;
+        }
+        
+        .btn-small.delete {
+          background-color: #e74c3c;
+          color: white;
+        }
+        
+        .btn-small.view {
+          background-color: #3498db;
+          color: white;
+        }
+        
+        .btn-small.approve {
+          background-color: #27ae60;
+          color: white;
+        }
+        
+        .btn-small.reject {
+          background-color: #e74c3c;
+          color: white;
+        }
+        
+        .status-badge,
+        .role-badge,
+        .priority-badge,
+        .office-badge,
+        .type-badge {
+          padding: 0.25rem 0.5rem;
+          border-radius: 12px;
+          font-size: 11px;
+          font-weight: 600;
+          text-transform: uppercase;
+        }
+        
+        .status-badge.active,
+        .status-badge.approved {
+          background-color: #d4edda;
+          color: #155724;
+        }
+        
+        .status-badge.pending {
+          background-color: #fff3cd;
+          color: #856404;
+        }
+        
+        .status-badge.rejected {
+          background-color: #f8d7da;
+          color: #721c24;
+        }
+        
+        .priority-badge.high {
+          background-color: #f8d7da;
+          color: #721c24;
+        }
+        
+        .priority-badge.medium {
+          background-color: #fff3cd;
+          color: #856404;
+        }
+        
+        .priority-badge.low {
+          background-color: #d4edda;
+          color: #155724;
+        }
+        
+        .notification {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          padding: 1rem 1.5rem;
+          border-radius: 4px;
+          color: white;
+          font-weight: 500;
+          z-index: 1001;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          min-width: 300px;
+        }
+        
+        .notification.success {
+          background-color: #27ae60;
+        }
+        
+        .notification.error {
+          background-color: #e74c3c;
+        }
+        
+        .notification.info {
+          background-color: #3498db;
+        }
+        
+        .notification button {
+          background: none;
+          border: none;
+          color: white;
+          font-size: 18px;
+          cursor: pointer;
+          margin-left: 1rem;
+        }
+        
+        .user-info {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-left: auto;
+          color: #ecf0f1;
+          font-size: 0.85rem;
+        }
+        
+        .user-info button {
+          background: #e74c3c;
+          border: none;
+          padding: 0.25rem 0.5rem;
+          border-radius: 3px;
+          color: white;
+          cursor: pointer;
+          font-size: 0.8rem;
+        }
+        
+        .error-message {
+          color: #e74c3c;
+          font-size: 14px;
+          margin-top: 0.5rem;
+        }
+        
+        .demo-credentials {
+          margin-top: 1rem;
+          padding: 0.5rem;
+          background-color: #f8f9fa;
+          border-radius: 4px;
+          border-left: 3px solid #3498db;
+        }
+        
+        .search-container {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 1rem;
+          align-items: center;
+        }
+        
+        .search-container input {
+          flex: 1;
+          padding: 0.5rem;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+        }
+        
+        .filters-container {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 1rem;
+          flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+          .modal-content {
+            width: 95%;
+            margin: 1rem;
+          }
+          
+          .tab-container {
+            flex-wrap: wrap;
+          }
+          
+          .search-container {
+            flex-direction: column;
+          }
+          
+          .filters-container {
+            flex-direction: column;
+          }
+        }
+      </style>`;
+    
+    document.head.insertAdjacentHTML('beforeend', additionalCSS);
+  </script>
 </body>
 </html>
