@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guild Office - Complaints System</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root {
+      --primary: #008080;
+      --primary-dark: #006064;
+      --highlight: #fffde7;
+      --security-red: #dc3545;
+      --mubs-blue: #007bff;
+      --success-green: #28a745;
+      --warning-orange: #ffc107;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+      min-height: 100vh;
+    }
+
+    /* Navigation Styles */
+    nav {
+      background: var(--primary);
+      color: #fff;
+      padding: 0;
+      text-align: center;
+      font-size: 1.13rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 12px #b2bec360;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    nav li {
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      padding: 18px 20px 16px 20px;
+      transition: background 0.2s, color 0.2s;
+      border-bottom: 3px solid transparent;
+    }
+
+    nav a.active, nav a:focus {
+      background: var(--primary-dark);
+      border-bottom: 3px solid var(--highlight);
+      color: var(--highlight);
+      outline: none;
+    }
+
+    nav a:hover {
+      background: var(--primary-dark);
+      color: var(--highlight);
+    }
+
+    /* Header */
+    .page-header {
+      text-align: center;
+      margin: 2rem 0 3rem 0;
+      color: white;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .page-header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    /* Main Content */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem 3rem;
+    }
+
+    /* Emergency Alert */
+    .emergency-alert {
+      background: rgba(220, 53, 69, 0.95);
+      color: white;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    .emergency-alert h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.3rem;
+    }
+
+    .emergency-btn {
+      background: white;
+      color: var(--security-red);
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .emergency-btn:hover {
+      background: #f8f9fa;
+      transform: scale(1.05);
+    }
+
+    /* Security Sections */
+    .security-section {
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      color: white;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .security-police .section-title {
+      color: #ff6b6b;
+    }
+
+    .security-mubs .section-title {
+      color: #74c0fc;
+    }
+
+    /* Complaint Cards Grid */
+    .complaints-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .complaint-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 2px solid transparent;
+    }
+
+    .complaint-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    .security-police .complaint-card {
+      border-left: 4px solid var(--security-red);
+    }
+
+    .security-police .complaint-card:hover {
+      border-color: var(--security-red);
+    }
+
+    .security-mubs .complaint-card {
+      border-left: 4px solid var(--mubs-blue);
+    }
+
+    .security-mubs .complaint-card:hover {
+      border-color: var(--mubs-blue);
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .complaint-card h3 {
+      margin: 0 0 0.8rem;
+      font-size: 1.1rem;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .complaint-card p {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      flex-grow: 1;
+    }
+
+    .complaint-card button {
+      background: var(--primary);
+      border: none;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .security-police .complaint-card button {
+      background: var(--security-red);
+    }
+
+    .security-mubs .complaint-card button {
+      background: var(--mubs-blue);
+    }
+
+    .complaint-card button:hover {
+      transform: scale(1.05);
+    }
+
+    /* Office Departments */
+    .office-departments {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .office-departments h2 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+
+    .departments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .department-card {
+      background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid #dee2e6;
+    }
+
+    .department-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      background: linear-gradient(45deg, #e3f2fd, #f3e5f5);
+    }
+
+    .dept-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .department-card h4 {
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+
+    .department-card p {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .dept-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+    }
+
+    .dept-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 1rem;
+    }
+
+    .modal-close {
+      background: #dc3545;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid #e1e8ed;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex: 1;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    /* Footer */
+    .site-footer {
+      background: #2c3e50;
+      color: white;
+      margin-top: 4rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-section h3, .footer-section h4 {
+      margin-bottom: 1rem;
+      color: #1abc9c;
+    }
+
+    .footer-section p {
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+    }
+
+    .emergency-contacts {
+      background: rgba(220, 53, 69, 0.1);
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--security-red);
+    }
+
+    .footer-bottom {
+      background: #34495e;
+      text-align: center;
+      padding: 1rem;
+      border-top: 1px solid #4a5568;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 900px) {
+      nav ul { 
+        flex-direction: column; 
+      }
+      nav a { 
+        padding: 14px 8px;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .complaints-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .departments-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .emergency-btn {
+        display: block;
+        margin: 0.5rem 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav-horizontal">
+      <ul>
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+        <li><a href="documents.html" class="nav-link">Documents</a></li>
+        <li><a href="results.html" class="nav-link">Results</a></li>
+        <li><a href="complaints.html" class="nav-link">Complaints</a></li>
+        <li><a href="medical.html" class="nav-link">Medical</a></li>
+        <li><a href="student-affairs.html" class="nav-link">StudentAffairs</a></li>
+        <li><a href="timetable.html" class="nav-link">Timetable</a></li>
+        <li><a href="adminTools.html" class="nav-link">Admin Tools</a></li>
+      </ul>
+  <main>
+    <div class="page-header">
+      <h1>🏛️ Guild Office - Complaints System</h1>
+      <p>Report incidents and concerns to the appropriate security departments</p>
+    </div>
+<div class="popup-view" id="filePopupView">
+  <div class="popup-content" id="popupContent">
+    <!-- Filled by JS on View button click -->
+  </div>
+</div>
+    <!-- Emergency Alert -->
+    <div class="emergency-alert">
+      <h3>🚨 EMERGENCY SITUATIONS</h3>
+      <p>For immediate assistance, contact emergency services</p>
+      <button class="emergency-btn" onclick="callEmergency('911')">📞 Call 911</button>
+      <button class="emergency-btn" onclick="callEmergency('campus')">📞 Campus Security</button>
+      <button class="emergency-btn" onclick="callEmergency('medical')">🏥 Medical Emergency</button>
+    </div>
+
+    <!-- Security Police Section -->
+    <div class="security-section security-police">
+      <h2 class="section-title">🚔 Security Police - Criminal Matters</h2>
+      <div class="complaints-grid">
+        <div class="complaint-card" onclick="openComplaintForm('terror-suspicion')">
+          <div class="card-icon">🕵️</div>
+          <h3>Terror Suspicions</h3>
+          <p>Report suspicious activities, unidentified packages, or potential terrorism threats</p>
+          <button>Report Suspicion</button>
+        </div>
+
+        <div class="complaint-card" onclick="openComplaintForm('rape')">
+          <div class="card-icon">⚠️</div>
+          <h3>Sexual Assault</h3>
+          <p>Report incidents of rape, sexual harassment, or any form of sexual violence</p>
+          <button>Report Incident</button>
+        </div>
+
+        <div class="complaint-card" onclick="openComplaintForm('street-robbery')">
+          <div class="card-icon">🎭</div>
+          <h3>Street Robbery</h3>
+          <p>Report theft, mugging, or robbery incidents on or near campus premises</p>
+          <button>Report Robbery</button>
+        </div>
+
+        <div class="complaint-card" onclick="openComplaintForm('car-incidents')">
+          <div class="card-icon">🚗</div>
+          <h3>Vehicle Related</h3>
+          <p>Car theft, vandalism, traffic incidents, or parking violations</p>
+          <button>Report Vehicle Issue</button>
+        </div>
+
+        <div class="complaint-card" onclick="openComplaintForm('other-criminal')">
+          <div class="card-icon">🚨</div>
+          <h3>Other Criminal Acts</h3>
+          <p>Any other criminal activities not listed above requiring police intervention</p>
+          <button>Report Crime</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MUBS Security Section -->
+    <div class="security-section security-mubs">
+      <h2 class="section-title">🛡️ MUBS Security - Campus Safety</h2>
+      <div class="complaints-grid">
+        <div class="complaint-card" onclick="openComplaintForm('class-environment')">
+          <div class="card-icon">🎓</div>
+          <h3>Class Environment</h3>
+          <p>Classroom safety issues, disruptive behavior, or learning environment concerns</p>
+          <button>Report Issue</button>
+        </div>
+
+        <div class="complaint-card" onclick="openComplaintForm('campus-safety')">
+          <div class="card-icon">🏫</div>
+          <h3>Campus Safety</h3>
+          <p>General safety concerns, security breaches, or unsafe conditions on campus</p>
+          <button>Report Safety Issue</button>
+        </div>
+
+        <div class="complaint-card" onclick="openComplaintForm('fire-emergency')">
+          <div class="card-icon">🔥</div>
+          <h3>Fire Hazards</h3>
+          <p>Fire safety concerns, blocked exits, faulty alarms, or fire prevention issues</p>
+          <button>Report Fire Hazard</button>
+        </div>
+
+        <div class="complaint-card" onclick="openComplaintForm('general-emergency')">
+          <div class="card-icon">🆘</div>
+          <h3>General Emergencies</h3>
+          <p>Medical emergencies, accidents, power outages, or facility emergencies</p>
+          <button>Report Emergency</button>
+        </div>
+
+        <div class="complaint-card" onclick="openComplaintForm('security-breach')">
+          <div class="card-icon">🔓</div>
+          <h3>Security Breach</h3>
+          <p>Unauthorized access, missing ID cards, or campus security protocol violations</p>
+          <button>Report Breach</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Office Departments -->
+    <div class="office-departments">
+      <h2>🏢 Other Office Departments</h2>
+      <div class="departments-grid">
+        <div class="department-card" onclick="openDepartmentComplaint('registrar')">
+          <div class="dept-icon">📋</div>
+          <h4>Registrar Office</h4>
+          <p>Academic records, transcripts, registration issues</p>
+          <button class="dept-btn">File Complaint</button>
+        </div>
+
+        <div class="department-card" onclick="openDepartmentComplaint('bursar')">
+          <div class="dept-icon">💰</div>
+          <h4>Bursar Office</h4>
+          <p>Fee payments, financial clearance, billing issues</p>
+          <button class="dept-btn">File Complaint</button>
+        </div>
+
+        <div class="department-card" onclick="openDepartmentComplaint('library')">
+          <div class="dept-icon">📚</div>
+          <h4>Library Services</h4>
+          <p>Book access, study spaces, library facilities</p>
+          <button class="dept-btn">File Complaint</button>
+        </div>
+
+        <div class="department-card" onclick="openDepartmentComplaint('ict')">
+          <div class="dept-icon">💻</div>
+          <h4>ICT Department</h4>
+          <p>Internet issues, computer labs, technical support</p>
+          <button class="dept-btn">File Complaint</button>
+        </div>
+
+        <div class="department-card" onclick="openDepartmentComplaint('accommodation')">
+          <div class="dept-icon">🏠</div>
+          <h4>Accommodation</h4>
+          <p>Housing issues, hostel problems, room allocation</p>
+          <button class="dept-btn">File Complaint</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Complaint Form Modal -->
+  <div id="complaintModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Submit Complaint</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <form id="complaintForm" onsubmit="submitComplaint(event)">
+        <input type="hidden" id="complaintType" name="complaintType">
+        
+        <div class="form-group">
+          <label for="urgencyLevel">Urgency Level</label>
+          <select id="urgencyLevel" name="urgencyLevel" required>
+            <option value="">Select Urgency</option>
+            <option value="critical">🚨 Critical - Immediate Action Required</option>
+            <option value="high">🔴 High - Urgent</option>
+            <option value="medium">🟡 Medium - Important</option>
+            <option value="low">🟢 Low - Non-urgent</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="incidentLocation">Location of Incident</label>
+          <input type="text" id="incidentLocation" name="location" required placeholder="Building, room number, or specific location">
+        </div>
+        
+        <div class="form-group">
+          <label for="incidentTime">Time of Incident</label>
+          <input type="datetime-local" id="incidentTime" name="time" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="complaintDetails">Detailed Description</label>
+          <textarea id="complaintDetails" name="details" rows="5" required placeholder="Provide detailed information about the incident or complaint"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="witnessInfo">Witnesses (if any)</label>
+          <textarea id="witnessInfo" name="witnesses" rows="2" placeholder="Names and contact information of any witnesses"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="evidence">Evidence/Attachments</label>
+          <input type="file" id="evidence" name="evidence" multiple accept="image/*,video/*,.pdf">
+          <small>Upload photos, videos, or documents (optional)</small>
+        </div>
+        
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="anonymous" name="anonymous"> 
+            Submit anonymously (your identity will be protected)
+          </label>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Submit Complaint</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>🏛️ Guild Office Complaints</h3>
+        <p>Your safety and security are our top priorities. Report incidents confidentially and get the help you need.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>🚔 Security Police Contacts</h4>
+        <div class="emergency-contacts">
+          <p><strong>Emergency:</strong> 911</p>
+          <p><strong>Campus Police:</strong> (555) 123-POLICE</p>
+          <p><strong>Crime Tip Line:</strong> (555) 123-TIPS</p>
+          <p><strong>24/7 Hotline:</strong> (555) 123-SAFE</p>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h4>🛡️ MUBS Security</h4>
+        <p>📞 Main Office: (555) 123-MUBS</p>
+        <p>🚨 Emergency: (555) 123-HELP</p>
+        <p>🔥 Fire Safety: (555) 123-FIRE</p>
+        <p>📍 Security Office: Main Building, Ground Floor</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4>⚖️ Support Services</h4>
+        <p>🆘 Counseling Services: (555) 123-CARE</p>
+        <p>👥 Student Support: (555) 123-HELP</p>
+        <p>🏥 Health Center: (555) 123-HEALTH</p>
+        <p>📧 guild.complaints@mubs.edu</p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2025 MUBS Guild Office Complaints System. All reports are treated confidentially.</p>
+      <p>🔒 Your safety matters. Report incidents without fear.</p>
+    </div>
+  </footer>
+
+  <script>
+    let currentComplaintType = '';
+
+    function callEmergency(type) {
+      const contacts = {
+        '911': 'Calling 911 Emergency Services...',
+        'campus': 'Connecting to Campus Security: (555) 123-POLICE',
+        'medical': 'Connecting to Medical Emergency: (555) 123-HEALTH'
+      };
+      
+      alert(contacts[type]);
+      console.log(`Emergency contact: ${type}`);
+    }
+
+    function openComplaintForm(type) {
+      currentComplaintType = type;
+      const modal = document.getElementById('complaintModal');
+      const title = document.getElementById('modalTitle');
+      const typeInput = document.getElementById('complaintType');
+      
+      const titles = {
+        'terror-suspicion': '🕵️ Report Terror Suspicion',
+        'rape': '⚠️ Report Sexual Assault',
+        'street-robbery': '🎭 Report Street Robbery',
+        'car-incidents': '🚗 Report Vehicle Incident',
+        'other-criminal': '🚨 Report Criminal Activity',
+        'class-environment': '🎓 Report Class Environment Issue',
+        'campus-safety': '🏫 Report Campus Safety Issue',
+        'fire-emergency': '🔥 Report Fire Hazard',
+        'general-emergency': '🆘 Report General Emergency',
+        'security-breach': '🔓 Report Security Breach'
+      };
+      
+      title.textContent = titles[type] || 'Submit Complaint';
+      typeInput.value = type;
+      modal.style.display = 'flex';
+    }
+
+    function openDepartmentComplaint(department) {
+      currentComplaintType = department;
+      const modal = document.getElementById('complaintModal');
+      const title = document.getElementById('modalTitle');
+      const typeInput = document.getElementById('complaintType');
+      
+      const departments = {
+        'registrar': '📋 Registrar Office Complaint',
+        'bursar': '💰 Bursar Office Complaint',
+        'library': '📚 Library Services Complaint',
+        'ict': '💻 ICT Department Complaint',
+        'accommodation': '🏠 Accommodation Complaint'
+      };
+      
+      title.textContent = departments[department] || 'Department Complaint';
+      typeInput.value = department;
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('complaintModal').style.display = 'none';
+      document.getElementById('complaintForm').reset();
+      currentComplaintType = '';
+    }
+
+    function submitComplaint(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      const complaintData = Object.fromEntries(formData);
+      
+      // Generate reference number
+      const refNumber = 'COM-2025-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+      
+      // Simulate submission
+      alert(`✅ Complaint submitted successfully!\n\nReference Number: ${refNumber}\n\nYou will receive updates on your complaint status via email.`);
+      
+      console.log('Complaint Data:', complaintData);
+      console.log('Reference Number:', refNumber);
+      
+      closeModal();
+      
+      // In real implementation, send data to server
+      // fetch('/api/complaints', { method: 'POST', body: formData })
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('complaintModal');
+      if (event.target === modal) {
+        closeModal();
+      }
+    }
+
+    // Set current time as default
+    document.addEventListener('DOMContentLoaded', function() {
+      const now = new Date();
+      const localTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+      document.getElementById('incidentTime').value = localTime.toISOString().slice(0, 16);
+    });
+  </script>
+<script src="script.js"></script>
+</body>
+</html>

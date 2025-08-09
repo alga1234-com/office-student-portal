@@ -1,0 +1,6 @@
+<script>
+  const auth = JSON.parse(localStorage.getItem('oasisAuth'));
+  if (!auth || !auth.token) {
+    window.location.href = 'index.html';
+  }
+</script

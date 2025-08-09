@@ -1,0 +1,288 @@
+/* === NAVBAR (intact, do not edit) === */
+.navbar { 
+  background: navy;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
+  padding: 1rem 2vw;
+}
+.navbar-logo { 
+  font-size: 1.55rem; 
+  font-weight: 700; 
+  color: #fff;
+  letter-spacing: 2px; 
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+.navbar-logo span {
+  font-size: 12px;
+  font-weight: 400;
+  color: #f5f5f5 !important; 
+  margin-left: 4px;
+}
+.navbar-menu { 
+  display: flex; 
+  gap: 2rem; 
+  align-items: center;
+}
+.nav-horizontal {
+  display: flex;
+}
+.nav-horizontal ul {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nav-horizontal ul li {
+  display: flex;
+}
+.nav-link {
+  text-decoration: none; 
+  color: #e1e0da;
+  font-size: 1rem; 
+  font-weight: 500; 
+  transition: color 0.18s, background 0.18s;
+  border-radius: 4px;
+  padding: 0.3em 0.6em;
+  display: inline-block;
+}
+.nav-link:hover,
+.nav-link.active {
+  background: #546f81;
+  color: #fff;
+}
+.navbar-actions { 
+  display: flex; 
+  gap: 0.7rem; 
+}
+.nav-orange { 
+  background: #f97316; 
+  color: #fff; 
+  border: none; 
+  border-radius: 999px; 
+  padding: 0.45em 1.2em; 
+  font-size: 1rem; 
+  font-weight: 600; 
+  cursor: pointer; 
+  margin-left: 0.2em; 
+  transition: background 0.18s; 
+  text-decoration: none; 
+  display: inline-block; 
+}
+.nav-orange:hover { background: #ea580c; }
+.navbar-profile {
+  display: flex; align-items: center; margin-left: 1.2em;
+}
+.navbar-profile a {
+  padding: 0;
+  background: none;
+  border: none;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 48px;
+}
+.navbar-profile .profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: #15803d;
+  font-weight: bold;
+}
+@media (max-width: 700px) { .navbar-menu { display: none; } }
+
+/* === HERO BANNER === */
+.dashboard-hero {
+  background: linear-gradient(90deg, #16a085 85%, #3498db 100%);
+  padding: 1.2rem 0.4rem 1rem 0.4rem;
+  color: #fff;
+  text-align: center;
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 2px 12px #0001;
+  margin-bottom: 1.3rem;
+}
+.dashboard-hero-content {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.dashboard-oasis-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: .5px;
+  margin-bottom: 0.2em;
+}
+.dashboard-hero-welcome {
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin-bottom: 0.26em;
+}
+.dashboard-hero-desc {
+  font-size: .96rem;
+  margin-bottom: 0;
+  color: #eafaf1;
+}
+
+/* === QUICK ACTIONS === */
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: center;
+  margin: 1.1rem 0 1.3rem 0;
+}
+.quick-action-btn {
+   background: #0099ff;
+ color: #ffffcc;
+  border: none;
+  border-radius: 10px;
+  padding: 0.55em 1.15em;
+  font-size: .98rem;
+  font-weight: 600;
+  box-shadow: 0 1px 6px #0ea5e91a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  transition: background 0.16s, box-shadow 0.18s, color 0.16s;
+  text-decoration: none;
+}
+.quick-action-btn:hover {
+  background: #0ea5e9;
+  color: #fff;
+  box-shadow: 0 2px 12px #0ea5e930;
+}
+
+/* === 3x3 GRID FOR ALL CARDS === */
+.dashboard-main-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(120px, 1fr);
+  gap: 1.1rem;
+  max-width: 900px;
+  margin: 0 auto 2.2rem auto;
+}
+.dashboard-card {
+  background: #fff;
+  border-radius: 13px;
+  box-shadow: 0 1px 8px #0001;
+  padding: 1rem 0.6rem 0.7rem 0.6rem;
+  min-width: 0;
+  min-height: 135px;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  transition: box-shadow 0.14s, transform 0.13s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.dashboard-card:hover {
+  box-shadow: 0 3px 16px #00ccff;
+  transform: translateY(-1px) scale(1.01);
+  z-index: 2;
+}
+.dashboard-card .dashboard-card-icon {
+  font-size: 1.55rem;
+  margin-bottom: 0.22em;
+}
+.dashboard-card h3 {
+  margin: 0.35em 0 0.18em 0;
+  font-size: 1.01rem;
+  font-weight: 700;
+  color: #263f5a;
+}
+.dashboard-card p {
+  color: #4a627a;
+  margin: 0.08em 0 0 0;
+  font-size: 0.93rem;
+}
+.dashboard-card-number {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #236d67;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+.dashboard-card-unit {
+  font-size: 0.9rem;
+  color: #9baec8;
+  margin-left: 0.10em;
+  font-weight: 500;
+}
+.dashboard-card-label {
+  font-size: 0.92rem;
+  color: #4a627a;
+  font-weight: 500;
+  margin-top: 0.11em;
+}
+.dashboard-card-link {
+  margin-top: 0.7em;
+  color: #15803d;
+  font-size: .97rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.44em;
+  cursor: pointer;
+  transition: color 0.16s;
+}
+.dashboard-card-link i {
+  font-size: 1em;
+}
+.dashboard-card-link:hover {
+  color: #f97316;
+}
+
+/* === SMALLER ARROW ICONS ETC === */
+.dashboard-card .fas,
+.dashboard-card .fa-solid,
+.dashboard-card .fa {
+  font-size: 1.18em;
+}
+
+/* === SERVICES SECTION TITLE === */
+.section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #236d67;
+  margin: 1.4rem 0 1.1rem 0;
+  text-align: left;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* === POPUP VIEW === */
+.popup-view { display: none; }
+
+/* === RESPONSIVE === */
+@media (max-width: 1000px) {
+  .dashboard-main-grid { max-width: 99vw; }
+}
+@media (max-width: 900px) {
+  .dashboard-main-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .dashboard-hero {
+    border-radius: 0 0 9px 9px;
+    padding: 0.9rem 0.2rem 0.7rem 0.2rem;
+  }
+  .dashboard-oasis-title { font-size: 0.93rem; }
+  .dashboard-hero-welcome { font-size: 0.87rem; }
+  .dashboard-hero-desc { font-size: 0.82rem; }
+  .quick-action-btn { font-size: 0.93rem; padding: 0.5em 0.7em; }
+  .dashboard-main-grid { grid-template-columns: 1fr; gap: 0.85rem;}
+  .section-title { font-size: .98rem; }
+}

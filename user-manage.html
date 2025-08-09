@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Management</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/user-management.css">
+</head>
+<body>
+<nav class="navbar">
+    <a href="/" class="navbar-logo">
+      OASIS <span>Student Portal</span>
+    </a>
+    <div class="navbar-menu">
+      <nav class="nav-horizontal">
+        <ul>
+          <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+          <li><a href="documents.html" class="nav-link">Documents</a></li>
+          <li><a href="medical.html" class="nav-link">Medical</a></li>
+          <li><a href="timetables.html" class="nav-link">Timetable</a></li>
+          <li><a href="adminTools.html" class="nav-link">Admin Tools</a></li>
+          <li><a href="help.html" class="nav-link">Help Desk</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="navbar-profile">
+      <a href="profile.html" title="My Profile">
+        <div class="profile-avatar" id="profileAvatarNavbar">A</div>
+      </a>
+    </div>
+    <div class="navbar-actions">
+      <a href="Login.html" class="nav-orange">Login</a>
+    </div>
+  </nav>
+
+<!-- USER MANAGEMENT BANNER -->
+<section class="um-banner">
+  <div class="um-banner-content">
+    <h2>User Management</h2>
+  </div>
+</section>
+  <div class="user-management-container">
+    <div class="user-management-header">
+      <h1><i class="fas fa-users-cog"></i> User Management</h1>
+      <button class="exit-tool-btn" id="exitToolBtn">
+        <i class="fas fa-sign-out-alt"></i>
+        Exit ToolManager
+      </button>
+    </div>
+    <div class="content-wrap">
+      <!-- Search/Filter Row -->
+      <div class="search-filter-row">
+        <input type="text" id="searchInput" placeholder="Search by name, email, role...">
+        <select id="roleFilter">
+          <option value="">All Roles</option>
+          <option value="admin">Admin</option>
+          <option value="faculty">Faculty</option>
+          <option value="student">Student</option>
+          <option value="registrar">Registrar</option>
+          <option value="superuser">Superuser</option>
+        </select>
+        <select id="statusFilter">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="suspended">Suspended</option>
+        </select>
+        <button class="user-action-btn info" id="refreshBtn"><i class="fas fa-sync"></i> Refresh</button>
+      </div>
+
+     <!-- User Management Dashboard (Superuser) -->
+<div class="manage-users-dashboard">
+  <div class="mud-header">
+    <h1><i class="fas fa-users-cog"></i> User Management</h1>
+    <button class="mud-menu-btn" id="mudMenuBtn" title="Open Actions Menu">
+      <i class="fas fa-bars"></i>
+      Actions
+    </button>
+    <button class="exit-tool-btn" id="exitToolBtn">
+      <i class="fas fa-sign-out-alt"></i> Exit ToolManager
+    </button>
+  </div>
+  <!-- Pop-up menu for Superuser Actions -->
+  <div class="mud-popup-menu" id="mudPopupMenu">
+    <ul>
+      <li><button id="addUserBtn"><i class="fas fa-user-plus"></i> Add New User</button></li>
+      <li><button id="bulkImportBtn"><i class="fas fa-file-import"></i> Bulk Import</button></li>
+      <li><button id="auditLogBtn"><i class="fas fa-clipboard-list"></i> View Audit Log</button></li>
+      <li><button id="rolesPermsBtn"><i class="fas fa-user-shield"></i> Manage Roles & Permissions</button></li>
+    </ul>
+  </div>
+  <div class="mud-main">
+    <!-- Frame: Add/Search user -->
+    <section class="mud-user-frame">
+      <div class="mud-search-bar">
+        <input type="text" id="searchInput" placeholder="Search by name, email, role...">
+        <select id="roleFilter">
+          <option value="">All Roles</option>
+          <option value="admin">Admin</option>
+          <option value="faculty">Faculty</option>
+          <option value="student">Student</option>
+          <option value="registrar">Registrar</option>
+          <option value="superuser">Superuser</option>
+        </select>
+        <select id="statusFilter">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="suspended">Suspended</option>
+        </select>
+        <button class="user-action-btn info" id="refreshBtn"><i class="fas fa-sync"></i> Refresh</button>
+      </div>
+      <form class="mud-add-user-form" id="addUserForm" autocomplete="off">
+        <h2><i class="fas fa-user-plus"></i> Add New User</h2>
+        <div class="mud-form-grid">
+          <div>
+            <label for="userName">Full Name</label>
+            <input type="text" id="userName" required>
+          </div>
+          <div>
+            <label for="userRole">Role</label>
+            <select id="userRole" required>
+              <option value="">Select Role</option>
+              <option value="admin">Admin</option>
+              <option value="faculty">Faculty</option>
+              <option value="student">Student</option>
+              <option value="registrar">Registrar</option>
+              <option value="superuser">Superuser</option>
+            </select>
+          </div>
+        </div>
+        <div class="email-format-row">
+          <label>Email Format:</label>
+          <label><input type="radio" name="emailFormat" value="auto" checked> Auto (by role)</label>
+          <label><input type="radio" name="emailFormat" value="manual"> Manual entry</label>
+        </div>
+        <div id="emailInputContainer">
+          <label for="userEmail">Email</label>
+          <input type="email" id="userEmail" required readonly>
+        </div>
+        <label for="userPassword">Password</label>
+        <input type="password" id="userPassword" required minlength="5">
+        <button type="submit"><i class="fas fa-plus-circle"></i> Add User</button>
+      </form>
+      <table class="mud-user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+      </table>
+    </section>
+
+    <h2>Manage Roles & Permissions (Superuser Only)</h2>
+  <form id="rolesForm">
+    <table>
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>manage users</th>
+          <th>manage documents</th>
+          <th>manage results</th>
+          <th>view audit</th>
+          <th>edit settings</th>
+          <th>view results</th>
+          <th>upload documents</th>
+          <th>submit complaints</th>
+          <th>all</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Admin</td>
+          <td class="checkbox-cell"><input type="checkbox" name="Admin_manage_users" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Admin_manage_documents" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Admin_manage_results" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Admin_view_audit" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Admin_edit_settings" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Admin_view_results" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Admin_upload_documents" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Admin_submit_complaints" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Admin_all" checked></td>
+        </tr>
+        <tr>
+          <td>Faculty</td>
+          <td class="checkbox-cell"><input type="checkbox" name="Faculty_manage_users" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Faculty_manage_documents" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Faculty_manage_results" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Faculty_view_audit" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Faculty_edit_settings" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Faculty_view_results" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Faculty_upload_documents" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Faculty_submit_complaints" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Faculty_all" checked></td>
+        </tr>
+        <tr>
+          <td>Student</td>
+          <td class="checkbox-cell"><input type="checkbox" name="Student_manage_users" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Student_manage_documents" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Student_manage_results" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Student_view_audit" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Student_edit_settings" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Student_view_results" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Student_upload_documents" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Student_submit_complaints" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Student_all" checked></td>
+        </tr>
+        <tr>
+          <td>Registrar</td>
+          <td class="checkbox-cell"><input type="checkbox" name="Registrar_manage_users" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Registrar_manage_documents" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Registrar_manage_results" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Registrar_view_audit" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Registrar_edit_settings" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Registrar_view_results" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Registrar_upload_documents" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Registrar_submit_complaints" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Registrar_all" checked></td>
+        </tr>
+        <tr>
+          <td>Superuser</td>
+          <td class="checkbox-cell"><input type="checkbox" name="Superuser_manage_users" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Superuser_manage_documents" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Superuser_manage_results" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Superuser_view_audit" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Superuser_edit_settings" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Superuser_view_results" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Superuser_upload_documents" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Superuser_submit_complaints" checked></td>
+          <td class="checkbox-cell"><input type="checkbox" name="Superuser_all" checked></td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="submit" class="save-btn">Save Changes</button>
+  </form>
+  <script>
+    document.getElementById('rolesForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Gather form data
+      const formData = new FormData(this);
+      // Convert to a nice object for demonstration
+      const output = {};
+      for (let [key, value] of formData.entries()) {
+        output[key] = value;
+      }
+      alert('Changes saved!\n\n' + JSON.stringify(output, null, 2));
+      // You could send 'output' via fetch() to your backend here
+    });
+  </script>
+</body>
+</html>

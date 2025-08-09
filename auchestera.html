@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Management</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    html, body {
+      height: 100%;
+      min-height: 100%;
+      width: 100vw;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+      min-height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+    .user-management-container {
+      width: 100vw;
+      min-height: calc(100vh - 0px);
+      margin: 0;
+      background: #fff;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      box-sizing: border-box;
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+    }
+    .user-management-header {
+      width: 100%;
+      background: linear-gradient(90deg, #16a085 85%, #3498db 100%);
+      padding: 2rem 0 1.5rem 0;
+      margin-bottom: 0;
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 4px 24px rgba(22,160,133,0.11);
+      text-align: center;
+      color: #fff;
+    }
+    .user-management-header h1 {
+      font-size: 2.3rem;
+      margin: 0;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: .03em;
+    }
+    .content-wrap {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 2rem 1.5rem;
+      box-sizing: border-box;
+    }
+    .search-filter-row {
+      display: flex;
+      gap: 1.2rem;
+      margin-bottom: 1.3rem;
+      flex-wrap: wrap;
+      align-items: center;
+      width: 100%;
+    }
+    .search-filter-row input,
+    .search-filter-row select {
+      padding: 0.35rem 0.7rem;
+      border: 1px solid #d1e0e6;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      min-width: 130px;
+      max-width: 180px;
+    }
+    .search-filter-row input:focus,
+    .search-filter-row select:focus {
+      outline: 2px solid #16a085;
+    }
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+      background: #fafafa;
+      border-radius: 10px;
+      overflow: auto;
+      table-layout: auto;
+      box-shadow: 0 2px 15px rgba(52,152,219,0.06);
+    }
+    .user-table th, .user-table td {
+      padding: 0.55rem 0.3rem;
+      border-bottom: 1px solid #e1e8ed;
+      text-align: center;
+      font-size: 0.97rem;
+      word-break: break-word;
+      vertical-align: middle;
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+    .user-table th {
+      background: #16a085;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.96rem;
+      letter-spacing: .01em;
+      white-space: nowrap;
+    }
+    .user-table tr:last-child td {
+      border-bottom: none;
+    }
+    .status-badge {
+      padding: 0.18em 0.6em;
+      border-radius: 8px;
+      font-size: 0.93em;
+      font-weight: 600;
+      color: #fff;
+      background: #16a085;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+    .status-badge.suspended { background: #e74c3c; }
+    .role-badge {
+      padding: 0.18em 0.6em;
+      border-radius: 8px;
+      font-size: 0.93em;
+      font-weight: 600;
+      background: #3498db;
+      color: #fff;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+    .user-action-btn {
+      border: none;
+      border-radius: 6px;
+      font-size: 0.86em;
+      padding: 0.23em 0.65em;
+      margin: 0 0.07em 0.07em 0;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25em;
+      white-space: nowrap;
+    }
+    .user-action-btn.edit { background: #f39c12; color: #fff; }
+    .user-action-btn.delete { background: #e74c3c; color: #fff; }
+    .user-action-btn.suspend { background: #e67e22; color: #fff; }
+    .user-action-btn.activate { background: #27ae60; color: #fff; }
+    .user-action-btn.save { background: #16a085; color: #fff; }
+    .user-action-btn.cancel { background: #7f8c8d; color: #fff; }
+    .user-action-btn.info { background: #3498db; color: #fff; }
+    .user-action-btn.reset { background: #3b5998; color: #fff; }
+    .user-action-btn.profile { background: #8e44ad; color: #fff;}
+    .user-action-btn:hover { filter: brightness(1.13); }
+    .add-user-form {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 1.1em 1.3em;
+      margin-bottom: 2em;
+      box-shadow: 0 2px 12px rgba(22,160,133,0.06);
+      max-width: 540px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+    }
+    .add-user-form h2 {
+      color: #16a085;
+      margin-bottom: 1em;
+      font-size: 1.12em;
+      text-align: center;
+    }
+    .add-user-form label {
+      display: block;
+      margin-bottom: 0.21em;
+      font-weight: 500;
+    }
+    .add-user-form input,
+    .add-user-form select {
+      width: 100%;
+      padding: 0.38em 0.7em;
+      margin-bottom: 0.8em;
+      border: 1px solid #d1e0e6;
+      border-radius: 5px;
+      font-size: 0.96em;
+      box-sizing: border-box;
+    }
+    .add-user-form .email-format-row {
+      display: flex;
+      gap: 0.7em;
+      align-items: center;
+      margin-bottom: 0.8em;
+      flex-wrap: wrap;
+      font-size: 0.93em;
+    }
+    .add-user-form button {
+      background: #16a085;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.39em 1em;
+      font-weight: 600;
+      font-size: 0.96em;
+      cursor: pointer;
+      transition: background 0.18s;
+      margin-top: 0.15em;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .add-user-form button:hover { background: #138d75; }
+    .roles-panel {
+      margin-top: 1.5em;
+      padding: 1em 1.3em;
+      background: #f8f9fa;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(52,152,219,0.08);
+      max-width: 540px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+      display: none; /* Hide by default, show only for superuser */
+    }
+    .roles-panel[superuser="true"] {
+      display: block;
+    }
+    .roles-panel h2 { color: #3498db; font-size: 1.09em; margin-bottom: 0.7em; text-align: center;}
+    .role-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8em;
+      margin-bottom: 0.35em;
+      flex-wrap: wrap;
+      font-size: 0.93em;
+    }
+    .role-row label { font-weight: 500; min-width: 90px; }
+    .role-row input[type="checkbox"] { accent-color: #16a085; }
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #16a085;
+      color: #fff;
+      padding: 0.7em 1.1em;
+      border-radius: 7px;
+      font-weight: 600;
+      z-index: 1001;
+      box-shadow: 0 2px 12px rgba(22,160,133,0.13);
+      min-width: 190px;
+      transition: opacity 0.4s;
+      font-size: 0.97em;
+    }
+    .notification.error { background: #e74c3c;}
+    .notification.success { background: #27ae60;}
+    .notification.info { background: #3498db;}
+    @media (max-width: 900px) {
+      .content-wrap {padding: 1rem 0.1rem;}
+      .add-user-form, .roles-panel {padding: 0.6em 0.2em;}
+      .roles-panel {max-width: 99vw;}
+    }
+    @media (max-width: 700px) {
+      .user-management-header {padding: 0.9rem 0 0.6rem 0;}
+      .user-management-header h1 {font-size: 1.12rem;}
+      .content-wrap {padding: 0.6rem 0.01rem;}
+      .add-user-form, .roles-panel { padding: 0.5em 0.1em;}
+      .search-filter-row { flex-direction: column; gap: 0.35em;}
+      .user-table th, .user-table td { font-size: 0.91em; padding: 0.43rem 0.11rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="user-management-container">
+    <div class="user-management-header">
+      <h1><i class="fas fa-users-cog"></i> User Management</h1>
+    </div>
+    <div class="content-wrap">
+      <!-- Search/Filter Row -->
+      <div class="search-filter-row">
+        <input type="text" id="searchInput" placeholder="Search by name, email, role...">
+        <select id="roleFilter">
+          <option value="">All Roles</option>
+          <option value="admin">Admin</option>
+          <option value="faculty">Faculty</option>
+          <option value="student">Student</option>
+          <option value="registrar">Registrar</option>
+          <option value="superuser">Superuser</option>
+        </select>
+        <select id="statusFilter">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="suspended">Suspended</option>
+        </select>
+        <button class="user-action-btn info" id="refreshBtn"><i class="fas fa-sync"></i> Refresh</button>
+      </div>
+
+      <!-- Add User Form -->
+      <form class="add-user-form" id="addUserForm" autocomplete="off">
+        <h2><i class="fas fa-user-plus"></i> Add New User</h2>
+        <label for="userName">Full Name</label>
+        <input type="text" id="userName" required>
+        <label for="userRole">Role</label>
+        <select id="userRole" required>
+          <option value="">Select Role</option>
+          <option value="admin">Admin</option>
+          <option value="faculty">Faculty</option>
+          <option value="student">Student</option>
+          <option value="registrar">Registrar</option>
+          <option value="superuser">Superuser</option>
+        </select>
+        <div class="email-format-row">
+          <label>Email Format:</label>
+          <label><input type="radio" name="emailFormat" value="auto" checked> Auto (by role)</label>
+          <label><input type="radio" name="emailFormat" value="manual"> Manual entry</label>
+        </div>
+        <div id="emailInputContainer">
+          <label for="userEmail">Email</label>
+          <input type="email" id="userEmail" required readonly>
+        </div>
+        <label for="userPassword">Password</label>
+        <input type="password" id="userPassword" required minlength="5">
+        <button type="submit"><i class="fas fa-plus-circle"></i> Add User</button>
+      </form>
+
+      <!-- User Table -->
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+      </table>
+
+      <!-- Manage Roles Panel (Superuser only) -->
+      <div class="roles-panel" id="rolesPanel">
+        <h2><i class="fas fa-user-shield"></i> Manage Roles & Permissions (Superuser Only)</h2>
+        <div id="rolesList"></div>
+        <button class="user-action-btn save" id="saveRolesBtn"><i class="fas fa-save"></i> Save Changes</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // --- Demo Data & State ---
+    let users = [
+      {id: 1, name: 'John Doe', email: '220102512@mubs.ac.u', role: 'student', status: 'active', password: 'pass1'},
+      {id: 2, name: 'Jane Smith', email: 'jane@faculty.mubs.ac.ug', role: 'faculty', status: 'active', password: 'pass2'},
+      {id: 3, name: 'Admin User', email: 'admin@mubs.ac.ug', role: 'admin', status: 'active', password: 'admin123'},
+      {id: 4, name: 'Mike Registrar', email: 'mike@mubs.ac.ug', role: 'registrar', status: 'suspended', password: 'reg123'},
+      {id: 5, name: 'Super User', email: 'superuser@gmail.com', role: 'superuser', status: 'active', password: 'superpass'}
+    ];
+
+    let roles = {
+      admin: ['manage_users', 'manage_documents', 'manage_results', 'view_audit', 'edit_settings'],
+      faculty: ['view_results', 'upload_documents'],
+      student: ['view_results', 'submit_complaints'],
+      registrar: ['manage_documents', 'manage_results'],
+      superuser: ['all']
+    };
+
+    // --- Utility: Notification ---
+    function showNotification(message, type='info') {
+      const div = document.createElement('div');
+      div.className = `notification ${type}`;
+      div.textContent = message;
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 3200);
+    }
+
+    // --- Superuser check for role panel ---
+    function isSuperuser() {
+      // Check if there is a logged-in user with role 'superuser'
+      // For demo, assume the user is superuser if present in users
+      // In real app: use login session/cookie/etc
+      return users.some(u => u.role === 'superuser');
+    }
+
+    // --- Show/hide roles panel ---
+    function updateRolesPanelVisibility() {
+      const panel = document.getElementById('rolesPanel');
+      if (isSuperuser()) {
+        panel.setAttribute('superuser', 'true');
+      } else {
+        panel.removeAttribute('superuser');
+      }
+    }
+
+    // --- Render Users Table ---
+    function renderUserTable() {
+      const tbody = document.getElementById('userTableBody');
+      let filtered = users.filter(u => {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const role = document.getElementById('roleFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        let ok = true;
+        if (search) {
+          ok = (u.name.toLowerCase().includes(search) || u.email.toLowerCase().includes(search) || u.role.toLowerCase().includes(search));
+        }
+        if (role && u.role !== role) ok = false;
+        if (status && u.status !== status) ok = false;
+        return ok;
+      });
+
+      tbody.innerHTML = filtered.length ? filtered.map(u => {
+        return `<tr>
+          <td>${u.id}</td>
+          <td>${u.name}</td>
+          <td>${u.email}</td>
+          <td><span class="role-badge">${u.role}</span></td>
+          <td><span class="status-badge ${u.status}">${u.status}</span></td>
+          <td>
+            <button class="user-action-btn profile" onclick="viewProfile(${u.id})"><i class="fas fa-id-badge"></i> Profile</button>
+            <button class="user-action-btn edit" onclick="editUser(${u.id})"><i class="fas fa-edit"></i> Edit</button>
+            <button class="user-action-btn delete" onclick="deleteUser(${u.id})"><i class="fas fa-trash"></i> Delete</button>
+            ${u.status === 'active' ?
+              `<button class="user-action-btn suspend" onclick="suspendUser(${u.id})"><i class="fas fa-user-lock"></i> Suspend</button>`
+              :
+              `<button class="user-action-btn activate" onclick="activateUser(${u.id})"><i class="fas fa-user-check"></i> Activate</button>`
+            }
+            <button class="user-action-btn reset" onclick="resetPassword(${u.id})"><i class="fas fa-key"></i> Reset Password</button>
+          </td>
+        </tr>`;
+      }).join('') : `<tr><td colspan="6" style="color:#888;">No users found.</td></tr>`;
+    }
+
+    // --- Add User ---
+    document.getElementById('addUserForm').onsubmit = function(e) {
+      e.preventDefault();
+      const name = document.getElementById('userName').value.trim();
+      const role = document.getElementById('userRole').value;
+      const password = document.getElementById('userPassword').value;
+
+      // Email format logic
+      const emailFormat = document.querySelector('input[name="emailFormat"]:checked').value;
+      let email = document.getElementById('userEmail').value.trim();
+
+      if (!name || !role || password.length < 5) {
+        showNotification('Please fill all fields and use a strong password!', 'error');
+        return;
+      }
+      if (emailFormat === 'auto') {
+        if (role === "student") {
+          let studentNum = name.match(/\d+/) ? name.match(/\d+/)[0] : (Math.floor(Math.random() * 900000) + 100000);
+          email = `${studentNum}@mubs.ac.u`;
+        } else if (role === "faculty" || role === "admin" || role === "registrar") {
+          let username = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+          email = `${username}@mubs.ac.ug`;
+        } else if (role === "superuser") {
+          email = document.getElementById('userEmail').value.trim();
+          if (!email) {
+            showNotification('Superuser email required.', 'error');
+            return;
+          }
+        }
+      } else {
+        if (!email) {
+          showNotification('Please enter a valid email.', 'error');
+          return;
+        }
+      }
+
+      // Email validation by role
+      if (role === 'student' && !/^\d{6,}@mubs\.ac\.u$/.test(email)) {
+        showNotification('Student email must be like studentnumber@mubs.ac.u', 'error');
+        return;
+      }
+      if ((role === 'admin' || role === 'faculty' || role === 'registrar') && !/^[a-z0-9]+@mubs\.ac\.ug$/.test(email)) {
+        showNotification('Staff email must be name@mubs.ac.ug', 'error');
+        return;
+      }
+      if (role === 'superuser' && !/^.+@.+\..+$/.test(email)) {
+        showNotification('Superuser can use any valid email.', 'error');
+        return;
+      }
+
+      const exists = users.some(u => u.email === email);
+      if (exists) {
+        showNotification('A user with this email already exists.', 'error');
+        return;
+      }
+      const id = users.length ? Math.max(...users.map(u=>u.id)) + 1 : 1;
+      users.push({id, name, email, role, status: 'active', password});
+      showNotification('User added successfully!', 'success');
+      document.getElementById('addUserForm').reset();
+      updateEmailInput();
+      renderUserTable();
+      updateRolesPanelVisibility();
+    };
+
+    // --- Edit User ---
+    window.editUser = function(id) {
+      const u = users.find(u => u.id === id);
+      if (!u) return;
+      const row = Array.from(document.querySelectorAll('#userTableBody tr')).find(r => r.children[0].textContent == id);
+      if (!row) return;
+
+      row.innerHTML = `
+        <td>${u.id}</td>
+        <td><input type="text" value="${u.name}" id="editName${id}" style="width:80px;"></td>
+        <td><input type="email" value="${u.email}" id="editEmail${id}" style="width:120px;" ${u.role === "student" ? "readonly" : ""}></td>
+        <td>
+          <select id="editRole${id}">
+            <option value="admin" ${u.role=='admin'?'selected':''}>Admin</option>
+            <option value="faculty" ${u.role=='faculty'?'selected':''}>Faculty</option>
+            <option value="student" ${u.role=='student'?'selected':''}>Student</option>
+            <option value="registrar" ${u.role=='registrar'?'selected':''}>Registrar</option>
+            <option value="superuser" ${u.role=='superuser'?'selected':''}>Superuser</option>
+          </select>
+        </td>
+        <td>
+          <select id="editStatus${id}">
+            <option value="active" ${u.status=='active'?'selected':''}>Active</option>
+            <option value="suspended" ${u.status=='suspended'?'selected':''}>Suspended</option>
+          </select>
+        </td>
+        <td>
+          <button class="user-action-btn save" onclick="saveEditUser(${id})"><i class="fas fa-save"></i> Save</button>
+          <button class="user-action-btn cancel" onclick="renderUserTable()"><i class="fas fa-times"></i> Cancel</button>
+        </td>
+      `;
+    };
+    window.saveEditUser = function(id) {
+      const u = users.find(u => u.id === id);
+      if (!u) return;
+      u.name = document.getElementById(`editName${id}`).value.trim();
+      u.email = document.getElementById(`editEmail${id}`).value.trim();
+      u.role = document.getElementById(`editRole${id}`).value;
+      u.status = document.getElementById(`editStatus${id}`).value;
+      showNotification('User updated!', 'success');
+      renderUserTable();
+      updateRolesPanelVisibility();
+    };
+
+    // --- Delete User ---
+    window.deleteUser = function(id) {
+      if (!confirm('Delete this user?')) return;
+      users = users.filter(u => u.id !== id);
+      showNotification('User deleted!', 'success');
+      renderUserTable();
+      updateRolesPanelVisibility();
+    };
+
+    // --- Suspend/Activate User ---
+    window.suspendUser = function(id) {
+      const u = users.find(u => u.id === id);
+      if (u) { u.status = 'suspended'; showNotification('User suspended.', 'info'); }
+      renderUserTable();
+    };
+    window.activateUser = function(id) {
+      const u = users.find(u => u.id === id);
+      if (u) { u.status = 'active'; showNotification('User activated.', 'success'); }
+      renderUserTable();
+    };
+
+    // --- Reset Password ---
+    window.resetPassword = function(id) {
+      const u = users.find(u => u.id === id);
+      if (!u) return;
+      const newPass = prompt('Enter new password for user "' + u.name + '"');
+      if (!newPass || newPass.length < 5) {
+        showNotification('Password must be at least 5 characters.', 'error');
+        return;
+      }
+      u.password = newPass;
+      showNotification('Password reset successfully!', 'success');
+    };
+
+    // --- View Profile ---
+    window.viewProfile = function(id) {
+      const u = users.find(u => u.id === id);
+      if (!u) return;
+      alert(
+        `User Profile\n\nID: ${u.id}\nName: ${u.name}\nEmail: ${u.email}\nRole: ${u.role}\nStatus: ${u.status}`
+      );
+    };
+
+    // --- Search/Filter/Refresh ---
+    document.getElementById('searchInput').oninput = renderUserTable;
+    document.getElementById('roleFilter').onchange = renderUserTable;
+    document.getElementById('statusFilter').onchange = renderUserTable;
+    document.getElementById('refreshBtn').onclick = function() {
+      showNotification('User list refreshed.', 'info');
+      renderUserTable();
+      updateRolesPanelVisibility();
+    };
+
+    // --- Roles & Permissions (Superuser only) ---
+    function renderRolesPanel() {
+      const rolesList = document.getElementById('rolesList');
+      rolesList.innerHTML = Object.entries(roles).map(([role, perms]) =>
+        `<div class="role-row">
+          <label>${role.charAt(0).toUpperCase() + role.slice(1)}</label>
+          ${['manage_users','manage_documents','manage_results','view_audit','edit_settings','view_results','upload_documents','submit_complaints','all'].map(
+            perm => `<label>
+              <input type="checkbox" data-role="${role}" data-perm="${perm}" ${perms.includes(perm)?'checked':''}> ${perm.replace(/_/g,' ')}
+            </label>`
+          ).join('')}
+        </div>`
+      ).join('');
+    }
+    document.getElementById('saveRolesBtn').onclick = function() {
+      if (!isSuperuser()) {
+        showNotification('Only superuser can manage roles/permissions.', 'error');
+        return;
+      }
+      const boxes = document.querySelectorAll('#rolesList input[type="checkbox"]');
+      let newRoles = {};
+      boxes.forEach(box => {
+        const role = box.getAttribute('data-role');
+        const perm = box.getAttribute('data-perm');
+        newRoles[role] = newRoles[role] || [];
+        if (box.checked) newRoles[role].push(perm);
+      });
+      roles = newRoles;
+      showNotification('Roles updated!', 'success');
+      renderRolesPanel();
+    };
+
+    // --- Email Format Logic ---
+    function updateEmailInput() {
+      const role = document.getElementById('userRole').value;
+      const format = document.querySelector('input[name="emailFormat"]:checked').value;
+      const emailInput = document.getElementById('userEmail');
+      if (format === "manual" || role === "superuser") {
+        emailInput.value = "";
+        emailInput.readOnly = false;
+        emailInput.placeholder = "Enter email address";
+      } else {
+        if (role === "student") {
+          emailInput.value = "";
+          emailInput.readOnly = true;
+          emailInput.placeholder = "Will be auto-generated (studentnumber@mubs.ac.u)";
+        } else if (role === "faculty" || role === "admin" || role === "registrar") {
+          emailInput.value = "";
+          emailInput.readOnly = true;
+          emailInput.placeholder = "Will be auto-generated (name@mubs.ac.ug)";
+        } else {
+          emailInput.value = "";
+          emailInput.readOnly = false;
+          emailInput.placeholder = "Enter email address";
+        }
+      }
+    }
+    document.getElementById('userRole').onchange = updateEmailInput;
+    document.querySelectorAll('input[name="emailFormat"]').forEach(el => {
+      el.onchange = updateEmailInput;
+    });
+    updateEmailInput();
+
+    // --- Initial Render ---
+    renderUserTable();
+    renderRolesPanel();
+    updateRolesPanelVisibility();
+  </script>
+<script src="script.js"></script>
+</body>
+</html>

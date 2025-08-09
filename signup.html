@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Signup - OASIS Portal</title>
+  <style>
+    body { font-family: sans-serif; background: #f6f6f9; }
+    .center-box {
+      background: #fff; padding: 2rem; border-radius: 22px; margin: 4rem auto 0;
+      box-shadow: 0 4px 32px #0001; max-width: 440px; text-align: center;
+    }
+    input, button, textarea { font-size: 1rem; padding: .7em; border-radius: 8px; border: 1px solid #bbb; width: 100%; margin-top: 1em; }
+    button { background: #dc3545; color: #fff; font-weight: bold; border: none; }
+    button:hover { background: #b91c1c; }
+    .link-row { margin-top: 1.2em; display: flex; justify-content: flex-end; }
+    a { color: #dc3545; text-decoration: none; font-size: 0.98em;}
+    a:hover { text-decoration: underline; }
+    .msg { color: #b91c1c; margin: 1em 0 0.5em; }
+    .agree-row { display: flex; align-items: center; margin-top: 1em; margin-bottom: 1em; }
+    .agree-row input[type="checkbox"] { width: auto; margin-right: .7em; }
+    label { font-size: 1em; text-align: left; display: block; margin-top: .5em; }
+  </style>
+</head>
+<body>
+  <div class="center-box">
+    <h2>Student Signup</h2>
+    <div class="msg" id="signupMsg"></div>
+    <form id="signupForm" autocomplete="off">
+      <input type="text" id="signupName" placeholder="Full Name" required>
+      <input type="email" id="signupEmail" placeholder="Email" required>
+      <textarea id="signupAddress" placeholder="Home Address" rows="2" required></textarea>
+      <input type="tel" id="signupContact" placeholder="Primary Contact" required>
+      <input type="password" id="signupCurrentPwd" placeholder="Current Password" required>
+      <input type="password" id="signupNewPwd" placeholder="New Password" required>
+      <input type="password" id="signupConfirmNewPwd" placeholder="Confirm New Password" required>
+      <div class="agree-row">
+        <input type="checkbox" id="signupAgree" required>
+        <label for="signupAgree" style="margin:0;">I agree to the <a href="#">terms & conditions</a>.</label>
+      </div>
+      <button type="submit" id="signupBtn">Signup Now</button>
+    </form>
+    <div class="link-row">
+      <a href="login.html">&larr; Back to Login</a>
+    </div>
+  </div>
+  <script>
+    // Simulated backend signup storage for demo
+    let users = [
+      {email: "student@example.com", pwd: "Hello123!", mustChange: true, role: "student"}
+    ];
+
+    function userExists(email) {
+      return users.some(u => u.email === email);
+    }
+
+    document.getElementById('signupForm').onsubmit = function(e) {
+      e.preventDefault();
+      const name = signupName.value.trim();
+      const email = signupEmail.value.trim();
+      const address = signupAddress.value.trim();
+      const contact = signupContact.value.trim();
+      const currentPwd = signupCurrentPwd.value;
+      const newPwd = signupNewPwd.value;
+      const confirmNewPwd = signupConfirmNewPwd.value;
+      const agreed = signupAgree.checked;
+
+      if (!name || !email || !address || !contact || !currentPwd || !newPwd || !confirmNewPwd) {
+        signupMsg.textContent = "All fields are required.";
+        return;
+      }
+      if (!agreed) {
+        signupMsg.textContent = "You must agree to the terms and conditions.";
+        return;
+      }
+      if (userExists(email)) {
+        signupMsg.textContent = "An account with this email already exists.";
+        return;
+      }
+      if (newPwd.length < 6) {
+        signupMsg.textContent = "New password must be at least 6 characters.";
+        return;
+      }
+      if (newPwd !== confirmNewPwd) {
+        signupMsg.textContent = "New passwords do not match.";
+        return;
+      }
+      if (currentPwd === newPwd) {
+        signupMsg.textContent = "New password must be different from current password.";
+        return;
+      }
+
+      // "Register" user (simulate backend)
+      users.push({
+        email,
+        pwd: newPwd,
+        mustChange: false,
+        role: "student",
+        name,
+        address,
+        contact
+      });
+
+      signupMsg.style.color = "#198754";
+      signupMsg.textContent = "Signup successful! Redirecting to login...";
+      setTimeout(() => window.location.href = "login.html", 1500);
+    };
+  </script>
+<script src="script.js"></script>
+</body>
+</html>

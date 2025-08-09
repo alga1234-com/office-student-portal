@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scholarships & Financial Aid - Student Affairs Portal</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+    }
+    main.scholarships-main {
+      max-width: 900px;
+      margin: 2rem auto 3rem;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+    .scholar-header {
+      text-align: center;
+      padding: 1.5rem 0 1rem 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(67, 206, 162, 0.2);
+    }
+    .scholar-header h1 {
+      font-size: 2.3rem;
+      margin-bottom: 0.5rem;
+    }
+    .scholar-header p {
+      font-size: 1.2rem;
+      margin-bottom: 0;
+      opacity: 0.95;
+    }
+    .scholar-sections {
+      margin-top: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    .scholar-card {
+      background: linear-gradient(135deg, #ffffff, #eafaf1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      position: relative;
+    }
+    .scholar-card h2 {
+      color: #16a085;
+      font-size: 1.3rem;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .scholar-card p {
+      color: #34495e;
+      font-size: 1.05rem;
+      margin-bottom: 0.7rem;
+    }
+    .scholar-card .learn-btn {
+      margin-top: 1rem;
+      background: #16a085;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6em 1.2em;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .scholar-card .learn-btn:hover {
+      background: #138d75;
+    }
+    /* Contact/Registration Form */
+    .form-section {
+      margin-top: 2.5rem;
+      padding: 2rem 1.5rem;
+      background: #f8f9fa;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(22, 160, 133, 0.08);
+    }
+    .form-section h2 {
+      color: #185a9d;
+      font-size: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .scholar-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+    .scholar-form label {
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: #2c3e50;
+    }
+    .scholar-form input, .scholar-form select, .scholar-form textarea {
+      padding: 0.7rem;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #fff;
+      resize: vertical;
+    }
+    .scholar-form textarea {
+      min-height: 70px;
+      max-height: 200px;
+    }
+    .scholar-form button {
+      background: #185a9d;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.8em 2em;
+      font-size: 1.05em;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1.1rem;
+      transition: background 0.2s;
+    }
+    .scholar-form button:hover {
+      background: #43cea2;
+      color: #fff;
+    }
+    .form-success {
+      color: #16a085;
+      font-weight: bold;
+      background: #eafaf1;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    .form-error {
+      color: #dc3545;
+      font-weight: bold;
+      background: #fbeeea;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      main.scholarships-main {
+        padding: 0.5rem;
+      }
+      .form-section {
+        padding: 1rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="scholarships-main">
+    <div class="scholar-header">
+      <h1><i class="fas fa-money-check-alt"></i> Scholarships & Financial Aid</h1>
+      <p>
+        Information about Scholarships, Bursaries, and MoE Academic Loan Scheme.<br>
+        Find opportunities, eligibility, and apply or contact us below.
+      </p>
+    </div>
+
+    <section class="scholar-sections">
+      <!-- Scholarship Card -->
+      <div class="scholar-card">
+        <h2><i class="fas fa-graduation-cap"></i> Scholarships</h2>
+        <p>
+          Academic scholarships are awarded based on merit and need. Explore local, national, and international programs to fund your studies.
+        </p>
+        <a class="learn-btn" href="https://www.moe.gov.scholarships" target="_blank">Learn More</a>
+      </div>
+      <!-- Bursaries Card -->
+      <div class="scholar-card">
+        <h2><i class="fas fa-hand-holding-usd"></i> Postgraduate 🎓Scholorship</h2>
+        <p>
+          Bursaries are provided to students in financial need. Discover eligibility requirements and application deadlines for available bursaries.
+        </p>
+        <a class="learn-btn" href="https://www.moe.gov.bursaries" target="_blank">See Bursaries</a>
+      </div>
+      <!-- MoE Academic Loan Scheme Card -->
+      <div class="scholar-card">
+        <h2><i class="fas fa-university"></i> MoE Academic Loan Scheme</h2>
+        <p>
+          The Ministry of Education (MoE) offers academic loans to help students cover tuition and related costs. View detailed information and how to apply.
+        </p>
+        <a class="learn-btn" href="https://www.moe.gov.loans" target="_blank">MoE Loan Scheme</a>
+      </div>
+    </section>
+
+    <!-- Contact / Registration Form -->
+    <section class="form-section" id="contactFormSection">
+      <h2><i class="fas fa-envelope"></i> Contact, Registration & Subscription</h2>
+      <form class="scholar-form" id="scholarshipForm" autocomplete="off">
+        <div>
+          <label for="fullname">Full Name</label>
+          <input type="text" id="fullname" name="fullname" required />
+        </div>
+        <div>
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div>
+          <label for="program">Program of Study</label>
+          <input type="text" id="program" name="program" placeholder="e.g. BSc Computer Science" required />
+        </div>
+        <div>
+          <label for="interest">I'm interested in:</label>
+          <select id="interest" name="interest" required>
+            <option value="">-- Select --</option>
+            <option value="Scholarships">Scholarships</option>
+            <option value="Bursaries">Bursaries</option>
+            <option value="MoE Academic Loan Scheme">MoE Academic Loan Scheme</option>
+            <option value="All">All Opportunities</option>
+          </select>
+        </div>
+        <div>
+          <label for="message">Message / Questions (optional)</label>
+          <textarea id="message" name="message" rows="3" maxlength="500"></textarea>
+        </div>
+        <button type="submit"><i class="fas fa-paper-plane"></i> Submit</button>
+        <div id="formStatus"></div>
+      </form>
+    </section>
+  </main>
+  <script>
+    // Form submission logic
+    document.getElementById('scholarshipForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var name = document.getElementById('fullname').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var program = document.getElementById('program').value.trim();
+      var interest = document.getElementById('interest').value;
+      var message = document.getElementById('message').value.trim();
+
+      var statusDiv = document.getElementById('formStatus');
+      statusDiv.innerHTML = "";
+      statusDiv.className = "";
+
+      // Simple email validation
+      var emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+      if (!emailPattern.test(email)) {
+        statusDiv.className = "form-error";
+        statusDiv.innerHTML = "<i class='fas fa-exclamation-circle'></i> Please enter a valid email address.";
+        return;
+      }
+
+      // Simulate submission (could be replaced with AJAX/fetch to backend)
+      setTimeout(function() {
+        statusDiv.className = "form-success";
+        statusDiv.innerHTML = "<i class='fas fa-check-circle'></i> Thank you, your request has been received! We will contact you soon.";
+        document.getElementById('scholarshipForm').reset();
+      }, 900);
+    });
+  </script>
+<script src="script.js"></script>
+</body>
+</html>

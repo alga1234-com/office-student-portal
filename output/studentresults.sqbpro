@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/kaggwa/Documents/office-student-portal/student_portal.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser query" current="2"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1638"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="documents" custom_title="0" dock_id="5" table="4,9:maindocuments"/><dock_state state="000000ff00000000fd00000001000000020000027700000213fc0100000003fb000000160064006f0063006b00420072006f00770073006500310100000000000001aa0000000000000000fb000000160064006f0063006b00420072006f00770073006500340100000000000002770000000000000000fb000000160064006f0063006b00420072006f00770073006500350100000000ffffffff0000011800ffffff000002770000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1*">PRAGMA table_info(users);
+ALTER TABLE users ADD COLUMN password TEXT;
+UPDATE users
+SET role = 'admin',
+    password = '$2b$10$jfRnFpDTqgy6M4yGRg8r7eR12vNQUpOCwjfQVO5CGK3AM2Tz0RmMi'
+WHERE name = 'mlkaggwa@mubs.ac.ug';
+UPDATE users
+SET password = '$2b$10$jfRnFpDTqgy6M4yGRg8r7eR12vNQUpOCwjfQVO5CGK3AM2Tz0RmMi'
+WHERE name = '2400713116@mubs.ac.ug';  -- update all rows, or use appropriate WHERE condition for new users</sql><current_tab id="0"/></tab_sql></sqlb_project>

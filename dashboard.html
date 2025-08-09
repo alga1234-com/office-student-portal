@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Dashboard - Portal</title>
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="navbar-logo">
+      OASIS <span>Student Portal</span>
+    </a>
+    <div class="navbar-menu">
+      <nav class="nav-horizontal">
+        <ul>
+          <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+          <li><a href="documents.html" class="nav-link">Documents</a></li>
+          <li><a href="medical.html" class="nav-link">Medical</a></li>
+          <li><a href="timetables.html" class="nav-link">Timetable</a></li>
+          <li><a href="adminTools.html" class="nav-link">Admin Tools</a></li>
+          <li><a href="support.html" class="nav-link">Help Desk</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="navbar-profile">
+      <a href="profile.html" title="My Profile">
+        <div class="profile-avatar" id="profileAvatarNavbar">A</div>
+      </a>
+    </div>
+    <div class="navbar-actions">
+      <a href="Login.html" class="nav-orange">Login</a>
+    </div>
+  </nav>
+
+  <section class="dashboard-hero">
+    <div class="dashboard-hero-content">
+      <h1 class="dashboard-oasis-title">OASIS- Office and Students Integration System</h1>
+      <h2 class="dashboard-hero-welcome">🎓 Welcome to Your Dashboard</h2>
+      <p class="dashboard-hero-desc">Access all your student services in one place</p>
+    </div>
+  </section>
+
+  <div class="quick-actions">
+    <button class="quick-action-btn" id="raiseIssueBtn">
+      <i class="fas fa-exclamation-circle"></i> Raise Issue
+    </button>
+    <a href="student-documents.html" class="quick-action-btn">
+      <i class="fas fa-upload"></i> My Achive
+    </a>
+    <a href="results.html" class="quick-action-btn">
+      <i class="fas fa-chart-line"></i> Check Results
+    </a>
+    <a href="timetables.html" class="quick-action-btn">
+      <i class="fas fa-calendar-plus"></i> Book Appointment
+    </a>
+  </div>
+
+  <div class="dashboard-main-grid">
+    <!-- Row 1 -->
+    <div class="dashboard-card" onclick="window.location.href='givetutorsupport.html'">
+      <div class="dashboard-card-icon"><i class="fas fa-graduation-cap"></i></div>
+      <h3>🎓 Give Academic Support</h3>
+      <p>Tutoring services, study groups, and academic resources</p>
+    </div>
+    <div class="dashboard-card" onclick="window.location.href='model.html'">
+      <div class="dashboard-card-icon">📊</div>
+      <div class="dashboard-card-number">ROOM-507<span class="dashboard-card-unit"></span></div>
+      <div class="dashboard-card-label">Numbers</div>
+    </div>
+    <div class="dashboard-card" onclick="window.location.href='model.html'">
+      <div class="dashboard-card-icon">📅</div>
+      <div class="dashboard-card-number">0</div>
+      <div class="dashboard-card-label">Upcoming Exams</div>
+    </div>
+    <!-- Row 2 -->
+    <div class="dashboard-card" onclick="navigateWithAnimation('documents.html')">
+      <div class="dashboard-card-icon">📄</div>
+      <h3>Documents</h3>
+      <p>Access transcripts, certificates, and forms</p>
+      <div class="dashboard-card-link">Access Now <i class="fas fa-arrow-right"></i></div>
+    </div>
+    <div class="dashboard-card" onclick="navigateWithAnimation('results.html')">
+      <div class="dashboard-card-icon">📈</div>
+      <h3>Results</h3>
+      <p>View your academic performance and grades</p>
+      <div class="dashboard-card-link">Check Results <i class="fas fa-arrow-right"></i></div>
+    </div>
+    <div class="dashboard-card" onclick="navigateWithAnimation('complaints.html')">
+      <div class="dashboard-card-icon">📝</div>
+      <h3>Complaints</h3>
+      <p>Submit and track your complaints</p>
+      <div class="dashboard-card-link">File Complaint <i class="fas fa-arrow-right"></i></div>
+    </div>
+    <!-- Row 3 -->
+    <div class="dashboard-card" onclick="window.location.href='timetables.html'">
+      <div class="dashboard-card-icon">⏰</div>
+      <h3>Timetables</h3>
+      <p>Check Timetable</p>
+      <div class="dashboard-card-link">View Schedule <i class="fas fa-arrow-right"></i></div>
+    </div>
+    <div class="dashboard-card" onclick="navigateWithAnimation('medical.html')">
+      <div class="dashboard-card-icon">🏥</div>
+      <h3>Health Center</h3>
+      <p>Book appointments and health services</p>
+      <div class="dashboard-card-link">Book Now <i class="fas fa-arrow-right"></i></div>
+    </div>
+    <div class="dashboard-card" onclick="navigateWithAnimation('adminTools.html')">
+      <div class="dashboard-card-icon">🔧</div>
+      <h3>Admin Tools</h3>
+      <p>Administrative functions and settings</p>
+      <div class="dashboard-card-link">Access Tools <i class="fas fa-arrow-right"></i></div>
+    </div>
+  </div>
+
+  <div class="popup-view" id="filePopupView">
+    <div class="popup-content" id="popupContent">
+      <!-- Filled by JS on View button click -->
+    </div>
+  </div>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

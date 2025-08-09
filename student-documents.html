@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Document Management - Student Portal</title>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+  :root {
+    --primary: #1976d2;
+    --primary-dark: #1356a2;
+    --bg: #f4f6fa;
+    --card-bg: #fff;
+    --accent: #009688;
+    --admin: #ff9800;
+    --border: #e1e5ea;
+    --shadow: 0 2px 14px rgba(30,90,220,0.08);
+    --radius: 12px;
+    --input-radius: 7px;
+    --font-main: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    --font-size: 1rem;
+    --font-size-header: 2.1rem;
+    --font-size-title: 1.22em;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: #222;
+    margin: 0; padding: 0;
+    font-family: var(--font-main);
+    min-block-size: 100vh; inline-size: 100vw;
+  }
+  main {
+    max-inline-size: 1000px;
+    margin: 40px auto 24px auto;
+    padding: 0 20px;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 34px 0 16px 0;
+    border-block-end: 2px solid var(--border);
+    margin-block-end: 18px;
+  }
+  .header-title {
+    font-size: var(--font-size-header);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+  }
+  .header-user {
+    font-size: 1.08rem;
+    color: #666;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #eff6ff;
+    border-radius: var(--input-radius);
+    padding: 0.6em 1.4em;
+  }
+
+  /* Module Switch Buttons */
+  .module-switch {
+    margin: 24px 0 24px 0;
+    display: flex;
+    gap: 1.2rem;
+    justify-content: center;
+  }
+  .toggle-btn {
+    background: #e3e8f0;
+    color: var(--primary);
+    border: none;
+    border-radius: var(--input-radius);
+    padding: 0.6rem 2rem;
+    font-size: 1.06rem;
+    font-weight: 500;
+    transition: background 0.18s, color 0.18s;
+    cursor: pointer;
+    outline: none;
+    box-shadow: var(--shadow);
+  }
+  .toggle-btn.active, .toggle-btn:hover {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  /* Module Containers */
+  .module-container {
+    display: none;
+    border-radius: var(--radius);
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    margin-block-end: 32px;
+    padding: 32px 28px 28px 28px;
+    min-height: 220px;
+    animation: fadeInModule 0.35s;
+  }
+  .module-container.active { display: block; }
+  @keyframes fadeInModule {
+    from { opacity: 0; transform: translateY(18px);}
+    to { opacity: 1; transform: translateY(0);}
+  }
+
+  /* Upload Zone */
+  #uploadZone {
+    border: 2px dashed #b3c3db;
+    background: #f5f8fc;
+    padding: 1.8rem 1.4rem;
+    border-radius: var(--radius);
+    margin-bottom: 28px;
+    box-shadow: 0 2px 8px rgba(30,90,220,0.06);
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+    min-width: 220px;
+    max-width: 600px;
+    margin-left: auto; margin-right: auto;
+  }
+  #uploadZone label {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.07em;
+    margin-bottom: 12px;
+    display: block;
+  }
+  #uploadZone input[type="file"], #uploadZone select {
+    margin: 8px 0;
+    padding: 7px 10px;
+    border-radius: var(--input-radius);
+    border: 1px solid #dadada;
+    font-size: 1em;
+    background: #fff;
+    width: 70%;
+    max-width: 340px;
+    box-shadow: 0 1px 4px rgba(30,90,220,0.04);
+  }
+  #submitFileBtn {
+    margin-top: 16px;
+    margin-bottom: 2px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--input-radius);
+    padding: 0.7em 2.2em;
+    font-size: 1.07em;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(30,90,220,0.09);
+    transition: background 0.17s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7em;
+    letter-spacing: 0.01em;
+  }
+  #submitFileBtn:hover {
+    background: var(--primary-dark);
+  }
+
+  /* Storage Info Bar */
+  #storageDisplay {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    font-size: 1.12em;
+    margin-bottom: 22px;
+    background: #e9f1fe;
+    padding: 11px 17px;
+    border-radius: var(--input-radius);
+    box-shadow: 0 1px 2px rgba(30,90,220,0.06);
+    justify-content: center;
+  }
+  #quotaFill {
+    display: block;
+    border-radius: 5px;
+    transition: width 0.2s;
+    height: 13px;
+    background: linear-gradient(90deg, var(--primary), #57b6ff);
+    min-width: 80px;
+    margin-left: 1em;
+  }
+
+  /* Document Cards */
+  [id^="leafCard"] {
+    margin-bottom: 28px;
+    background: #f9fbfc;
+    border-radius: 9px;
+    box-shadow: 0 2px 10px rgba(30,90,220,0.06);
+    padding: 24px 24px 22px 24px;
+    min-height: 110px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .card-quota {
+    font-size: 1.03em;
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 14px;
+    letter-spacing: 0.01em;
+  }
+  .leaf-file-row {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 11px 0;
+    border-bottom: 1px solid #e0e6f0;
+    font-size: 1.08em;
+  }
+  .leaf-file-row:last-child { border-bottom: none; }
+  .leaf-file-icon { font-size: 1.5em; width: 2em; text-align: center; }
+  .leaf-file-name { flex: 1; font-weight: 500; }
+  .leaf-file-meta { min-width: 90px; color: #888; font-size: 1em; }
+
+  /* File Actions */
+  .leaf-file-actions {
+    display: flex;
+    gap: 0.6em;
+  }
+  .leaf-file-btn {
+    background: #e3e8f0;
+    color: var(--primary);
+    border: none;
+    border-radius: var(--input-radius);
+    padding: 0.43em 1.15em;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    outline: none;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+  }
+  .leaf-file-btn.view { background: #dbefff; color: #2575c3; }
+  .leaf-file-btn.download { background: #def7e7; color: #229d5e; }
+  .leaf-file-btn.delete { background: #ffe3e3; color: #c32525; }
+  .leaf-file-btn:hover { background: var(--primary); color: #fff; }
+  .leaf-empty { color: #999; font-style: italic; padding: 14px 0; }
+
+  /* Popup View */
+  .popup-view {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(30,40,100,0.12);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeInPopup 0.24s;
+  }
+  .popup-view.active { display: flex; }
+  @keyframes fadeInPopup { from { opacity: 0;} to { opacity: 1;} }
+  .popup-content {
+    background: #fff;
+    border-radius: 13px;
+    box-shadow: 0 8px 40px rgba(30,90,220,0.14);
+    padding: 36px 38px 18px 38px;
+    min-width: 410px;
+    max-width: 94vw;
+    max-height: 92vh;
+    overflow-y: auto;
+    position: relative;
+  }
+  .popup-title {
+    font-size: var(--font-size-title);
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--primary);
+    letter-spacing: 0.03em;
+  }
+  .popup-meta {
+    color: #444;
+    font-size: 1em;
+    margin-bottom: 17px;
+  }
+  .popup-exit-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--input-radius);
+    padding: 0.83em 2.1em;
+    font-size: 1.07em;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(30,90,220,0.11);
+    margin-top: 10px;
+  }
+  .popup-exit-btn:hover { background: var(--primary-dark); }
+  .popup-doc-iframe {
+    width: 100%; height: 440px;
+    border: none; border-radius: 8px;
+    background: #f8f9fa;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  /* Notifications */
+  .notification {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #17a2b8; color: #fff;
+    padding: 1.08rem 1.6rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1001;
+    font-weight: 600;
+    max-width: 390px;
+    animation: slideUp 0.3s ease;
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 1.08em;
+  }
+  .notification.success { background: #28a745;}
+  .notification.error { background: #dc3545;}
+  .notification.warning { background: #ffc107; color: #2c3e50;}
+  @keyframes slideUp { from {transform: translateY(100%); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+
+  /* Guild Module */
+  .guild-section {
+    background: #eaf7fa;
+    border-radius: var(--radius);
+    padding: 20px 32px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow);
+    max-width: 600px;
+    margin-left: auto; margin-right: auto;
+  }
+  .guild-title {
+    font-size: 1.15em;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .guild-item {
+    padding: 11px 0;
+    border-bottom: 1px solid #d4e7e9;
+    color: #00796b;
+    font-size: 1.07em;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .guild-item:last-child { border-bottom: none; }
+  .guild-action-btn {
+    background: #b2f7ef;
+    color: #00796b;
+    border: none;
+    border-radius: var(--input-radius);
+    padding: 0.39em 1.05em;
+    font-size: 0.99em;
+    font-weight: 500;
+    cursor: pointer;
+    margin-inline-start: 0.8em;
+    transition: background 0.17s, color 0.17s;
+  }
+  .guild-action-btn:hover { background: var(--accent); color: #fff; }
+
+  /* Admin Module */
+  .admin-db {
+    background: #fff6e1;
+    border-radius: var(--radius);
+    padding: 20px 32px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 8px rgba(180,140,40,0.07);
+    max-width: 600px;
+    margin-left: auto; margin-right: auto;
+  }
+  .admin-title {
+    font-size: 1.15em;
+    font-weight: 700;
+    color: var(--admin);
+    margin-bottom: 10px;
+  }
+  .admin-item {
+    padding: 11px 0;
+    border-block-end: 1px solid #ffe0b2;
+    color: #e65100;
+    font-size: 1.07em;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .admin-item:last-child { border-block-end: none; }
+  .admin-action-btn {
+    background: #ffe0b2;
+    color: #e65100;
+    border: none;
+    border-radius: var(--input-radius);
+    padding: 0.39em 1.05em;
+    font-size: 0.99em;
+    font-weight: 500;
+    cursor: pointer;
+    margin-inline-start: 0.8em;
+    transition: background 0.17s, color 0.17s;
+  }
+  .admin-action-btn:hover { background: var(--admin); color: #fff; }
+
+  /* Responsive */
+  @media (max-width: 800px) {
+    main { max-width: 99vw; padding: 0 4vw; }
+    .header-title { font-size: 1.34rem;}
+    .popup-content { min-width: 0; width: 96vw;}
+    [id^="leafCard"] { padding: 15px 8px 15px 8px;}
+  }
+  @media (max-width: 480px) {
+    .header { flex-direction: column; align-items: flex-start;}
+    .header-title { font-size: 1.1rem;}
+    .module-switch { gap: 0.5rem;}
+    .popup-content { padding: 16px 7vw;}
+    #uploadZone { padding: 1.2rem 2vw;}
+    .guild-section, .admin-db { padding: 10px 2vw;}
+  }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="header">
+      <div class="header-title">
+        <i class="fas fa-folder-open"></i> Document Management Portal
+      </div>
+      <div class="header-user">
+        <i class="fas fa-user-circle"></i> Welcome, Student
+      </div>
+    </div>
+    <div class="module-switch">
+      <button class="toggle-btn active" onclick="switchModule('student')">Student Storage</button>
+      <button class="toggle-btn guild-btn" onclick="switchModule('guild')">Guild Activities</button>
+      <button class="toggle-btn admin-btn" onclick="switchModule('Document')">Admin Database</button>
+    </div>
+    <div class="module-container active" id="student-module">
+      <div id="uploadZone">
+        <label for="fileInput"><i class="fas fa-upload"></i> Upload Document:</label>
+        <input type="file" id="fileInput" /><br>
+        <label for="cardSelect">Card:</label>
+        <select id="cardSelect">
+          <option value="0">Card 1</option>
+          <option value="1">Card 2</option>
+        </select>
+        <label for="typeSelect">Type:</label>
+        <select id="typeSelect">
+          <option value="id">Student ID</option>
+          <option value="registration">Registration Form</option>
+          <option value="transcript">Transcript</option>
+          <option value="assignment">Assignment</option>
+          <option value="certificate">Certificate</option>
+          <option value="other">Other</option>
+        </select>
+        <br>
+        <button id="submitFileBtn" type="button"><i class="fas fa-file-upload"></i> Submit File</button>
+      </div>
+      <div id="storageDisplay">
+        Used: <span id="usedSpace"></span>,
+        Available: <span id="availableSpace"></span>,
+        Usage: <span id="usagePercent"></span>
+        <div style="background:#eee;width:100%;height:13px;border-radius:5px;overflow:hidden;margin-top:5px;">
+          <div id="quotaFill"></div>
+        </div>
+      </div>
+      <div id="leafCard0">
+        <div class="card-quota"></div>
+        <div id="leafList0"></div>
+      </div>
+      <div id="leafCard1">
+        <div class="card-quota"></div>
+        <div id="leafList1"></div>
+      </div>
+    </div>
+    <div class="module-container guild-section" id="guild-module">
+      <div class="guild-title"><i class="fas fa-users"></i> Guild Activities & Events</div>
+      <div class="guild-item">Orientation 2025 <button class="guild-action-btn">View Details</button></div>
+      <div class="guild-item">Hackathon <button class="guild-action-btn">Register</button></div>
+      <div class="guild-item">Annual Sports <button class="guild-action-btn">View Results</button></div>
+    </div>
+    <div class="module-container admin-db" id="admin-module">
+      <div class="admin-title"><i class="fas fa-database"></i> Administrative Database</div>
+      <div class="admin-item">Student Records <button class="admin-action-btn">Access</button></div>
+      <div class="admin-item">Faculty List <button class="admin-action-btn">Access</button></div>
+      <div class="admin-item">Fee Payment Status <button class="admin-action-btn">View</button></div>
+    </div>
+    <div class="popup-view" id="filePopupView">
+      <div class="popup-content" id="popupContent"></div>
+    </div>
+  </main>
+  <script>
+    // --- Professional logic ---
+    const MAX_SPACE = 250 * 1024 * 1024;
+    const CARD_QUOTAS = [0.2 * MAX_SPACE, 0.8 * MAX_SPACE];
+    const DEMO_FILES = [
+      [
+        { name: 'Student_ID_Card.jpg', size: 153130, type: 'image/jpeg', uploadDate: '2025-01-10', fileType: 'id', blob: null },
+        { name: 'Registration_Form.pdf', size: 120000, type: 'application/pdf', uploadDate: '2025-01-12', fileType: 'registration', blob: null }
+      ],
+      [
+        { name: 'Academic_Transcript.pdf', size: 245760, type: 'application/pdf', uploadDate: '2025-01-15', fileType: 'transcript', blob: null },
+        { name: 'Assignment_Report.docx', size: 402500, type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', uploadDate: '2025-01-05', fileType: 'assignment', blob: null }
+      ]
+    ];
+    let studentLeaves = [[], []];
+    let usedSpace = 0;
+    let usedCardSpace = [0, 0];
+    let popupBlobCleanup = null;
+
+    // Utility functions
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024, sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    function prettyType(fileType) {
+      switch(fileType) {
+        case 'id': return 'Student ID';
+        case 'registration': return 'Registration Form';
+        case 'transcript': return 'Transcript';
+        case 'assignment': return 'Assignment';
+        case 'certificate': return 'Certificate';
+        case 'other': return 'Other';
+        default: return fileType;
+      }
+    }
+    function getFileIcon(type, fileType) {
+      switch(fileType) {
+        case 'id': return '🖼️';
+        case 'registration': return '📄';
+        case 'transcript': return '📄';
+        case 'assignment': return '📝';
+        case 'certificate': return '📜';
+        default: return '📁';
+      }
+    }
+    function updateStorageDisplay() {
+      const availableSpace = MAX_SPACE - usedSpace;
+      const usagePercent = Math.round((usedSpace / MAX_SPACE) * 100);
+      document.getElementById('usedSpace').textContent = formatFileSize(usedSpace);
+      document.getElementById('availableSpace').textContent = formatFileSize(availableSpace);
+      document.getElementById('usagePercent').textContent = usagePercent + '%';
+      document.getElementById('quotaFill').style.width = usagePercent + '%';
+      document.querySelector('#leafCard0 .card-quota').textContent =
+        `Quota: ${formatFileSize(usedCardSpace[0])} / ${formatFileSize(CARD_QUOTAS[0])}`;
+      document.querySelector('#leafCard1 .card-quota').textContent =
+        `Quota: ${formatFileSize(usedCardSpace[1])} / ${formatFileSize(CARD_QUOTAS[1])}`;
+    }
+    function renderLeaves() {
+      for (let cardIdx = 0; cardIdx < studentLeaves.length; cardIdx++) {
+        const list = document.getElementById('leafList' + cardIdx);
+        list.innerHTML = '';
+        if (studentLeaves[cardIdx].length === 0) {
+          list.innerHTML = `<div class="leaf-empty">No documents in this card</div>`;
+          continue;
+        }
+        studentLeaves[cardIdx].forEach((file, idx) => {
+          const row = document.createElement('div');
+          row.className = 'leaf-file-row';
+          row.innerHTML = `
+            <span class="leaf-file-icon">${getFileIcon(file.type, file.fileType)}</span>
+            <span class="leaf-file-name">${file.name} <small style="color:#999;">(${prettyType(file.fileType)})</small></span>
+            <span class="leaf-file-meta">${formatFileSize(file.size)}</span>
+            <div class="leaf-file-actions">
+              <button class="leaf-file-btn view" title="View" onclick="viewLeafFile(${cardIdx},${idx})"><i class="fas fa-eye"></i>View</button>
+              <button class="leaf-file-btn download" title="Download" onclick="downloadLeafFile(${cardIdx},${idx})"><i class="fas fa-download"></i>Download</button>
+              <button class="leaf-file-btn delete" title="Delete" onclick="deleteLeafFile(${cardIdx},${idx})"><i class="fas fa-trash"></i>Delete</button>
+            </div>
+          `;
+          list.appendChild(row);
+        });
+      }
+    }
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+      document.body.appendChild(notification);
+      setTimeout(() => { if (notification.parentNode) notification.parentNode.removeChild(notification); }, 4000);
+    }
+    function switchModule(module) {
+      document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+      const targetBtn = module === 'student' ?
+        document.querySelector('.toggle-btn:not(.guild-btn):not(.admin-btn)') :
+        module === 'guild' ?
+        document.querySelector('.toggle-btn.guild-btn') :
+        document.querySelector('.toggle-btn.admin-btn');
+      if (targetBtn) targetBtn.classList.add('active');
+      document.querySelectorAll('.module-container').forEach(container => container.classList.remove('active'));
+      document.getElementById(`${module}-module`).classList.add('active');
+      showNotification(`Switched to ${targetBtn.textContent}`, 'info');
+    }
+    function downloadLeafFile(cardIdx, idx) {
+      const file = studentLeaves[cardIdx][idx];
+      if (!file) return showNotification('Document not found.', 'error');
+      if (file.blob) {
+        const url = URL.createObjectURL(file.blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+        showNotification(`Downloading ${file.name}...`, 'success');
+      }
+    }
+    function deleteLeafFile(cardIdx, idx) {
+      const file = studentLeaves[cardIdx][idx];
+      if (confirm(`Delete ${file.name}?`)) {
+        usedCardSpace[cardIdx] -= file.size;
+        usedSpace -= file.size;
+        studentLeaves[cardIdx].splice(idx, 1);
+        updateStorageDisplay();
+        renderLeaves();
+        showNotification(`${file.name} deleted from Card ${cardIdx + 1}`, 'success');
+      }
+    }
+    function viewLeafFile(cardIdx, idx) {
+      const file = studentLeaves[cardIdx][idx];
+      if (!file) return showNotification('Document not found.', 'error');
+      showPopupView(file);
+    }
+    function showBlobInDocumentView(file, container) {
+      let url = file.blob ? URL.createObjectURL(file.blob) : undefined;
+      let mime = file.type || (file.blob ? file.blob.type : '');
+      let el;
+      if (mime === 'application/pdf') {
+        el = document.createElement('iframe');
+        el.src = url;
+        el.className = 'popup-doc-iframe';
+        el.setAttribute('title', 'PDF Preview');
+        container.appendChild(el);
+        return () => { if (url) URL.revokeObjectURL(url); if (el && el.parentNode) container.removeChild(el); };
+      }
+      else if (mime.startsWith('image/')) {
+        el = document.createElement('img');
+        el.src = url;
+        el.style.maxWidth = '100%';
+        el.style.maxHeight = '440px';
+        el.style.borderRadius = '8px';
+        el.style.display = 'block';
+        el.style.margin = '0 auto 1.2rem auto';
+        container.appendChild(el);
+        return () => { if (url) URL.revokeObjectURL(url); if (el && el.parentNode) container.removeChild(el); };
+      }
+      else if (mime.startsWith('text/')) {
+        el = document.createElement('pre');
+        let reader = new FileReader();
+        reader.onload = () => { el.textContent = reader.result; };
+        reader.readAsText(file.blob);
+        el.style.maxHeight = '420px';
+        el.style.overflow = 'auto';
+        el.style.background = '#f8f9fa';
+        el.style.padding = '1rem';
+        el.style.borderRadius = '8px';
+        container.appendChild(el);
+        return () => { if (url) URL.revokeObjectURL(url); if (el && el.parentNode) container.removeChild(el); };
+      }
+      else if (mime.startsWith('video/')) {
+        el = document.createElement('video');
+        el.src = url;
+        el.controls = true;
+        el.style.maxWidth = '100%';
+        el.style.maxHeight = '420px';
+        el.style.marginBottom = '1.2rem';
+        container.appendChild(el);
+        return () => { if (url) URL.revokeObjectURL(url); if (el && el.parentNode) container.removeChild(el); };
+      }
+      else if (mime.startsWith('audio/')) {
+        el = document.createElement('audio');
+        el.src = url;
+        el.controls = true;
+        el.style.width = '100%';
+        el.style.marginBottom = '1.2rem';
+        container.appendChild(el);
+        return () => { if (url) URL.revokeObjectURL(url); if (el && el.parentNode) container.removeChild(el); };
+      }
+      else {
+        el = document.createElement('iframe');
+        el.src = url;
+        el.className = 'popup-doc-iframe';
+        container.appendChild(el);
+        return () => { if (url) URL.revokeObjectURL(url); if (el && el.parentNode) container.removeChild(el); };
+      }
+    }
+    function showPopupView(file) {
+      const popup = document.getElementById('filePopupView');
+      const content = document.getElementById('popupContent');
+      if (popupBlobCleanup) { popupBlobCleanup(); popupBlobCleanup = null; }
+      content.innerHTML = `
+        <div class="popup-title">${getFileIcon(file.type, file.fileType)} ${file.name}</div>
+        <div class="popup-meta">
+          <strong>Type:</strong> ${prettyType(file.fileType)}<br>
+          <strong>Size:</strong> ${formatFileSize(file.size)}<br>
+          <strong>Uploaded:</strong> ${new Date(file.uploadDate).toLocaleDateString()}
+        </div>
+        <div class="popup-doc-content" id="popupDocContent"></div>
+        <button class="popup-exit-btn" onclick="closePopupView()">Exit View</button>
+      `;
+      const docContent = document.getElementById('popupDocContent');
+      if (file.blob) {
+        popupBlobCleanup = showBlobInDocumentView(file, docContent);
+      } else {
+        docContent.innerHTML = `${prettyType(file.fileType)}<br><span style="font-size:0.92em;color:#888;">This is a simulated preview.</span>`;
+      }
+      popup.style.display = 'flex';
+      popup.classList.add('active');
+    }
+    function closePopupView() {
+      const popup = document.getElementById('filePopupView');
+      popup.classList.remove('active');
+      popup.style.display = 'none';
+      if (popupBlobCleanup) { popupBlobCleanup(); popupBlobCleanup = null; }
+    }
+    function submitFileFromInput() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      if (!file) return showNotification('Please select a file to submit.', 'warning');
+      const cardIdx = parseInt(document.getElementById('cardSelect').value, 10);
+      const fileTypeSelected = document.getElementById('typeSelect').value;
+      if (studentLeaves[cardIdx].some(f => f.name === file.name && f.size === file.size)) {
+        showNotification(`File ${file.name} already exists in Card ${cardIdx + 1}.`, 'warning'); return;
+      }
+      if (file.type.startsWith('image/')) {
+        compressImage(file, 0.7, function(blob) {
+          if (blob.size > CARD_QUOTAS[cardIdx]) return showNotification(`Compressed image exceeds card quota (${formatFileSize(blob.size)}).`, 'error');
+          if (usedCardSpace[cardIdx] + blob.size > CARD_QUOTAS[cardIdx]) return showNotification(`Not enough space in Card ${cardIdx+1} for ${file.name}`, 'error');
+          if (usedSpace + blob.size > MAX_SPACE) return showNotification(`Not enough total storage for ${file.name}`, 'error');
+          const fileObj = {
+            name: file.name.replace(/\.(jpg|jpeg|png|gif)$/i, '.jpg'),
+            size: blob.size,
+            type: 'image/jpeg',
+            uploadDate: new Date().toISOString().split('T')[0],
+            fileType: fileTypeSelected,
+            blob: blob
+          };
+          studentLeaves[cardIdx].push(fileObj);
+          usedCardSpace[cardIdx] += blob.size;
+          usedSpace += blob.size;
+          showNotification(`${file.name} compressed and submitted to Card ${cardIdx + 1}!`, 'success');
+          updateStorageDisplay();
+          renderLeaves();
+          fileInput.value = '';
+        });
+        return;
+      }
+      if (file.size > CARD_QUOTAS[cardIdx]) return showNotification(`File ${file.name} exceeds card quota`, 'error');
+      if (usedCardSpace[cardIdx] + file.size > CARD_QUOTAS[cardIdx]) return showNotification(`Not enough space in Card ${cardIdx+1} for ${file.name}`, 'error');
+      if (usedSpace + file.size > MAX_SPACE) return showNotification(`Not enough total storage for ${file.name}`, 'error');
+      const fileObj = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        uploadDate: new Date().toISOString().split('T')[0],
+        fileType: fileTypeSelected,
+        blob: file
+      };
+      studentLeaves[cardIdx].push(fileObj);
+      usedCardSpace[cardIdx] += file.size;
+      usedSpace += file.size;
+      showNotification(`${file.name} forcibly submitted to Card ${cardIdx + 1}!`, 'success');
+      updateStorageDisplay();
+      renderLeaves();
+      fileInput.value = '';
+    }
+    function compressImage(file, quality, callback) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          canvas.getContext('2d').drawImage(img, 0, 0);
+          canvas.toBlob(function(blob) {
+            callback(blob);
+          }, 'image/jpeg', quality);
+        };
+        img.onerror = function() { showNotification('Image compression failed.', 'error'); };
+        img.src = e.target.result;
+      };
+      reader.onerror = function() { showNotification('Image file reading failed.', 'error'); };
+      reader.readAsDataURL(file);
+    }
+    function loadSampleLeaves() {
+      studentLeaves = [[], []];
+      for (let i = 0; i < DEMO_FILES.length; i++) {
+        studentLeaves[i] = DEMO_FILES[i].map(f => Object.assign({}, f));
+      }
+      usedCardSpace[0] = studentLeaves[0].reduce((total, f) => total + f.size, 0);
+      usedCardSpace[1] = studentLeaves[1].reduce((total, f) => total + f.size, 0);
+      usedSpace = usedCardSpace[0] + usedCardSpace[1];
+    }
+    // Init
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('submitFileBtn').addEventListener('click', submitFileFromInput);
+      loadSampleLeaves();
+      updateStorageDisplay();
+      renderLeaves();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closePopupView();
+    });
+    window.switchModule = switchModule;
+    window.viewLeafFile = viewLeafFile;
+    window.downloadLeafFile = downloadLeafFile;
+    window.deleteLeafFile = deleteLeafFile;
+    window.closePopupView = closePopupView;
+  </script>
+<script src="script.js"></script>
+</body>
+</html>

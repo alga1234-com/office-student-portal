@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digital Documents Admin Portal - Multi-page PDF Viewer & Actions</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #222;
+      margin: 0;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.13);
+      padding: 2rem 1rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #008080;
+    }
+    .upload-section, .search-section, .table-section {
+      margin-bottom: 2rem;
+    }
+    .form-group { display: flex; gap: 0.7rem; align-items: center; }
+    .form-input {
+      padding: 0.5rem;
+      border: 2px solid #ddd;
+      border-radius: 7px;
+      font-size: 0.97rem;
+      min-width: 90px;
+      max-width: 160px;
+      flex: unset;
+      width: 140px;
+      box-sizing: border-box;
+    }
+    .form-group input[type="file"].form-input {
+      min-width: 90px;
+      max-width: 180px;
+      width: 140px;
+      padding: 0.3rem;
+      font-size: 0.93rem;
+    }
+    .btn { padding: 0.45rem 0.9rem; border: none; border-radius: 7px; cursor: pointer; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 0.4rem; background: #008080; color: #fff; min-width: 120px; }
+    .btn-danger { background: #e74c3c; }
+    .btn-warning { background: #f39c12; color: #fff; }
+    .btn-success { background: #2ecc71; color: #fff;}
+    .btn-info { background: #3498db; color: #fff;}
+    .btn:hover { background: #3498db; }
+    .actions-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.6rem;
+      padding: 0.6rem 0;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+    .admin-table { width: 100%; min-width: 700px; border-collapse: collapse; font-size: 0.95rem; background: #f6fafd; border-radius: 7px; overflow: hidden; }
+    .admin-table th, .admin-table td { padding: 0.5rem; text-align: left; border-bottom: 1px solid #eee; }
+    .admin-table th { background: linear-gradient(135deg, #008080, #3498db); color: white; font-weight: bold; }
+    .row-actions { display: flex; gap: 0.2rem; }
+    .status-badge { padding: 0.22rem 0.7rem; border-radius: 20px; font-size: 0.87rem; font-weight: bold; text-transform: uppercase; display: flex; align-items: center; gap: 0.2em; }
+    .status-pending { background: #f8d7da; color: #721c24;}
+    .status-forwarded { background: #fff3cd; color: #856404;}
+    .status-approved { background: #d4edda; color: #155724;}
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.44); z-index: 10000; }
+    .modal-content {
+      background: white;
+      margin: 0 auto;
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 16px;
+      width: 98vw;
+      max-width: 740px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.14);
+      padding: 0;
+      min-height: 380px;
+      max-height: 95vh;
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+    }
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f6fafd;
+      padding: 1.2rem 1.6rem 1.2rem 1.6rem;
+      border-radius: 16px 16px 0 0;
+      border-bottom: 1px solid #e8e8e8;
+    }
+    .preview-user {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+    }
+    .preview-user img {
+      width: 55px;
+      height: 55px;
+      border-radius: 100%;
+      border: 2.5px solid #008080;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      background: #fff;
+    }
+    .preview-user span {
+      font-size: 1.18rem;
+      font-weight: 600;
+      color: #008080;
+      letter-spacing: 0.03em;
+    }
+    .preview-actions button {
+      margin-left: 0.7rem;
+      font-size: 1rem;
+      padding: 0.43rem 0.98rem;
+      border-radius: 8px;
+      min-width: 85px;
+    }
+    .preview-actions .btn-print { background: #3498db; }
+    .preview-actions .btn-exit { background: #e74c3c; }
+    .preview-actions .btn-print:hover { background: #217dbb; }
+    .preview-actions .btn-exit:hover { background: #c0392b; }
+    .preview-body {
+      padding: 1.5rem;
+      background: #fff;
+      border-radius: 0 0 16px 16px;
+      min-height: 300px;
+      max-height: 72vh;
+      overflow: auto;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .preview-body img, .preview-body canvas {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      border-radius: 10px;
+      max-width: 96%;
+      max-height: 65vh;
+      margin: 0.5rem auto;
+      display: block;
+    }
+    .preview-body table {
+      margin: 0.7rem auto;
+      width: 98%;
+      border-collapse: collapse;
+      background: #f6fafd;
+      border-radius: 9px;
+      font-size: 1rem;
+    }
+    .preview-body th, .preview-body td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    .preview-body th {
+      background: #ecf0f1;
+      color: #222;
+    }
+    .preview-body pre {
+      background: #f6fafd;
+      border-radius: 9px;
+      padding: 1rem;
+      margin: 0.5rem auto;
+      max-width: 96%;
+      text-align: left;
+      font-size: 1rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 1rem 1.3rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1001;
+      font-weight: 600;
+      max-width: 320px;
+      animation: slideUp 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.97rem;
+    }
+    .notification.success { background: #2ecc71; color: white;}
+    .notification.error { background: #e74c3c; color: white;}
+    .notification.warning { background: #f39c12; color: white;}
+    .notification.info { background: #3498db; color: white;}
+    .stacked-preview {
+      background: #f9f9f9;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 13px;
+      margin: 0.6rem 0 1rem 0;
+      padding: 0.7rem 1.2rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      max-width: 520px;
+      text-align: left;
+    }
+    .stacked-preview-title {
+      font-weight: 600;
+      color: #008080;
+      margin-bottom: 0.4rem;
+      font-size: 1rem;
+    }
+    .stacked-preview-actions {
+      margin-top: 0.6rem;
+      text-align: right;
+    }
+    @media (max-width: 900px) {
+      .modal-content { max-width: 99vw; }
+      .container {max-width:99vw;}
+      .admin-table {font-size:0.89rem;}
+      .stacked-preview {max-width:98vw;}
+    }
+    @media (max-width: 600px) {
+      .preview-header {padding:0.6rem;}
+      .preview-body {padding:0.5rem;}
+      .stacked-preview {padding:0.4rem;}
+      .modal-content {max-width:99vw;}
+      .container{padding:0.3rem;}
+      .admin-table th,.admin-table td{padding:0.25rem;font-size:0.89rem;}
+      .form-input {width: 90px; min-width: 60px; max-width: 140px;}
+      .form-group input[type="file"].form-input {width: 90px; min-width: 60px; max-width: 140px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fas fa-folder-open"></i> Digital Documents Admin Portal</h1>
+    <div class="upload-section">
+      <form id="manualUploadForm">
+        <div class="form-group">
+          <input type="file" id="uploadFile" class="form-input" required accept=".pdf,.docx,.csv,.png,.jpeg,.jpg,.txt">
+          <button type="submit" class="btn"><i class="fas fa-upload"></i> Upload</button>
+          <ul>
+        <a href="dashboard.html" class="nav-link">Go to Dashboard</a>
+        <a href="adminTools.html" class="nav-link">Go to Admin Tools</a>
+      </ul>
+  <main>
+        </div>
+      </form>
+      <div id="uploadPreview" style="margin:1rem 0;"></div>
+    </div>
+    <div class="search-section">
+      <form id="searchForm">
+        <div class="form-group">
+          <input type="text" id="searchRegNo" class="form-input" placeholder="Enter Registration Number">
+          <button type="submit" class="btn"><i class="fas fa-search"></i> Search</button>
+          <button type="button" class="btn btn-danger" id="clearBtn"><i class="fas fa-times"></i> Clear</button>
+        </div>
+      </form>
+    </div>
+    <div class="table-section">
+      <div class="actions-bar">
+        <button class="btn btn-danger" id="deleteSelectedBtn"><i class="fas fa-trash"></i> Delete Selected</button>
+        <button class="btn btn-warning" id="forwardSelectedBtn"><i class="fas fa-share"></i> Forward Selected</button>
+        <button class="btn btn-success" id="printSelectedBtn"><i class="fas fa-print"></i> Print Preview</button>
+      </div>
+      <div id="digitalDocumentsTable"></div>
+    </div>
+    <div id="stackedPreviews"></div>
+  </div>
+  <!-- Document Preview Modal -->
+  <div id="docBlobView" class="modal">
+    <div class="modal-content">
+      <div class="preview-header">
+        <div class="preview-user">
+          <img id="docOwnerAvatar" src="" alt="Owner Avatar">
+          <span id="docOwnerName"></span>
+        </div>
+        <div class="preview-actions">
+          <button onclick="printPreviewDocAll()" class="btn btn-print"><i class="fas fa-print"></i> Print All</button>
+          <button onclick="closeBlobView()" class="btn btn-exit"><i class="fas fa-times"></i> Exit</button>
+        </div>
+      </div>
+      <div id="docBlobContainer" class="preview-body"></div>
+    </div>
+  </div>
+  <script>
+    function getInitialDocumentsData() {
+      const demoRows = [
+        {
+          regNo: "STU2021001",
+          name: "John Doe",
+          program: "Computer Science",
+          faculty: "Science & Technology",
+          timestamp: "2024-01-15 10:30:00",
+          uploadedBy: "Admin",
+          ownerAvatarUrl: "https://ui-avatars.com/api/?name=John+Doe&background=008080&color=fff",
+          document: {status: "pending", blobUrl: "", mimetype: "", forwardedBy: "", approvedBy: ""},
+        },
+        {
+          regNo: "STU2021002",
+          name: "Mary Jane",
+          program: "Business Administration",
+          faculty: "Business",
+          timestamp: "2024-01-16 09:25:00",
+          uploadedBy: "Admin",
+          ownerAvatarUrl: "https://ui-avatars.com/api/?name=Mary+Jane&background=008080&color=fff",
+          document: {status: "pending", blobUrl: "", mimetype: "", forwardedBy: "", approvedBy: ""},
+        },
+        {
+          regNo: "STU2021003",
+          name: "Alice Smith",
+          program: "Engineering",
+          faculty: "Engineering",
+          timestamp: "2024-01-17 11:10:00",
+          uploadedBy: "Admin",
+          ownerAvatarUrl: "https://ui-avatars.com/api/?name=Alice+Smith&background=008080&color=fff",
+          document: {status: "pending", blobUrl: "", mimetype: "", forwardedBy: "", approvedBy: ""},
+        },
+        {
+          regNo: "STU2021004",
+          name: "Bob Lee",
+          program: "Mathematics",
+          faculty: "Science & Technology",
+          timestamp: "2024-01-18 13:45:00",
+          uploadedBy: "Admin",
+          ownerAvatarUrl: "https://ui-avatars.com/api/?name=Bob+Lee&background=008080&color=fff",
+          document: {status: "pending", blobUrl: "", mimetype: "", forwardedBy: "", approvedBy: ""},
+        },
+        {
+          regNo: "STU2021005",
+          name: "Sarah Connor",
+          program: "Physics",
+          faculty: "Science & Technology",
+          timestamp: "2024-01-19 08:50:00",
+          uploadedBy: "Admin",
+          ownerAvatarUrl: "https://ui-avatars.com/api/?name=Sarah+Connor&background=008080&color=fff",
+          document: {status: "pending", blobUrl: "", mimetype: "", forwardedBy: "", approvedBy: ""},
+        },
+        {
+          regNo: "STU2021006",
+          name: "Mike Brown",
+          program: "Economics",
+          faculty: "Business",
+          timestamp: "2024-01-20 14:05:00",
+          uploadedBy: "Admin",
+          ownerAvatarUrl: "https://ui-avatars.com/api/?name=Mike+Brown&background=008080&color=fff",
+          document: {status: "pending", blobUrl: "", mimetype: "", forwardedBy: "", approvedBy: ""},
+        },
+        {
+          regNo: "STU2021007",
+          name: "Linda Green",
+          program: "Chemistry",
+          faculty: "Science & Technology",
+          timestamp: "2024-01-21 12:34:00",
+          uploadedBy: "Admin",
+          ownerAvatarUrl: "https://ui-avatars.com/api/?name=Linda+Green&background=008080&color=fff",
+          document: {status: "pending", blobUrl: "", mimetype: "", forwardedBy: "", approvedBy: ""},
+        }
+      ];
+      return demoRows;
+    }
+    let documentsData = getInitialDocumentsData();
+
+    // Upload & Preview
+    document.getElementById("manualUploadForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const fileInput = document.getElementById("uploadFile");
+      const file = fileInput.files[0];
+      if (!file) return;
+      let attached = false;
+      for (let doc of documentsData) {
+        if (!doc.document.blobUrl) {
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            doc.document.blobUrl = ev.target.result;
+            doc.document.mimetype = file.type;
+            doc.document.previewData = window._lastPreviewData || null;
+            notify(`<i class='fas fa-upload'></i> File "${file.name}" attached to ${doc.name}.`, "success");
+            window._lastPreviewData = null;
+            loadDigitalDocumentsTable();
+            renderStackedPreviews();
+            document.getElementById("uploadPreview").innerHTML = "";
+          };
+          reader.readAsDataURL(file);
+          attached = true;
+          break;
+        }
+      }
+      if (!attached) {
+        notify("<i class='fas fa-exclamation-circle'></i> All students have a document uploaded. Delete one to upload again.", "warning");
+      }
+      fileInput.value = "";
+    });
+
+    // Preview file before upload
+    document.getElementById("uploadFile").addEventListener("change", function(e){
+      const file = e.target.files[0];
+      const preview = document.getElementById("uploadPreview");
+      preview.innerHTML = "";
+      window._lastPreviewData = null;
+      if (!file) return;
+      // PDF Preview (first page only)
+      if (file.type === "application/pdf") {
+        const fileReader = new FileReader();
+        fileReader.onload = function() {
+          const pdfData = new Uint8Array(this.result);
+          pdfjsLib.getDocument({ data: pdfData }).promise.then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+              const scale = 1.2;
+              const viewport = page.getViewport({ scale: scale });
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
+              preview.appendChild(canvas);
+              page.render({canvasContext: context, viewport: viewport});
+              window._lastPreviewData = canvas;
+            });
+          });
+        };
+        fileReader.readAsArrayBuffer(file);
+        return;
+      }
+      // DOCX Preview
+      if (file.name.endsWith(".docx")) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          mammoth.convertToHtml({arrayBuffer: event.target.result})
+            .then(function(result) {
+              preview.innerHTML = result.value;
+              window._lastPreviewData = result.value;
+            });
+        };
+        reader.readAsArrayBuffer(file);
+        return;
+      }
+      // CSV Preview
+      if (file.name.endsWith(".csv")) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const csv = Papa.parse(event.target.result, {header: true});
+          let table = "<table border='1' style='border-collapse:collapse;width:100%;'><tr>";
+          if (csv.data && csv.data.length > 0) {
+            Object.keys(csv.data[0]).forEach(h => table += `<th style='padding:4px;background:#f2f2f2;'>${h}</th>`);
+            table += "</tr>";
+            csv.data.forEach(row => {
+              table += "<tr>";
+              Object.values(row).forEach(cell => table += `<td style='padding:4px;'>${cell}</td>`);
+              table += "</tr>";
+            });
+            table += "</table>";
+            preview.innerHTML = table;
+            window._lastPreviewData = table;
+          } else {
+            preview.innerHTML = "<div style='color: #c0392b;'>No CSV data found.</div>";
+            window._lastPreviewData = preview.innerHTML;
+          }
+        };
+        reader.readAsText(file);
+        return;
+      }
+      // Images Preview
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const img = document.createElement('img');
+          img.src = event.target.result;
+          img.style.maxWidth = "650px";
+          img.style.maxHeight = "85vh";
+          img.style.borderRadius = "10px";
+          preview.appendChild(img);
+          window._lastPreviewData = img;
+        };
+        reader.readAsDataURL(file);
+        return;
+      }
+      // Plain text Preview
+      if (file.type === "text/plain") {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          let pre = document.createElement("pre");
+          pre.textContent = event.target.result;
+          preview.appendChild(pre);
+          window._lastPreviewData = pre;
+        };
+        reader.readAsText(file);
+        return;
+      }
+      // Unsupported file type
+      preview.innerHTML = "<div style='color: #c0392b;'>Unsupported file type for preview.</div>";
+      window._lastPreviewData = preview.innerHTML;
+    });
+
+    function renderStackedPreviews() {
+      const container = document.getElementById("stackedPreviews");
+      container.innerHTML = "";
+      documentsData.forEach((doc, idx) => {
+        if (doc.document && doc.document.blobUrl) {
+          const previewDiv = document.createElement("div");
+          previewDiv.className = "stacked-preview";
+          previewDiv.innerHTML = `
+            <div class="stacked-preview-title"><i class="fas fa-user"></i> ${doc.name} (${doc.regNo})</div>
+            <div class="stacked-preview-content" id="stacked_preview_${idx}"></div>
+            <div class="stacked-preview-actions">
+              <button class="btn btn-info" title="View File" onclick="viewBlob('${doc.document.blobUrl}','${doc.document.mimetype}','${doc.ownerAvatarUrl}','${doc.name}')"><i class="fas fa-file"></i> View File</button>
+            </div>
+          `;
+          container.appendChild(previewDiv);
+          const previewContent = previewDiv.querySelector(".stacked-preview-content");
+          if (doc.document.previewData instanceof HTMLCanvasElement) {
+            let cnv = doc.document.previewData.cloneNode(true);
+            previewContent.appendChild(cnv);
+          } else if (doc.document.previewData instanceof HTMLElement) {
+            previewContent.appendChild(doc.document.previewData.cloneNode(true));
+          } else if (typeof doc.document.previewData === "string") {
+            previewContent.innerHTML = doc.document.previewData;
+          }
+        }
+      });
+    }
+
+    function loadDigitalDocumentsTable(filterRegNo = "") {
+      let rows = documentsData;
+      if (filterRegNo) {
+        rows = rows.filter(r => r.regNo.toLowerCase().includes(filterRegNo.toLowerCase()));
+      }
+      let html = `
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAllDocs" onclick="selectAllRows(this)"></th>
+              <th>Reg No</th>
+              <th>Name</th>
+              <th>Program</th>
+              <th>Status</th>
+              <th>Faculty</th>
+              <th>Time</th>
+              <th>By</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      for (const [idx, row] of rows.entries()) {
+        let statusClass = "status-pending";
+        let statusText = "<i class='fas fa-hourglass-half'></i> Pending";
+        if (row.document.status === "forwarded") {
+          statusClass = "status-forwarded";
+          statusText = `<i class='fas fa-share'></i> Forwarded to Registrar`;
+        }
+        if (row.document.status === "approved") {
+          statusClass = "status-approved";
+          statusText = `<i class='fas fa-check-circle'></i> Approved by Registrar`;
+        }
+        html += `
+          <tr>
+            <td><input type="checkbox" class="row-select" data-index="${idx}"></td>
+            <td>${row.regNo}</td>
+            <td>${row.name}</td>
+            <td>${row.program}</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>${row.faculty}</td>
+            <td>${row.timestamp}</td>
+            <td>${row.uploadedBy}</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-info" title="View File" onclick="viewBlob('${row.document.blobUrl}','${row.document.mimetype}','${row.ownerAvatarUrl}','${row.name}')">
+                  <i class="fas fa-file"></i> View File
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }
+      html += "</tbody></table>";
+      if (rows.length === 0) {
+        html = `<div style="text-align: center; padding: 2rem; color: #666;">
+            <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+            <p>No documents found${filterRegNo ? ` for "${filterRegNo}"` : ""}.</p>
+          </div>`;
+      }
+      document.getElementById("digitalDocumentsTable").innerHTML = html;
+      setTimeout(function() {
+        const selectAll = document.getElementById('selectAllDocs');
+        if (selectAll) {
+          const rowCheckboxes = document.querySelectorAll('.row-select');
+          for (const cb of rowCheckboxes) {
+            cb.addEventListener('change', function() {
+              selectAll.checked = Array.from(rowCheckboxes).every(chk => chk.checked);
+            });
+          }
+        }
+      }, 0);
+    }
+    window.selectAllRows = function(masterCheckbox) {
+      const checkboxes = document.querySelectorAll('.row-select');
+      for (const cb of checkboxes) {
+        cb.checked = masterCheckbox.checked;
+      }
+    };
+    function getSelectedRows() {
+      const checkboxes = document.querySelectorAll('.row-select');
+      let selected = [];
+      for (const cb of checkboxes) {
+        if (cb.checked) selected.push(parseInt(cb.getAttribute('data-index')));
+      }
+      return selected;
+    }
+
+    document.getElementById("deleteSelectedBtn").onclick = function() {
+      let selectedIndexes = getSelectedRows();
+      if (selectedIndexes.length === 0) {
+        notify("<i class='fas fa-exclamation-triangle'></i> No records selected.", "warning");
+        return;
+      }
+      if (!confirm("Delete selected documents?")) return;
+      selectedIndexes.forEach(idx => {
+        if (documentsData[idx].document) {
+          documentsData[idx].document = {status:"pending",blobUrl:"",mimetype:"",forwardedBy:"",approvedBy:""};
+          documentsData[idx].previewData = null;
+        }
+      });
+      notify("<i class='fas fa-trash'></i> Selected documents deleted.", "success");
+      loadDigitalDocumentsTable();
+      renderStackedPreviews();
+    };
+    document.getElementById("forwardSelectedBtn").onclick = function() {
+      let selectedIndexes = getSelectedRows();
+      if (selectedIndexes.length === 0) {
+        notify("<i class='fas fa-exclamation-triangle'></i> No records selected.", "warning");
+        return;
+      }
+      selectedIndexes.forEach(idx => {
+        if (documentsData[idx].document && (documentsData[idx].document.status === "pending")) {
+          documentsData[idx].document.status = "forwarded";
+          documentsData[idx].document.forwardedBy = "Registrar";
+        }
+      });
+      notify("<i class='fas fa-share'></i> Selected documents forwarded to Registrar.", "info");
+      loadDigitalDocumentsTable();
+      renderStackedPreviews();
+    };
+    document.getElementById("printSelectedBtn").onclick = function() {
+      let selectedIndexes = getSelectedRows();
+      if (selectedIndexes.length === 0) {
+        notify("<i class='fas fa-exclamation-triangle'></i> No records selected.", "warning");
+        return;
+      }
+      selectedIndexes.forEach(idx => {
+        if (documentsData[idx].document && documentsData[idx].document.status === "forwarded") {
+          documentsData[idx].document.status = "approved";
+          documentsData[idx].document.approvedBy = "Registrar";
+        }
+      });
+      notify("<i class='fas fa-print'></i> Print Preview requested for selected forwarded documents.", "success");
+      loadDigitalDocumentsTable();
+      renderStackedPreviews();
+    };
+
+    document.getElementById("searchForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const regNo = document.getElementById("searchRegNo").value.trim();
+      loadDigitalDocumentsTable(regNo);
+      renderStackedPreviews();
+    });
+    document.getElementById("clearBtn").onclick = function() {
+      document.getElementById("searchRegNo").value = "";
+      loadDigitalDocumentsTable();
+      renderStackedPreviews();
+    };
+
+    // Document popup with all pdf pages
+    window.viewBlob = function(blobUrl, mimetype, ownerAvatarUrl, ownerName) {
+      document.getElementById('docOwnerAvatar').src = ownerAvatarUrl || "https://ui-avatars.com/api/?name=" + encodeURIComponent(ownerName || "User") + "&background=008080&color=fff";
+      document.getElementById('docOwnerName').textContent = ownerName || "Unknown";
+      const container = document.getElementById('docBlobContainer');
+      container.innerHTML = "";
+      if (!blobUrl) {
+        container.innerHTML = "<div style='color: #c0392b;'>No file uploaded for this student.</div>";
+        document.getElementById('docBlobView').style.display = "block";
+        return;
+      }
+      if (mimetype === "application/pdf") {
+        const loadingMsg = document.createElement("div");
+        loadingMsg.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Loading PDF preview...";
+        container.appendChild(loadingMsg);
+        const fileReader = new FileReader();
+        fileReader.onload = function() {
+          container.innerHTML = "";
+          const pdfData = new Uint8Array(this.result);
+          pdfjsLib.getDocument({ data: pdfData }).promise.then(function(pdf) {
+            let pagePromises = [];
+            for (let i = 1; i <= pdf.numPages; i++) {
+              pagePromises.push(pdf.getPage(i));
+            }
+            Promise.all(pagePromises).then(function(pages) {
+              pages.forEach(function(page, idx) {
+                const scale = 1.15;
+                const viewport = page.getViewport({ scale: scale });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                container.appendChild(canvas);
+                page.render({canvasContext: context, viewport: viewport});
+              });
+            });
+          });
+        };
+        fileReader.readAsArrayBuffer(dataURLtoBlob(blobUrl));
+        document.getElementById('docBlobView').style.display = "block";
+        return;
+      }
+      // DOCX
+      if (mimetype === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || blobUrl.endsWith(".docx")) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          container.innerHTML = "";
+          mammoth.convertToHtml({arrayBuffer: event.target.result})
+            .then(function(result) {
+              container.innerHTML = result.value;
+            });
+        };
+        reader.readAsArrayBuffer(dataURLtoBlob(blobUrl));
+        document.getElementById('docBlobView').style.display = "block";
+        return;
+      }
+      // CSV
+      if (mimetype === "text/csv" || blobUrl.endsWith(".csv")) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          container.innerHTML = "";
+          const csv = Papa.parse(event.target.result, {header: true});
+          let table = "<table border='1' style='border-collapse:collapse;width:100%;'><tr>";
+          if (csv.data && csv.data.length > 0) {
+            Object.keys(csv.data[0]).forEach(h => table += `<th style='padding:4px;background:#f2f2f2;'>${h}</th>`);
+            table += "</tr>";
+            csv.data.forEach(row => {
+              table += "<tr>";
+              Object.values(row).forEach(cell => table += `<td style='padding:4px;'>${cell}</td>`);
+              table += "</tr>";
+            });
+            table += "</table>";
+            container.innerHTML = table;
+          } else {
+            container.innerHTML = "<div style='color: #c0392b;'>No CSV data found.</div>";
+          }
+        };
+        reader.readAsText(dataURLtoBlob(blobUrl));
+        document.getElementById('docBlobView').style.display = "block";
+        return;
+      }
+      // Images
+      if (mimetype && mimetype.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = blobUrl;
+        container.appendChild(img);
+        document.getElementById('docBlobView').style.display = "block";
+        return;
+      }
+      // Text
+      if (mimetype === "text/plain") {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          container.innerHTML = "";
+          let pre = document.createElement("pre");
+          pre.textContent = event.target.result;
+          container.appendChild(pre);
+        };
+        reader.readAsText(dataURLtoBlob(blobUrl));
+        document.getElementById('docBlobView').style.display = "block";
+        return;
+      }
+      // Unsupported
+      container.innerHTML = "<div style='color: #c0392b;'>Unsupported file type for preview.</div>";
+      document.getElementById('docBlobView').style.display = "block";
+    };
+
+    function printPreviewDocAll() {
+      const container = document.getElementById('docBlobContainer');
+      const printWindow = window.open('', '', 'width=900,height=600');
+      printWindow.document.write(`
+        <html><head><title>Print Document</title>
+        <style>
+          body{font-family:sans-serif;margin:0;padding:0;}
+          img{max-width:800px;}
+          canvas{max-width:800px;}
+          table{width:100%;border-collapse:collapse;}
+          th,td{border:1px solid #aaa;padding:4px;}
+          pre{background:#f6fafd;padding:1rem;border-radius:9px;}
+        </style>
+        </head><body>
+        ${container.innerHTML}
+        </body></html>
+      `);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => printWindow.print(), 350);
+    }
+
+    function dataURLtoBlob(dataurl) {
+      if (!dataurl || !dataurl.startsWith('data:')) return null;
+      var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1];
+      var bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+      while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], {type:mime});
+    }
+    function closeBlobView() {
+      document.getElementById('docBlobView').style.display = "none";
+    }
+    function notify(msg, type = "info") {
+      const notification = document.createElement("div");
+      notification.className = `notification ${type}`;
+      notification.innerHTML = msg;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        if (notification.parentNode) notification.parentNode.removeChild(notification);
+      }, 3500);
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+      loadDigitalDocumentsTable();
+      renderStackedPreviews();
+      notify("<i class='fas fa-check-circle'></i> Documents portal loaded.", "success");
+    });
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+      }
+    };
+  </script>
+<script src="script.js"></script>
+</body>
+</html>

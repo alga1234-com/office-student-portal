@@ -1,0 +1,652 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admissions & Student Analytics (Upload Dataset)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #1976d2;
+      --accent: #ff9800;
+      --bg: #f4f6fa;
+      --card-bg: #fff;
+      --border: #e1e5ea;
+      --radius: 12px;
+      --font-main: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      --font-size: 1rem;
+    }
+    body {
+      background: var(--bg);
+      font-family: var(--font-main);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .analytics-section {
+      background: #e8eefc;
+      border: 2px solid #1976d2;
+      border-radius: 18px;
+      margin: 36px auto 24px auto;
+      max-width: 1200px;
+      width: 97vw;
+      box-shadow: 0 8px 32px rgba(25,118,210,0.08);
+      padding: 2vw 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .analytics-panel {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 12px rgba(30,90,220,0.06);
+      padding: 2rem 2vw 2.5rem 2vw;
+      width: 98%;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .analytics-panel h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+      justify-content: center;
+    }
+    .upload-bar {
+      margin: 1.5em 0;
+      padding: 1.3em 2em;
+      background: #e9f1fe;
+      border-radius: var(--radius);
+      box-shadow: 0 1px 4px #dbefff;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.3em;
+      justify-content: space-between;
+    }
+    .upload-bar form {
+      display: flex;
+      align-items: center;
+      gap: 1em;
+      flex-wrap: wrap;
+    }
+    .upload-bar label {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .upload-bar input[type="file"] {
+      padding: 0.4em 0.9em;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 1em;
+      background: #f9fbfc;
+      margin-right: 1em;
+    }
+    .upload-bar button,
+    .toolbar button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6em 1.7em;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+      margin-right: 0.6em;
+      margin-bottom: 0.5em;
+    }
+    .upload-bar button:hover,
+    .toolbar button:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .upload-info {
+      font-size: 0.98em;
+      color: #1976d2;
+      margin-left: 1em;
+      font-style: italic;
+      flex: 1 0 100%;
+      margin-top: 0.75em;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.9em;
+      margin: 0.7em 0 1.2em 0;
+      justify-content: flex-end;
+    }
+    .toolbar label {
+      font-weight: 600;
+      color: #1976d2;
+      margin-right: 0.4em;
+    }
+    .toolbar select, .toolbar input[type="text"] {
+      padding: 0.4em 0.9em;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 1em;
+      background: #f9fbfc;
+      margin-right: 0.6em;
+    }
+    .analytics-summary {
+      display: flex;
+      gap: 1.8rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .summary-card {
+      background: #e3e8f0;
+      border-radius: var(--radius);
+      padding: 1.2em 2em;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1.08em;
+      box-shadow: 0 1px 6px rgba(30,90,220,0.06);
+      min-width: 170px;
+      text-align: center;
+    }
+    .table-scroll-x {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .analytics-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5em 0;
+      font-size: 0.98rem;
+      background: var(--card-bg);
+      table-layout: auto;
+      overflow-x: auto;
+    }
+    .analytics-table th,
+    .analytics-table td {
+      border: 1px solid var(--border);
+      padding: 0.7em 0.5em;
+      text-align: center;
+    }
+    .analytics-table th {
+      background: #e3e8f0;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .analytics-table tr:nth-child(even) {
+      background: #f6fafd;
+    }
+    .analytics-table td:first-child,
+    .analytics-table th:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .analytics-table tfoot td {
+      background: #e3e8f0;
+      color: #1976d2;
+      font-weight: 700;
+      border-top: 2px solid #1976d2;
+      text-align: center;
+    }
+    @media (max-width: 1200px) {
+      .analytics-section { max-width: 99vw; }
+      .analytics-panel { max-width: 99vw; }
+    }
+    @media (max-width: 900px) {
+      .analytics-panel { padding: 1rem 2vw 1.5rem 2vw; }
+      .summary-card { padding: 1em 1em; min-width: 120px; }
+      .analytics-table th, .analytics-table td { font-size: 0.93rem; padding: 0.5em 0.2em; }
+      .upload-bar { padding: 1em 1vw; flex-direction: column; gap: 0.7em;}
+      .toolbar { flex-direction: column; gap: 0.7em; align-items: flex-start;}
+    }
+    @media (max-width: 600px) {
+      .analytics-panel { padding: 0.5rem 0vw 0.5rem 0vw; }
+      .analytics-section { padding: 1vw 0;}
+      .analytics-summary { gap: 0.5rem; }
+      .summary-card { font-size: 0.98em; padding: 0.7em 0.4em; }
+      .analytics-table th, .analytics-table td { font-size: 0.89rem; padding: 0.3em 0.1em; }
+      .upload-bar { padding: 0.7em 1vw;}
+      .upload-bar form { flex-direction: column; align-items: flex-start;}
+      .upload-info { margin-left: 0; }
+      .analytics-table { font-size: 0.89rem; }
+    }
+    #addRowModal {
+      display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:#0008; z-index:1000; align-items:center; justify-content:center;
+    }
+    #addRowForm {
+      background:white; padding:2em; border-radius:10px; display:flex; flex-direction:column; gap:1em; min-width:300px;
+    }
+    #columnFilterCheckboxes label {
+      margin-right: 12px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="analytics-section">
+    <div class="analytics-panel">
+      <h2><i class="fas fa-chart-bar"></i> Admissions & Student Analytics</h2>
+      <div class="upload-bar">
+        <form id="uploadForm" enctype="multipart/form-data">
+          <label for="datasetFile"><i class="fas fa-upload"></i> Upload Student CSV:</label>
+          <input type="file" id="datasetFile" accept=".csv" required>
+          <button type="submit"><i class="fas fa-file-import"></i> Import & Analyze</button>
+        </form>
+        <span class="upload-info" id="uploadInfo">
+          Upload a CSV file with columns such as: NAME, GENDER, NATIONALITY, STUDENT NUMBER, REGISTRATION NUMBER, PROGRAMME CODE, CAMPUS, PROGRAMME TYPE, SPONSORSHIP, HALL OF ATTACHMENT, YEAR OF ENTRY, etc.
+        </span>
+      </div>
+      <div class="toolbar">
+        <label for="programFilter">Filter Program:</label>
+        <select id="programFilter">
+          <option value="">All Programs</option>
+        </select>
+        <span id="columnFilterCheckboxes" style="display:inline-block; max-width:350px; vertical-align:middle;"></span>
+        <button type="button" id="clearDataBtn"><i class="fas fa-trash"></i> Clear Data</button>
+        <button type="button" id="printDataBtn"><i class="fas fa-print"></i> Print Data</button>
+      </div>
+      <button type="button" id="addRowBtn" style="align-self:flex-end;margin-bottom:1em;"><i class="fas fa-plus"></i> Add Row</button>
+      <div class="analytics-summary">
+        <div class="summary-card">Total Students: <span id="totalStudents"></span></div>
+        <div class="summary-card">Total Dropped: <span id="totalDropped"></span></div>
+      </div>
+      <div class="table-scroll-x">
+        <table class="analytics-table" id="analyticsTable">
+          <thead>
+            <tr id="tableHeaderRow"></tr>
+          </thead>
+          <tbody id="analyticsTableBody">
+          </tbody>
+          <tfoot>
+            <tr id="grandTotalRow"></tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Add Row Modal -->
+  <div id="addRowModal">
+    <form id="addRowForm">
+      <label>
+        Program:
+        <input type="text" name="PROGRAMME CODE" required>
+      </label>
+      <label>
+        Gender:
+        <select name="GENDER" required>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </label>
+      <label>
+        Registration Number:
+        <input type="text" name="REGISTRATION NUMBER" required>
+      </label>
+      <label>
+        Sponsorship:
+        <input type="text" name="SPONSORSHIP">
+      </label>
+      <button type="submit">Add</button>
+      <button type="button" id="closeRowModal">Cancel</button>
+    </form>
+  </div>
+  <script>
+    // --- Table and Data Logic ---
+
+    // Analytics columns in order
+    const ANALYTICS_COLUMNS = [
+      "Program","Female Day","Male Day","Female Evening","Male Evening",
+      "Govt Female","Govt Male",
+      "X Male","X Female","K Male","K Female","Intl T",
+      "Private","Scholarship",
+      "Retaker Female Day","Retaker Male Day","Retaker Female Evening","Retaker Male Evening",
+      "Second Year Female Day","Second Year Male Day","Second Year Female Evening","Second Year Male Evening",
+      "Dropped"
+    ];
+
+    let analyticsRawRows = []; // raw input student rows
+    let analyticsData = [];    // processed program-wise analytics output
+    let programOptions = new Set();
+
+    // --- Utility: infer session, etc ---
+    function inferSession(regNo) {
+      regNo = regNo ? regNo.toLowerCase() : '';
+      if (regNo.endsWith('ps')) return 'day';
+      if (regNo.endsWith('eve')) return 'evening';
+      return 'unknown';
+    }
+
+    // --- Main Analytics Logic ---
+    function countAnalytics(rows) {
+      const programMap = {};
+      let privateTotal = 0, scholarshipTotal = 0, governmentTotal = 0;
+
+      rows.forEach(row => {
+        const program = row['PROGRAMME CODE'] || row['Program'] || row['programme code'] || row['program'] || "Unknown";
+        const gender = (row['GENDER'] || row['Gender'] || "").toLowerCase();
+        const regNo = (row['REGISTRATION NUMBER'] || row['Registration Number'] || row['registration number'] || "").toLowerCase();
+        const sponsorship = (row['SPONSORSHIP'] || row['Sponsorship'] || "").toLowerCase();
+
+        const session = inferSession(regNo);
+
+        if (!programMap[program]) {
+          programMap[program] = {
+            "Program": program,
+            "Female Day": 0,
+            "Male Day": 0,
+            "Female Evening": 0,
+            "Male Evening": 0,
+            "Govt Female": 0,
+            "Govt Male": 0,
+            "X Male": 0,
+            "X Female": 0,
+            "K Male": 0,
+            "K Female": 0,
+            "Intl T": 0,
+            "Private": 0,
+            "Scholarship": 0,
+            "Retaker Female Day": 0,
+            "Retaker Male Day": 0,
+            "Retaker Female Evening": 0,
+            "Retaker Male Evening": 0,
+            "Second Year Female Day": 0,
+            "Second Year Male Day": 0,
+            "Second Year Female Evening": 0,
+            "Second Year Male Evening": 0,
+            "Dropped": 0
+          };
+          programOptions.add(program);
+        }
+        const obj = programMap[program];
+
+        // Day/Evening + Gender
+        if (session === 'day' && gender === 'female') obj["Female Day"]++;
+        if (session === 'day' && gender === 'male') obj["Male Day"]++;
+        if (session === 'evening' && gender === 'female') obj["Female Evening"]++;
+        if (session === 'evening' && gender === 'male') obj["Male Evening"]++;
+
+        // Govt Female/Male
+        if ((sponsorship.includes('gov') || regNo.includes('/u/')) && gender === 'female') obj["Govt Female"]++;
+        if ((sponsorship.includes('gov') || regNo.includes('/u/')) && gender === 'male') obj["Govt Male"]++;
+
+        // X/K split
+        if (regNo.length >= 3 && regNo[2] === 'x') {
+          if (gender === 'male') obj["X Male"]++;
+          if (gender === 'female') obj["X Female"]++;
+        }
+        if (regNo.length >= 3 && regNo[2] === 'k') {
+          if (gender === 'male') obj["K Male"]++;
+          if (gender === 'female') obj["K Female"]++;
+        }
+
+        // Intl T (regNo starts with 't')
+        if (regNo.startsWith('t')) obj["Intl T"]++;
+
+        // Private (sponsorship)
+        if (sponsorship.includes('private')) {
+          obj["Private"]++; privateTotal++;
+        }
+        // Scholarship (sponsorship)
+        if (sponsorship.includes('schol')) {
+          obj["Scholarship"]++; scholarshipTotal++;
+        }
+        // Government total (gov or /u/)
+        if (sponsorship.includes('gov') || regNo.includes('/u/')) {
+          governmentTotal++;
+        }
+
+        // Retaker
+        if (regNo.includes('retake')) {
+          if (session === 'day' && gender === 'female') obj["Retaker Female Day"]++;
+          if (session === 'day' && gender === 'male') obj["Retaker Male Day"]++;
+          if (session === 'evening' && gender === 'female') obj["Retaker Female Evening"]++;
+          if (session === 'evening' && gender === 'male') obj["Retaker Male Evening"]++;
+        }
+
+        // Second Year
+        if ((row['YEAR OF ENTRY'] && row['YEAR OF ENTRY'].toString().endsWith('2')) || (row['Year'] && row['Year'].toString().endsWith('2'))) {
+          if (session === 'day' && gender === 'female') obj["Second Year Female Day"]++;
+          if (session === 'day' && gender === 'male') obj["Second Year Male Day"]++;
+          if (session === 'evening' && gender === 'female') obj["Second Year Female Evening"]++;
+          if (session === 'evening' && gender === 'male') obj["Second Year Male Evening"]++;
+        }
+
+        // Dropped
+        if ((row['Dropped'] && row['Dropped'].toLowerCase() === 'yes') || sponsorship === 'dropped') obj["Dropped"]++;
+      });
+
+      window.analyticsTotals = { privateTotal, scholarshipTotal, governmentTotal };
+      return Object.values(programMap);
+    }
+
+    function populateProgramFilter() {
+      const programFilter = document.getElementById("programFilter");
+      const options = Array.from(programOptions).sort();
+      programFilter.innerHTML = '<option value="">All Programs</option>';
+      for (const p of options) {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.textContent = p;
+        programFilter.appendChild(opt);
+      }
+    }
+
+    // Generate tickable checkboxes for column selection
+    function populateColumnFilter() {
+      const container = document.getElementById("columnFilterCheckboxes");
+      container.innerHTML = '<label style="font-weight:600;color:#1976d2;margin-right:0.4em;">Columns:</label>';
+      ANALYTICS_COLUMNS.forEach((col, i) => {
+        if (col !== "Program") {
+          const id = "colchk_" + col.replace(/\s/g, "_");
+          container.innerHTML += `
+            <label>
+              <input type="checkbox" class="colFilterChk" value="${col}" id="${id}" checked>
+              ${col}
+            </label>`;
+        }
+      });
+    }
+
+    function getFilteredAnalyticsData() {
+      let data = analyticsData;
+      const program = document.getElementById("programFilter").value;
+      if (program) {
+        data = data.filter(row => row["Program"] === program);
+      }
+      return data;
+    }
+
+    function getSelectedColumns() {
+      const chks = document.querySelectorAll(".colFilterChk");
+      const selected = [];
+      chks.forEach(chk => { if (chk.checked) selected.push(chk.value); });
+      return ["Program", ...selected];
+    }
+
+    function renderAnalyticsTable(data) {
+      // Update header based on filtered columns
+      const selectedColumns = getSelectedColumns();
+      const headerRow = document.getElementById("tableHeaderRow");
+      headerRow.innerHTML = "";
+      selectedColumns.forEach(col => {
+        const th = document.createElement("th");
+        th.textContent = col;
+        if (col === "Program") th.style.color = "var(--accent)";
+        headerRow.appendChild(th);
+      });
+
+      // Render body
+      const table = document.getElementById("analyticsTableBody");
+      table.innerHTML = "";
+      let totalStudents = 0, totalDropped = 0;
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        let rowSum = 0, rowDropped = 0;
+        selectedColumns.forEach(col => {
+          let val = row[col] !== undefined ? row[col] : "";
+          if (["Female Day","Male Day","Female Evening","Male Evening"].includes(col)) rowSum += Number(val)||0;
+          if (col === "Dropped") rowDropped = Number(val)||0;
+          const td = document.createElement("td");
+          td.textContent = val;
+          if (col === "Program") td.style.color = "var(--accent)";
+          tr.appendChild(td);
+        });
+        totalStudents += rowSum;
+        totalDropped += rowDropped;
+        table.appendChild(tr);
+      });
+      document.getElementById("totalStudents").textContent = totalStudents;
+      document.getElementById("totalDropped").textContent = totalDropped;
+
+      // --- Dynamic Grand Totals Row ---
+      const grandTotals = {};
+      selectedColumns.forEach(col => {
+        grandTotals[col] = 0;
+        if (col !== "Program") {
+          data.forEach(row => {
+            grandTotals[col] += Number(row[col]) || 0;
+          });
+        }
+      });
+      // Render the tfoot
+      const tr = document.getElementById("grandTotalRow");
+      tr.innerHTML = "";
+      selectedColumns.forEach((col, idx) => {
+        const td = document.createElement("td");
+        if (col === "Program") {
+          td.textContent = "Grand Total";
+          td.style.fontWeight = "bold";
+        } else {
+          td.textContent = grandTotals[col] || "";
+          td.style.fontWeight = "bold";
+        }
+        tr.appendChild(td);
+      });
+    }
+
+    // CSV Parsing Utility (basic, for this model)
+    function parseCSV(csv) {
+      const lines = csv.trim().split(/\r?\n/);
+      if (lines.length < 2) return [];
+      const headers = lines[0].split(",").map(h => h.trim().replace(/"/g,""));
+      return lines.slice(1).map(line => {
+        const values = line.split(",").map(v => v.trim().replace(/"/g,""));
+        const obj = {};
+        headers.forEach((h, i) => { obj[h] = values[i] || ""; });
+        return obj;
+      });
+    }
+
+    // --- Actions ---
+    document.getElementById("uploadForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const input = document.getElementById("datasetFile");
+      const info = document.getElementById("uploadInfo");
+      if (!input.files || !input.files[0]) {
+        info.textContent = "Please select a CSV file.";
+        info.style.color = "#c32525";
+        return;
+      }
+      const file = input.files[0];
+      if (!file.name.endsWith(".csv")) {
+        info.textContent = "Only CSV files are supported.";
+        info.style.color = "#c32525";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const csv = event.target.result;
+          analyticsRawRows = parseCSV(csv);
+          if (analyticsRawRows.length === 0) {
+            info.textContent = "CSV file is empty or invalid format.";
+            info.style.color = "#c32525";
+            return;
+          }
+          programOptions = new Set();
+          analyticsData = countAnalytics(analyticsRawRows);
+          populateProgramFilter();
+          populateColumnFilter();
+          renderAnalyticsTable(getFilteredAnalyticsData());
+          info.textContent = "File uploaded and table updated!";
+          info.style.color = "#229d5e";
+        } catch (err) {
+          info.textContent = "Failed to read CSV file.";
+          info.style.color = "#c32525";
+        }
+      };
+      reader.onerror = function() {
+        info.textContent = "Failed to read file.";
+        info.style.color = "#c32525";
+      };
+      reader.readAsText(file);
+    });
+
+    document.getElementById("clearDataBtn").addEventListener("click", function() {
+      analyticsRawRows = [];
+      analyticsData = [];
+      programOptions = new Set();
+      document.getElementById("programFilter").innerHTML = '<option value="">All Programs</option>';
+      document.getElementById("columnFilterCheckboxes").innerHTML = '';
+      renderAnalyticsTable([]);
+      document.getElementById("uploadInfo").textContent = "Data cleared. Upload a CSV file to display analytics.";
+      document.getElementById("uploadInfo").style.color = "#1976d2";
+      document.getElementById("totalStudents").textContent = "0";
+      document.getElementById("totalDropped").textContent = "0";
+    });
+
+    document.getElementById("printDataBtn").addEventListener("click", function() {
+      window.print();
+    });
+
+    document.getElementById("programFilter").addEventListener("change", function() {
+      renderAnalyticsTable(getFilteredAnalyticsData());
+    });
+
+    // Listen for checkbox changes for columns
+    document.addEventListener("change", function(e) {
+      if (e.target.classList.contains("colFilterChk")) {
+        renderAnalyticsTable(getFilteredAnalyticsData());
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      populateColumnFilter();
+      renderAnalyticsTable([]);
+    });
+
+    // --- Add Row Modal Logic ---
+    document.getElementById("addRowBtn").addEventListener("click", function() {
+      document.getElementById("addRowModal").style.display = "flex";
+    });
+    document.getElementById("closeRowModal").addEventListener("click", function() {
+      document.getElementById("addRowModal").style.display = "none";
+    });
+    document.getElementById("addRowForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const newRow = {};
+      for (let [k,v] of fd.entries()) newRow[k] = v;
+      analyticsRawRows.push(newRow);
+      analyticsData = countAnalytics(analyticsRawRows);
+      programOptions.add(newRow["PROGRAMME CODE"]);
+      populateProgramFilter();
+      renderAnalyticsTable(getFilteredAnalyticsData());
+      document.getElementById("addRowModal").style.display = "none";
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>

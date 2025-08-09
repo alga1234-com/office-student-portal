@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Document Management - Student Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #1976d2;
+      --primary-dark: #1356a2;
+      --highlight: #fffde7;
+      --success-green: #28a745;
+      --warning-orange: #ffc107;
+      --danger-red: #dc3545;
+      --info-blue: #17a2b8;
+      --admin-purple: #6f42c1;
+      --guild-orange: #ff6b35;
+      --card-bg: #fff;
+      --bg: #f4f6fa;
+      --radius: 15px;
+      --input-radius: 8px;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+      min-height: 100vh;
+    }
+    nav {
+      background: var(--primary);
+      color: #fff;
+      text-align: center;
+      font-size: 1.13rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 12px #b2bec360;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    nav li {
+      margin: 0;
+      padding: 0;
+    }
+    nav a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      padding: 18px 20px 16px 20px;
+      transition: background 0.2s, color 0.2s;
+      border-bottom: 3px solid transparent;
+    }
+    nav a.active, nav a:focus {
+      background: var(--primary-dark);
+      border-bottom: 3px solid var(--highlight);
+      color: var(--highlight);
+      outline: none;
+    }
+    nav a:hover {
+      background: var(--primary-dark);
+      color: var(--highlight);
+    }
+    main {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1rem 3rem;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 34px 0 16px 0;
+      border-bottom: 2px solid #e1e5ea;
+      margin-bottom: 18px;
+    }
+    .header-title {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.8em;
+    }
+    .header-user {
+      font-size: 1.08rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: #eff6ff;
+      border-radius: var(--input-radius);
+      padding: 0.6em 1.4em;
+    }
+    .header-user a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .page-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      color: var(--primary);
+    }
+    .page-header h1 {
+      font-size: 2.4rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.07);
+    }
+    .page-header p {
+      font-size: 1.1rem;
+      opacity: 0.8;
+      margin-bottom: 2rem;
+      color: #444;
+    }
+    .module-switch {
+      margin: 24px 0 24px 0;
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+    }
+    .toggle-btn {
+      background: #e3e8f0;
+      color: var(--primary);
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.8rem 2.1rem;
+      font-size: 1.09rem;
+      font-weight: 500;
+      transition: background 0.18s, color 0.18s;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 2px 12px rgba(30,90,220,0.05);
+    }
+    .toggle-btn.active, .toggle-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    .module-container {
+      display: none;
+      border-radius: var(--radius);
+      background: var(--card-bg);
+      box-shadow: 0 2px 14px rgba(30,90,220,0.08);
+      margin-bottom: 32px;
+      padding: 32px 28px 28px 28px;
+      min-height: 220px;
+      animation: fadeInModule 0.35s;
+    }
+    .module-container.active { display: block; }
+    @keyframes fadeInModule {
+      from { opacity: 0; transform: translateY(18px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .storage-quota {
+      background: linear-gradient(45deg, #e3f2fd, #f3e5f5);
+      padding: 1.3rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      border-left: 4px solid var(--primary);
+      max-width: 600px;
+      margin-left: auto; margin-right: auto;
+    }
+    .quota-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .quota-bar {
+      background: #e0e0e0;
+      border-radius: 10px;
+      height: 18px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+    }
+    .quota-fill {
+      background: linear-gradient(90deg, var(--success-green), var(--info-blue));
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+    #uploadZone {
+      background: #f8f9fa;
+      padding: 2rem;
+      border-radius: 15px;
+      border: 2px dashed #dee2e6;
+      text-align: center;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(30,90,220,0.06);
+    }
+    #uploadZone label {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 1.07em;
+      margin-bottom: 12px;
+      display: block;
+    }
+    #uploadZone input[type="file"], #uploadZone select {
+      margin: 8px 0;
+      padding: 7px 10px;
+      border-radius: var(--input-radius);
+      border: 1px solid #dadada;
+      font-size: 1em;
+      background: #fff;
+      width: 70%;
+      max-width: 340px;
+      box-shadow: 0 1px 4px rgba(30,90,220,0.04);
+    }
+    #submitFileBtn {
+      margin-top: 16px;
+      margin-bottom: 2px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--input-radius);
+      padding: 0.7em 2.2em;
+      font-size: 1.07em;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(30,90,220,0.09);
+      transition: background 0.17s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7em;
+      letter-spacing: 0.01em;
+    }
+    #submitFileBtn:hover {
+      background: var(--primary-dark);
+    }
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .file-card {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.09);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .file-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    .file-icon {
+      font-size: 2.3rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .file-info h3 {
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+      word-break: break-word;
+    }
+    .file-meta {
+      color: #666;
+      font-size: 0.92rem;
+      margin-bottom: 1rem;
+    }
+    .file-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .file-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.87rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex: 1;
+      min-width: 60px;
+    }
+    .download-btn { background: var(--success-green); color: white; }
+    .view-btn { background: var(--info-blue); color: white; }
+    .edit-btn { background: var(--warning-orange); color: #2c3e50;}
+    .delete-btn { background: var(--danger-red); color: white; }
+    .file-btn:hover { transform: scale(1.08); }
+    .popup-view {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(30,40,100,0.12);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeInPopup 0.24s;
+    }
+    .popup-view.active { display: flex; }
+    @keyframes fadeInPopup { from { opacity: 0;} to { opacity: 1;} }
+    .popup-content {
+      background: #fff;
+      border-radius: 13px;
+      box-shadow: 0 8px 40px rgba(30,90,220,0.14);
+      padding: 36px 38px 18px 38px;
+      min-width: 410px;
+      max-width: 94vw;
+      max-height: 92vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .popup-title {
+      font-size: 1.22em;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--primary);
+      letter-spacing: 0.03em;
+    }
+    .popup-meta {
+      color: #444;
+      font-size: 1em;
+      margin-bottom: 17px;
+    }
+    .popup-exit-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 15px;
+      padding: 0.83em 2.1em;
+      font-size: 1.04em;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(30,90,220,0.11);
+      margin-top: 10px;
+    }
+    .popup-exit-btn:hover { background: var(--primary-dark); }
+    .popup-doc-iframe {
+      width: 100%; height: 440px;
+      border: none; border-radius: 8px;
+      background: #f8f9fa;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    .admin-db-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    .admin-db-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .admin-db-card:hover {
+      border-color: var(--admin-purple);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    .admin-db-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .admin-db-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 0.7rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6em;
+    }
+    .admin-db-btn:hover { background: var(--primary-dark); }
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #17a2b8;
+      color: #fff;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1001;
+      font-weight: 600;
+      max-width: 350px;
+      animation: slideUp 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.09em;
+    }
+    .notification.success { background: #28a745;}
+    .notification.error { background: #dc3545;}
+    .notification.warning { background: #ffc107; color: #2c3e50;}
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @media (max-width: 900px) {
+      nav ul { flex-direction: column; }
+      nav a { padding: 14px 8px;}
+      .page-header h1 { font-size: 2.1rem;}
+      .module-switch { flex-direction: column;}
+      .file-grid { grid-template-columns: 1fr;}
+      .storage-quota { padding: 1.2rem 2vw;}
+    }
+    @media (max-width: 480px) {
+      .header { flex-direction: column; align-items: flex-start;}
+      .header-title { font-size: 1.07rem;}
+      .module-switch { gap: 0.5rem;}
+      .storage-quota { padding: 10px 2vw;}
+      .popup-content { padding: 16px 7vw;}
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="header">
+      <div class="header-title">
+        <i class="fas fa-folder-open"></i> Document Management Portal
+      </div>
+      <div class="header-user">
+        <a href="dashboard.html">
+          <i class="fas fa-user-circle"></i> Return to Dashboard
+        </a>
+      </div>
+    </div>
+    <div class="page-header">
+      <h1>📄 Document Management</h1>
+      <p>Student document storage, administrative database management</p>
+    </div>
+      <button class="toggle-btn admin-btn" onclick="switchModule('admin')">
+        <i class="fas fa-database"></i> Admin Database
+      </button>
+    </div>
+    <!-- Student Storage Module -->
+    <div class="module-container active" id="student-module">
+      <div class="storage-quota">
+        <div class="quota-stats">
+          <span><strong>Used:</strong> <span id="usedSpace"></span></span>
+          <span><strong>Available:</strong> <span id="availableSpace"></span></span>
+          <span><strong>Total:</strong> 250 MB</span>
+        </div>
+        <div class="quota-bar">
+          <div class="quota-fill" id="quotaFill"></div>
+        </div>
+        <small>Storage usage: <span id="usagePercent"></span> of total capacity</small>
+      </div>
+      <div id="uploadZone">
+        <label for="fileInput"><i class="fas fa-upload"></i> Upload Document:</label>
+        <input type="file" id="fileInput" multiple /><br>
+        <label for="typeSelect">Type:</label>
+        <select id="typeSelect">
+          <option value="id">Student ID</option>
+          <option value="registration">Registration Form</option>
+          <option value="transcript">Transcript</option>
+          <option value="assignment">Assignment</option>
+          <option value="certificate">Certificate</option>
+          <option value="other">Other</option>
+        </select>
+        <br>
+        <button id="submitFileBtn" type="button"><i class="fas fa-file-upload"></i> Submit File</button>
+      </div>
+      <div class="file-grid" id="fileGrid"></div>
+    </div>
+    <!-- Guild Module -->
+    <div class="module-container" id="guild-module">
+      <div class="guild-title"><i class="fas fa-users"></i> Guild Activities & Events</div>
+      <div class="guild-item">Orientation 2025 <button class="guild-action-btn">View Details</button></div>
+      <div class="guild-item">Hackathon <button class="guild-action-btn">Register</button></div>
+      <div class="guild-item">Annual Sports <button class="guild-action-btn">View Results</button></div>
+    </div>
+    <!-- Admin Database Module -->
+    <div class="module-container admin-db" id="admin-module">
+      <div class="admin-title"><i class="fas fa-database"></i> Administrative Database</div>
+      <div class="admin-db-grid">
+        <div class="admin-db-card">
+          <div class="admin-db-icon"><i class="fas fa-database"></i></div>
+          <h4>Document Database</h4>
+          <p>Manage all student documents and files</p>
+          <button class="admin-db-btn" onclick="manageDocuments()">
+            <i class="fas fa-cogs"></i> Manage Documents
+          </button>
+        </div>
+        <div class="admin-db-card">
+          <div class="admin-db-icon"><i class="fas fa-file-export"></i></div>
+          <h4>Export/Import</h4>
+          <p>Backup and restore document archives</p>
+          <button class="admin-db-btn" onclick="exportData()">
+            <i class="fas fa-download"></i> Export Data
+          </button>
+        </div>
+        <div class="admin-db-card">
+          <div class="admin-db-icon"><i class="fas fa-shield-alt"></i></div>
+          <h4>Security Settings</h4>
+          <p>Configure access and permissions</p>
+          <button class="admin-db-btn" onclick="securityPanel()">
+            <i class="fas fa-lock"></i> Security Panel
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="popup-view" id="filePopupView">
+      <div class="popup-content" id="popupContent"></div>
+    </div>
+  </main>
+  <footer class="site-footer" style="background:#2c3e50; color:white; margin-top:4rem;">
+    <div class="footer-content" style="max-width:1200px; margin:0 auto; padding:3rem 1rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:2rem;">
+      <div class="footer-section">
+        <h3>📄 Document Management</h3>
+        <p>Comprehensive student document storage with guild activities and administrative tools for complete campus document management.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Features</h3>
+        <p>• 250MB Personal Storage</p>
+        <p>• Guild Activity Tracking</p>
+        <p>• Admin Database Tools</p>
+        <p>• Multi-format Support</p>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <p>📞 Help Desk: (555) 123-DOCS</p>
+        <p>📧 documents@university.edu</p>
+        <p>🕒 24/7 Technical Support</p>
+        <p>📍 IT Center, Building A</p>
+      </div>
+    </div>
+    <div class="footer-bottom" style="background:#34495e; text-align:center; padding:1rem; border-top:1px solid #4a5568;">
+      <p>&copy; 2025 University Document Management System. All rights reserved.</p>
+      <p>🔒 Secure document storage with guild integration and administrative oversight</p>
+    </div>
+  </footer>
+  <script>
+    // Student storage logic, one card, 250MB quota
+    let studentFiles = [];
+    let usedSpace = 0;
+    const maxSpace = 250 * 1024 * 1024; // 250MB in bytes
+    let currentModule = 'student';
+
+    document.addEventListener('DOMContentLoaded', function() {
+      updateStorageDisplay();
+      renderFiles();
+      document.getElementById('submitFileBtn').addEventListener('click', submitFileFromInput);
+      document.getElementById('fileInput').addEventListener('change', function(e) {});
+    });
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    function updateStorageDisplay() {
+      const availableSpace = maxSpace - usedSpace;
+      const usagePercent = Math.round((usedSpace / maxSpace) * 100);
+      document.getElementById('usedSpace').textContent = formatFileSize(usedSpace);
+      document.getElementById('availableSpace').textContent = formatFileSize(availableSpace);
+      document.getElementById('usagePercent').textContent = usagePercent + '%';
+      document.getElementById('quotaFill').style.width = usagePercent + '%';
+    }
+    function submitFileFromInput() {
+      const fileInput = document.getElementById('fileInput');
+      const files = fileInput.files;
+      const fileType = document.getElementById('typeSelect').value;
+      if (!files || files.length === 0) {
+        showNotification('Please select a file to submit.', 'warning');
+        return;
+      }
+      Array.from(files).forEach(file => {
+        if (file.size > 10 * 1024 * 1024) { // 10MB per file limit
+          showNotification(`File ${file.name} exceeds 10MB limit`, 'error');
+          return;
+        }
+        if (usedSpace + file.size > maxSpace) {
+          showNotification(`Not enough storage space for ${file.name}`, 'error');
+          return;
+        }
+        const fileObj = {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          uploadDate: new Date().toISOString().split('T')[0],
+          fileType: fileType,
+          blob: file
+        };
+        studentFiles.push(fileObj);
+        usedSpace += file.size;
+        showNotification(`${file.name} uploaded successfully!`, 'success');
+      });
+      fileInput.value = '';
+      updateStorageDisplay();
+      renderFiles();
+    }
+    function renderFiles() {
+      const grid = document.getElementById('fileGrid');
+      grid.innerHTML = '';
+      if (studentFiles.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; color: #666; padding: 3rem;">
+            <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+            <h3>No documents uploaded yet</h3>
+            <p>Upload your first document to get started</p>
+          </div>
+        `;
+        return;
+      }
+      studentFiles.forEach((file, index) => {
+        const fileCard = document.createElement('div');
+        fileCard.className = 'file-card';
+        const icon = getFileIcon(file.type);
+        fileCard.innerHTML = `
+          <div class="file-icon">${icon}</div>
+          <div class="file-info">
+            <h3>${file.name}</h3>
+            <div class="file-meta">
+              <div><strong>Size:</strong> ${formatFileSize(file.size)}</div>
+              <div><strong>Type:</strong> ${getFileTypeName(file.type)}</div>
+              <div><strong>Category:</strong> ${file.fileType}</div>
+              <div><strong>Uploaded:</strong> ${new Date(file.uploadDate).toLocaleDateString()}</div>
+            </div>
+          </div>
+          <div class="file-actions">
+            <button class="file-btn download-btn" onclick="downloadFile(${file})">
+              <i class="fas fa-download"></i> Download
+            </button>
+            <button class="file-btn view-btn" onclick="viewFile(${file})">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="file-btn edit-btn" onclick="editFile(${file})">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="file-btn delete-btn" onclick="deleteFile(${file})">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        `;
+        grid.appendChild(fileCard);
+      });
+    }
+    function getFileIcon(type) {
+      if (type?.includes('pdf')) return '📄';
+      if (type?.includes('word') || type?.includes('document')) return '📝';
+      if (type?.includes('image')) return '🖼️';
+      if (type?.includes('text')) return '📃';
+      return '📄';
+    }
+    function getFileTypeName(type) {
+      if (type?.includes('pdf')) return 'PDF Document';
+      if (type?.includes('word')) return 'Word Document';
+      if (type?.includes('image/jpeg')) return 'JPEG Image';
+      if (type?.includes('image/png')) return 'PNG Image';
+      if (type?.includes('text')) return 'Text Document';
+      return 'Document';
+    }
+    function downloadFile(index) {
+      const file = studentFiles[index];
+      if (file.blob) {
+        const url = URL.createObjectURL(file.blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          a.remove();
+        }, 1000);
+        showNotification(`Downloading ${file.name}...`, 'info');
+      } else {
+        showNotification(`No file data for ${file.name}`, 'error');
+      }
+    }
+    function viewFile(index) {
+      const file = studentFiles[index];
+      showPopupView(file);
+    }
+    function editFile(index) {
+      const file = studentFiles[index];
+      const newName = prompt('Enter new filename:', file.name);
+      if (newName && newName !== file.name) {
+        studentFiles[index].name = newName;
+        renderFiles();
+        showNotification(`File renamed to ${newName}`, 'success');
+      }
+    }
+    function deleteFile(index) {
+      const file = studentFiles[index];
+      if (confirm(`Are you sure you want to delete ${file.name}?`)) {
+        usedSpace -= file.size;
+        studentFiles.splice(index, 1);
+        updateStorageDisplay();
+        renderFiles();
+        showNotification(`${file.name} deleted successfully`, 'success');
+      }
+    }
+    function showPopupView(file) {
+      const popup = document.getElementById('filePopupView');
+      const content = document.getElementById('popupContent');
+      content.innerHTML = `
+        <div class="popup-title">${getFileIcon(file.type)} ${file.name}</div>
+        <div class="popup-meta">
+          <strong>Type:</strong> ${getFileTypeName(file.type)}<br>
+          <strong>Size:</strong> ${formatFileSize(file.size)}<br>
+          <strong>Category:</strong> ${file.fileType}<br>
+          <strong>Uploaded:</strong> ${new Date(file.uploadDate).toLocaleDateString()}
+        </div>
+        <div class="popup-doc-content" id="popupDocContent"></div>
+        <button class="popup-exit-btn" onclick="closePopupView()">Exit View</button>
+      `;
+      const docContent = document.getElementById('popupDocContent');
+      if (file.blob && file.type === "application/pdf") {
+        const url = URL.createObjectURL(file.blob);
+        docContent.innerHTML = `<iframe src="${url}" class="popup-doc-iframe"></iframe>`;
+      } else if (file.blob && file.type.startsWith("image/")) {
+        const url = URL.createObjectURL(file.blob);
+        docContent.innerHTML = `<img src="${url}" style="max-width:100%;max-height:400px;border-radius:8px;" />`;
+      } else {
+        docContent.innerHTML = '<em>No preview available.</em>';
+      }
+      popup.style.display = 'flex';
+      popup.classList.add('active');
+    }
+    function closePopupView() {
+      const popup = document.getElementById('filePopupView');
+      popup.classList.remove('active');
+      popup.style.display = 'none';
+      document.getElementById('popupDocContent').innerHTML = '';
+    }
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : type === 'warning' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
+      notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#28a745' : type === 'info' ? '#17a2b8' : type === 'error' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#6c757d'};
+        color: ${type === 'warning' ? '#2c3e50' : 'white'};
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1001;
+        font-weight: 600;
+        max-width: 350px;
+        animation: slideUp 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      `;
+      if (!document.querySelector('#notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+          @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 4000);
+    }
+    function switchModule(module) {
+      document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+      const targetBtn = module === 'student' ?
+        document.querySelector('.toggle-btn:not(.guild-btn):not(.admin-btn)') :
+        module === 'guild' ?
+        document.querySelector('.toggle-btn.guild-btn') :
+        document.querySelector('.toggle-btn.admin-btn');
+      if (targetBtn) targetBtn.classList.add('active');
+      document.querySelectorAll('.module-container').forEach(container => container.classList.remove('active'));
+      document.getElementById(`${module}-module`).classList.add('active');
+      showNotification(`Switched to ${targetBtn.textContent}`, "info");
+    }
+    // Admin DB module functions
+    function manageDocuments() {
+      showNotification("Manage Documents: Opens document management interface.", "info");
+    }
+    function exportData() {
+      showNotification("Export Data: Starts backup and export process.", "success");
+    }
+    function securityPanel() {
+      showNotification("Security Panel: Opens security settings and permissions.", "info");
+    }
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closePopupView();
+    });
+  </script>
+<script src="script.js"></script>
+</body>
+</html>

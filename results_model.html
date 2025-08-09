@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Results - Spring 2024 Current Semester</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f9f9f9; }
+        .container { background: #fff; padding: 20px 30px; border-radius: 6px; box-shadow: 0 2px 8px #ddd; max-width: 1200px; margin: auto;}
+        h1, h2 { color: #2a4b7c; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #e5eaf2; }
+        .status { font-weight: bold; }
+        .message { color: #2e7d32; font-style: italic; margin-top: 10px; }
+        .courtesy { color: #d32f2f; font-style: italic; }
+        .probation { color: #c0680b; }
+        .vicechancellor { color: #1976d2; }
+        .progress { color: #388e3c; }
+        .grade-bar { height: 20px; background: linear-gradient(90deg, #1976d2 0%, #388e3c 100%); border-radius: 4px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spring 2024 - Current Semester Results</h1>
+        <div id="studentInfo"></div>
+        <div id="resultsTables"></div>
+        <div id="performance"></div>
+        <h2>Grade Distribution Analysis</h2>
+        <div id="gradeDistribution"></div>
+    </div>
+
+    <script>
+    // Sample Data Model
+    const student = {
+        name: "John Doe",
+        registrationNumber: "2024REG001",
+        studentNumber: "STU10001",
+        semesters: [
+            {
+                label: "Year 1 Semester 1",
+                courses: [
+                    { code: "MTH101", name: "Calculus I", cu: 3, cw1: 15, cw2: 20, mark: 65 },
+                    { code: "PHY101", name: "Physics I", cu: 3, cw1: 12, cw2: 18, mark: 55 }
+                ],
+                GP: 3.2,
+                CGP: null
+            },
+            {
+                label: "Year 1 Semester 2",
+                courses: [
+                    { code: "MTH102", name: "Calculus II", cu: 3, cw1: 14, cw2: null, mark: null },
+                    { code: "PHY102", name: "Physics II", cu: 3, cw1: 15, cw2: 20, mark: 60 }
+                ],
+                GP: 2.8,
+                CGP: 3.0
+            },
+            {
+                label: "Year 2 Semester 2",
+                courses: [
+                    { code: "CSC201", name: "Programming II", cu: 3, cw1: 18, cw2: 20, mark: 70 }
+                ],
+                GP: 3.7,
+                CGP: 3.2
+            },
+            {
+                label: "Year 3 Semester 1",
+                courses: [
+                    { code: "CSC301", name: "Algorithms", cu: 3, cw1: 18, cw2: 20, mark: 40 }
+                ],
+                GP: 2.1,
+                CGP: null
+            },
+            {
+                label: "Year 3 Semester 2",
+                courses: [
+                    { code: "CSC302", name: "Machine Learning", cu: 3, cw1: 14, cw2: 16, mark: null }
+                ],
+                GP: null,
+                CGPA: 2.9
+            }
+        ]
+    };
+
+    // Grade Distribution Example
+    const gradeDistribution = {
+        "A": 2,
+        "B": 3,
+        "C": 1,
+        "D": 1,
+        "F": 2
+    };
+
+    // Performance Analysis Logic
+    function getPerformanceStatus(semesters) {
+        let allMarks = [];
+        let failed = false;
+        let veryLow = false;
+        let outstanding = false;
+
+        semesters.forEach(s => {
+            s.courses.forEach(c => {
+                if (c.mark !== null) {
+                    allMarks.push(c.mark);
+                    if (c.mark < 50) failed = true;
+                    if (c.mark < 40) veryLow = true;
+                    if (c.mark >= 70) outstanding = true;
+                } else {
+                    failed = true; // treat null as failed
+                }
+            });
+        });
+
+        if (outstanding && !failed) {
+            return { status: "Vice Chancellor", class: "vicechancellor", msg: "Outstanding performance! You qualify for Vice Chancellor's recognition." };
+        } else if (!failed) {
+            return { status: "Normal Progress", class: "progress", msg: "Congratulations! You have passed all papers." };
+        } else if (veryLow) {
+            return { status: "Courtesy", class: "courtesy", msg: "Your performance is below expectations. Keep trying and seek help if needed." };
+        } else {
+            return { status: "Probation", class: "probation", msg: "You have failed one or more papers. Please consult your advisor." };
+        }
+    }
+
+    // Render Student Info
+    function renderStudentInfo(student) {
+        return `
+        <h2>Student Details</h2>
+        <table>
+            <tr><th>Student Name</th><td>${student.name}</td></tr>
+            <tr><th>Registration Number</th><td>${student.registrationNumber}</td></tr>
+            <tr><th>Student Number</th><td>${student.studentNumber}</td></tr>
+        </table>`;
+    }
+
+    // Render Results Tables
+    function renderResultsTables(student) {
+        let html = '';
+        for (let i = 0; i < student.semesters.length; i += 2) {
+            html += `<table>
+                <tr>
+                    <th colspan="6">${student.semesters[i].label}</th>
+                    <th colspan="6">${student.semesters[i+1] ? student.semesters[i+1].label : ''}</th>
+                </tr>
+                <tr>
+                    <th>Code</th><th>Course Name</th><th>CU</th><th>CW1</th><th>CW2</th><th>Mark %100</th>
+                    <th>Code</th><th>Course Name</th><th>CU</th><th>CW1</th><th>CW2</th><th>Mark %100</th>
+                </tr>`;
+            let maxRows = Math.max(
+                student.semesters[i].courses.length,
+                student.semesters[i+1] ? student.semesters[i+1].courses.length : 0
+            );
+            for (let row = 0; row < maxRows; row++) {
+                let s1c = student.semesters[i].courses[row] || {};
+                let s2c = student.semesters[i+1] ? student.semesters[i+1].courses[row] || {} : {};
+                html += `<tr>
+                    <td>${s1c.code || ""}</td>
+                    <td>${s1c.name || ""}</td>
+                    <td>${s1c.cu || ""}</td>
+                    <td>${s1c.cw1 !== undefined && s1c.cw1 !== null ? s1c.cw1 : ""}</td>
+                    <td>${s1c.cw2 !== undefined && s1c.cw2 !== null ? s1c.cw2 : ""}</td>
+                    <td>${s1c.mark !== undefined && s1c.mark !== null ? s1c.mark : ""}</td>
+                    <td>${s2c.code || ""}</td>
+                    <td>${s2c.name || ""}</td>
+                    <td>${s2c.cu || ""}</td>
+                    <td>${s2c.cw1 !== undefined && s2c.cw1 !== null ? s2c.cw1 : ""}</td>
+                    <td>${s2c.cw2 !== undefined && s2c.cw2 !== null ? s2c.cw2 : ""}</td>
+                    <td>${s2c.mark !== undefined && s2c.mark !== null ? s2c.mark : ""}</td>
+                </tr>`;
+            }
+            html += `<tr>
+                <td colspan="6">GP: ${student.semesters[i].GP !== null ? student.semesters[i].GP : ""}</td>
+                <td colspan="6">CGP: ${student.semesters[i+1] && student.semesters[i+1].CGP !== null ? student.semesters[i+1].CGP : ""}</td>
+            </tr>`;
+            html += `</table>`;
+        }
+        // Final CGPA row if present
+        let lastSem = student.semesters[student.semesters.length-1];
+        if (lastSem.CGPA) {
+            html += `<table><tr><td colspan="12">CGPA: ${lastSem.CGPA}</td></tr></table>`;
+        }
+        return html;
+    }
+
+    // Render Grade Distribution
+    function renderGradeDistribution(dist) {
+        let total = Object.values(dist).reduce((a,b)=>a+b,0);
+        let max = Math.max(...Object.values(dist));
+        let html = '<table><tr><th>Grade</th><th>Count</th><th>Distribution</th></tr>';
+        for (let grade in dist) {
+            let percent = ((dist[grade]/total)*100).toFixed(1);
+            let barWidth = (dist[grade]/max)*200;
+            html += `<tr>
+                <td>${grade}</td>
+                <td>${dist[grade]}</td>
+                <td>
+                    <div class="grade-bar" style="width:${barWidth}px"></div>
+                    ${percent}%
+                </td>
+            </tr>`;
+        }
+        html += '</table>';
+        return html;
+    }
+
+    // Render Performance Analysis
+    function renderPerformance(student) {
+        let perf = getPerformanceStatus(student.semesters);
+        return `<div class="status ${perf.class}">Status: ${perf.status}</div>
+                <div class="message ${perf.class}">${perf.msg}</div>`;
+    }
+
+    // Admin Publish Logic (simulated)
+    function publishResults() {
+        // In real app, trigger saving to results.html, etc.
+        alert("Results have been published to results.html for Spring 2025 - Current Semester!");
+    }
+
+    // Initial Render
+    document.getElementById('studentInfo').innerHTML = renderStudentInfo(student);
+    document.getElementById('resultsTables').innerHTML = renderResultsTables(student);
+    document.getElementById('performance').innerHTML = renderPerformance(student);
+    document.getElementById('gradeDistribution').innerHTML = renderGradeDistribution(gradeDistribution);
+
+    // Admin button (only for admin, shown here for demo)
+    if (true) { // replace with admin check
+        let publishBtn = document.createElement('button');
+        publishBtn.innerText = "Publish Results to Spring 2025";
+        publishBtn.onclick = publishResults;
+        document.querySelector(".container").appendChild(publishBtn);
+    }
+    </script>
+<script src="script.js"></script>
+</body>
+</html>

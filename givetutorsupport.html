@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Whiteboard with Role and OCR - Enhanced UI</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f7fc; margin:0; }
+    .main-layout { display: flex; }
+    .dashboard {
+      width: 320px; min-width: 260px; background: #fff;
+      border-right: 2px solid #eee; padding: 1.3em 1em 1em 1em;
+      box-shadow: 2px 0 10px #0001; height: 100vh; overflow-y: auto;
+    }
+    .whiteboard-area { flex: 1; padding: 2em; position: relative; }
+    h2 { margin-bottom: 1em; }
+    .request-box, .role-box, .calc-box, .geometry-set, .math-formula-set, .dbox {
+      border-radius: 32px;
+      box-shadow: 0 3px 14px #0002;
+      background: #fff;
+      margin-bottom: 1.1em;
+      padding: 1em 1.3em;
+    }
+    .request-box { border-left: 6px solid #ffc107; background: #fffbe9; }
+    .request-title { font-weight: bold; color: #ff9800; margin-bottom: 0.5em; }
+    .request-list { margin: 0.5em 0 0 1em; }
+    .role-box {
+      color: #007bff; background: #e6f2ff; display: flex; align-items: center; gap: 1em;
+      font-size: 1.09em;
+    }
+    .role-box select { font-size: 1em; margin-left: .6em; border-radius: 14px; padding: 0.2em 0.7em; }
+    .controls-bar { display: flex; flex-direction: column; align-items: flex-start; gap: 0.7em; margin-bottom: 1em; width: 100%; }
+    .controls-row {
+      display: flex;
+      gap: 0.7em;
+      align-items: center;
+      margin-bottom: 0.3em;
+    }
+    .controls-bar .mode-btn,
+    .controls-bar .action-btn {
+      font-weight: 700;
+      border: none;
+      border-radius: 32px;
+      padding: 0.38em 1em;
+      cursor: pointer;
+      font-size: 0.92em;
+      outline: none;
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+      min-width: 70px;
+    }
+    .mode-btn.draw      { background: #007bff; color: #fff; }
+    .mode-btn.duster    { background: #dc3545; color: #fff; }
+    .mode-btn.smooth    { background: #17a2b8; color: #fff; }
+    .mode-btn.save      { background: #28a745; color: #fff; }
+    .mode-btn.move      { background: #ffc107; color: #222; }
+    .action-btn.clear   { background: #fd7e14; color: #fff; }
+    .action-btn.undo    { background: #6f42c1; color: #fff; }
+    .action-btn.download{ background: #343a40; color: #fff; }
+    .action-btn.move    { background: #ffc107; color: #222; }
+    .mode-btn.active-mode,
+    .action-btn.active-mode { box-shadow: 0 0 0 2px #ffc107; border: 2px solid #ffc107; }
+    .color-palette {
+      display: grid;
+      grid-template-columns: repeat(4, 28px);
+      grid-gap: 8px;
+      margin-left: 1em;
+      margin-right: 1em;
+    }
+    .color-swatch {
+      width: 28px; height: 28px; border-radius: 12px; border: 2px solid #bbb;
+      cursor: pointer; transition: border .1s;
+      margin-right: 0.2em; box-sizing: border-box;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .color-swatch.selected { border: 3px solid #007bff; }
+    .pen-size-box { margin-left: 1em; }
+    @media (max-width:700px) {
+      .controls-row { flex-wrap: wrap; }
+      .controls-bar { font-size: 0.9em; }
+      .color-palette { grid-template-columns: repeat(2, 28px); }
+    }
+    .canvas-wrap { background: #fff; border-radius: 24px; box-shadow: 0 3px 14px #0002; padding: 1em; margin-bottom: 2em; overflow: auto; border: 2px solid #bbb; max-width: 100vw; max-height: 80vh; position: relative; }
+    .ocr-char { position: absolute; background: #fff; color: #222; font-size: 2em; font-family: JetBrains Mono, Consolas, monospace; pointer-events: none;}
+    #saveMsg { margin-left:2em;color:green;}
+    .geometry-tools { display: flex; gap: 10px; flex-wrap: wrap; }
+    .geometry-tool-btn { background: #17a2b8; color: #fff; border: none; border-radius: 16px; font-weight: 600; padding: 0.35em 1em; cursor: pointer; margin-bottom: 0.3em; font-size: 0.98em;}
+    .geometry-tool-btn.selected { background: #ffc107; color: #222; }
+    .math-formula-list span { margin-bottom: .2em; display:block; border-radius: 10px; box-shadow: 0 2px 8px #0001; }
+    .calc-inp, .calc-btn { border-radius: 14px; }
+    .mapping-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  background: #17a2b8;
+  color: #fff;
+  font-size: 1rem;           /* Reduced from 1.2rem */
+  font-weight: 600;
+  border-radius: 8px;        /* Reduced from 16px */
+  padding: 0.6em 1.2em;      /* Reduced from 1.2em 2em */
+  box-shadow: 0 2px 8px rgba(23,162,184,0.15);
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+  margin: 0.3em auto;        /* Reduced margin */
+  max-width: 220px;          /* Reduced width */
+}
+
+.mapping-btn:hover {
+  background: #138496;
+  box-shadow: 0 6px 18px rgba(23,162,184,0.25);
+  transform: translateY(-2px) scale(1.03);
+  color: #fffde7;
+}
+
+.mapping-btn .btn-icon {
+  font-size: 1.2em;          /* Reduced from 1.5em */
+  display: flex;
+  align-items: center;
+}
+  </style>
+</head>
+<body>
+<div class="main-layout">
+  <aside class="dashboard">
+    <div class="request-box">
+      <div class="request-title">Special Requests</div>
+      <ul class="request-list">
+        <li>Role: Only presenter/cohost can draw</li>
+        <li>Writing enabled for white coverage (no color bleed, clean white background)</li>
+        <li>Precise character recognition for neatness</li>
+      </ul>
+    </div>
+    <div class="role-box">
+      <label>
+        <select id="roleSel">
+          <option value="presenter">Presenter</option>
+          <option value="cohost">Cohost</option>
+          <option value="viewer">Viewer</option>
+        </select>
+      </label>
+      <span style="font-size:0.92em; color:#444;">Role: Only presenter/cohost can draw</span>
+    </div>
+    <div class="calc-box">
+      <div class="calc-title">Calculator</div>
+      <input type="text" id="calcInput" class="calc-inp" placeholder="e.g. 22*5+7" />
+      <button class="calc-btn" onclick="calculate()">=</button>
+      <div class="calc-result" id="calcResult"></div>
+    </div>
+    <div class="geometry-set">
+      <div class="geometry-title">Geometry Set</div>
+      <div class="geometry-tools" id="geometryTools">
+        <button class="geometry-tool-btn" data-tool="freehand">Freehand</button>
+        <button class="geometry-tool-btn" data-tool="line">Line</button>
+        <button class="geometry-tool-btn" data-tool="rectangle">Rectangle</button>
+        <button class="geometry-tool-btn" data-tool="circle">Circle</button>
+        <button class="geometry-tool-btn" data-tool="protractor">Protractor</button>
+        <button class="geometry-tool-btn" data-tool="ruler">Ruler</button>
+      </div>
+      <div style="font-size:0.93em; color:#888;">Tip: Select a tool, then draw on the board.</div>
+    </div>
+    <div class="math-formula-set">
+      <div class="math-formula-title">Math Formulas (drag to board)</div>
+      <div class="math-formula-list">
+        <span class="math-formula" draggable="true" data-formula="a² + b² = c²">a² + b² = c²</span>
+        <span class="math-formula" draggable="true" data-formula="x = [-b ± √(b²-4ac)]/(2a)">x = [-b ± √(b²-4ac)]/(2a)</span>
+        <span class="math-formula" draggable="true" data-formula="Area Circle: πr²">Area Circle: πr²</span>
+        <span class="math-formula" draggable="true" data-formula="Volume Sphere: (4/3)πr³">Volume Sphere: (4/3)πr³</span>
+        <span class="math-formula" draggable="true" data-formula="Slope: m = (y₂-y₁)/(x₂-x₁)">Slope: m = (y₂-y₁)/(x₂-x₁)</span>
+        <span class="math-formula" draggable="true" data-formula="Derivative: d/dx[f(x)]">Derivative: d/dx[f(x)]</span>
+        <span class="math-formula" draggable="true" data-formula="Integral: ∫f(x)dx">Integral: ∫f(x)dx</span>
+      </div>
+    </div>
+    <div class="dbox"><h3>Statistical Symbols</h3><ul>
+      <li>μ – Population Mean</li><li>σ – Population Std. Dev.</li><li>x̄ – Sample Mean</li><li>Σ – Summation</li><li>P(A) – Probability of A</li>
+    </ul></div>
+    <div class="dbox"><h3>Financial Management</h3><ul>
+      <li>NPV = Σ (Ct / (1+r)t)</li><li>IRR</li><li>ROI = (Gain - Cost) / Cost</li>
+    </ul></div>
+    <div class="dbox"><h3>Accounting Principles</h3><ul>
+      <li>Assets = Liabilities + Equity</li><li>Net Income = Revenue - Expenses</li>
+    </ul></div>
+    <div class="dbox"><h3>Computing & Math</h3><ul>
+      <li>Binary Search – O(log n)</li><li>Quick Sort – O(n log n)</li><li>Fibonacci: Fₙ = Fₙ₋₁ + Fₙ₋₂</li>
+    </ul></div>
+    <div class="dbox"><h3>Tourism Rules</h3><ul>
+      <li>No Overbooking</li><li>Cancellation Policy</li><li>Safety Regulation</li>
+    </ul></div>
+    <div class="dbox"><h3>Business Laws & Cases</h3><ul>
+      <li>Carlill v Carbolic Smoke Ball Co (1893)<br><span style="color:#444;">Contract offer & acceptance.</span></li>
+      <li>Salomon v Salomon (1897)<br><span style="color:#444;">Legal entity of company.</span></li>
+    </ul></div>
+  </aside>
+  <section class="whiteboard-area">
+    <h2>Admin Advanced Whiteboard</h2>
+    <div class="controls-bar">
+      <div class="controls-row">
+        <button id="drawModeBtn"    class="mode-btn draw active-mode" onclick="setMode('draw')">Draw</button>
+        <button id="dusterModeBtn"  class="mode-btn duster" onclick="setMode('duster')">Duster</button>
+        <button id="smoothBtn"      class="mode-btn smooth" onclick="toggleSmooth()">Smooth</button>
+        <button id="saveBtn"        class="mode-btn save" onclick="saveBoard()">Save</button>
+        <button id="moveModeBtn"    class="mode-btn move" onclick="toggleMoveMode()">Move</button>
+        <span>Pen Color:</span>
+        <div class="color-palette" id="colorPalette"></div>
+        <span class="pen-size-box">
+          <label>Pen Size:
+            <input type="range" id="penSize" min="2" max="16" value="4" /> <span id="penSizeVal">4</span>
+          </label>
+        </span>
+      </div>
+      <div class="controls-row">
+        <button id="clearBtn"      class="action-btn clear" onclick="clearCanvas()">Clear</button>
+        <button id="undoBtn"       class="action-btn undo" onclick="undoCanvas()">Undo</button>
+        <button id="downloadBtn"   class="action-btn download" onclick="saveImage()">Download</button>
+      <div class="stats-grid">
+  <div class="stat-card mapping-btn" onclick="window.location.href='student-affairs.html'">
+    <span class="btn-icon"><i class="fas fa-map-marker-alt"></i></span>
+    Back to Dashboard
+  </div>
+</div>
+      </div>
+    </div>
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="whiteboard" width="1000" height="1500" style="background: #fff; border: 1px solid #bbb; display: block;"></canvas>
+    </div>
+    <span id="saveMsg"></span>
+  </section>
+</div>
+<script>
+const colors = ["#007bff","#dc3545","#28a745","#ffc107","#17a2b8","#6f42c1","#fd7e14","#343a40","#222","#fff","#000"];
+window.penColor = colors[0];
+function renderPalette() {
+  let palette = document.getElementById("colorPalette");
+  if (!palette) return;
+  palette.innerHTML = "";
+  colors.forEach(c => {
+    let swatch = document.createElement("div");
+    swatch.className = "color-swatch" + (window.penColor===c ? " selected" : "");
+    swatch.style.background = c;
+    swatch.onclick = () => { window.penColor = c; renderPalette(); };
+    palette.appendChild(swatch);
+  });
+}
+renderPalette();
+document.getElementById('penSize').oninput = function() {
+  document.getElementById('penSizeVal').textContent = this.value;
+  window.penSize = Number(this.value);
+};
+
+// Role management
+let role = localStorage.getItem("adminRole") || "viewer";
+document.getElementById("roleSel").value = role;
+document.getElementById("roleSel").onchange = function() {
+  role = this.value;
+  localStorage.setItem("adminRole", role);
+  updateRoleUI();
+};
+function updateRoleUI() {
+  let canWrite = (role === "presenter" || role === "cohost");
+  document.getElementById('canvasWrap').style.opacity = canWrite ? "1" : "0.5";
+  document.getElementById("drawModeBtn").disabled = !canWrite;
+  document.getElementById("dusterModeBtn").disabled = !canWrite;
+  document.getElementById("smoothBtn").disabled = !canWrite;
+  document.getElementById("saveBtn").disabled = !canWrite;
+  document.getElementById("moveModeBtn").disabled = !canWrite;
+  document.getElementById("clearBtn").disabled = !canWrite;
+  document.getElementById("undoBtn").disabled = !canWrite;
+  document.getElementById("downloadBtn").disabled = !canWrite;
+  document.getElementById("penSize").disabled = !canWrite;
+  document.getElementById("colorPalette").style.pointerEvents = canWrite ? "auto" : "none";
+}
+updateRoleUI();
+
+// Calculator
+function calculate() {
+  let input = document.getElementById('calcInput').value;
+  let resultBox = document.getElementById('calcResult');
+  try {
+    if (!/^[0-9+\-*/().\s]+$/.test(input)) throw new Error("Invalid expression");
+    let val = Function('"use strict";return (' + input + ")")();
+    if (typeof val === "number" && isFinite(val)) resultBox.textContent = val;
+    else throw new Error("Invalid result");
+  } catch(e) {
+    resultBox.textContent = "Error";
+  }
+}
+
+// Geometry tools
+let geometryMode = "freehand";
+document.querySelectorAll(".geometry-tool-btn").forEach(btn => {
+  btn.onclick = () => {
+    geometryMode = btn.getAttribute("data-tool");
+    document.querySelectorAll(".geometry-tool-btn").forEach(b=>b.classList.remove("selected"));
+    btn.classList.add("selected");
+  }
+});
+
+// Drawing logic with character recognition and move/duster
+const canvas = document.getElementById('whiteboard');
+const ctx = canvas.getContext('2d');
+let drawing = false, mode = 'draw', dusterDragging = false, dusterPos = {x:0, y:0};
+let strokes = [], currentStroke = [], lastX=0, lastY=0;
+let penSize = 4;
+let smooth = true;
+let shapeStart = null;
+let moveMode = false, movingStroke = null, moveOffset = {x:0, y:0};
+let ocrChars = [];
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('drawModeBtn').classList.toggle('active-mode', m === 'draw');
+  document.getElementById('dusterModeBtn').classList.toggle('active-mode', m === 'duster');
+  document.getElementById('moveModeBtn').classList.toggle('active-mode', moveMode && m === 'draw');
+  renderDuster();
+}
+function toggleSmooth() {
+  smooth = !smooth;
+  alert("Smoothing is now " + (smooth ? "ON (lines will be interpolated)" : "OFF (raw points)"));
+}
+function toggleMoveMode() {
+  moveMode = !moveMode;
+  document.getElementById('moveModeBtn').classList.toggle('active-mode', moveMode);
+}
+
+function getXY(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scrollLeft = canvasWrap.scrollLeft;
+  const scrollTop = canvasWrap.scrollTop;
+  let x, y;
+  if (e.touches) {
+    x = e.touches[0].clientX - rect.left + scrollLeft;
+    y = e.touches[0].clientY - rect.top + scrollTop;
+  } else {
+    x = e.clientX - rect.left + scrollLeft;
+    y = e.clientY - rect.top + scrollTop;
+  }
+  return { x, y };
+}
+
+function startDraw(e) {
+  if (!(role === "presenter" || role === "cohost")) return;
+  e.preventDefault();
+  const {x, y} = getXY(e);
+  if (moveMode && mode === "draw") {
+    let idx = findStrokeAt(x, y);
+    if (idx >= 0) {
+      movingStroke = idx;
+      moveOffset.x = x;
+      moveOffset.y = y;
+      return;
+    }
+  }
+  if (mode === 'draw') {
+    if (geometryMode === "freehand") {
+      drawing = true;
+      lastX = x; lastY = y;
+      currentStroke = [{x, y}];
+    } else {
+      shapeStart = {x, y};
+      drawing = true;
+    }
+  } else if (mode === 'duster') {
+    dusterDragging = true;
+    dusterPos = {x, y};
+    eraseAt(x, y);
+    renderDuster(x, y);
+  }
+}
+
+function draw(e) {
+  if (!(role === "presenter" || role === "cohost")) return;
+  const {x, y} = getXY(e);
+  if (moveMode && mode === "draw" && movingStroke != null) {
+    let dx = x - moveOffset.x, dy = y - moveOffset.y;
+    let s = strokes[movingStroke];
+    if (s.type === "freehand") {
+      s.points.forEach(pt=>{pt.x+=dx;pt.y+=dy;});
+    } else {
+      s.start.x += dx; s.start.y += dy; s.end.x += dx; s.end.y += dy;
+    }
+    moveOffset.x = x; moveOffset.y = y;
+    redraw();
+    return;
+  }
+  if (mode === 'draw') {
+    if (geometryMode === "freehand") {
+      if (drawing && (currentStroke.length === 0 || Math.abs(x-lastX) > 0.5 || Math.abs(y-lastY) > 0.5)) {
+        currentStroke.push({x, y});
+        lastX = x; lastY = y;
+        redraw();
+      }
+    } else if (drawing) {
+      redraw();
+      drawShapePreview(shapeStart.x, shapeStart.y, x, y, geometryMode, penSize, penColor);
+    }
+  } else if (mode === 'duster') {
+    if (dusterDragging) {
+      dusterPos = {x, y};
+      eraseAt(x, y);
+      renderDuster(x, y);
+    }
+  }
+}
+
+function endDraw(e) {
+  if (!(role === "presenter" || role === "cohost")) return;
+  if (moveMode && mode === "draw" && movingStroke != null) {
+    movingStroke = null;
+    saveBoard();
+    return;
+  }
+  if (mode === 'draw' && drawing) {
+    if (geometryMode === "freehand" && currentStroke.length > 1) {
+      // Character recognition demo: If closed, try to recognize as a character
+      if (isClosed(currentStroke)) {
+        let guess = simpleCharRecognition(currentStroke);
+        if (guess) addOCRChar(guess, currentStroke[0].x, currentStroke[0].y);
+      }
+      strokes.push({type:"freehand", points: currentStroke.slice(), size: penSize, smooth, color: penColor});
+    } else if (geometryMode !== "freehand" && shapeStart) {
+      const {x, y} = getXY(e);
+      strokes.push({type: geometryMode, start: shapeStart, end: {x, y}, size: penSize, color: penColor});
+      redraw();
+    }
+  }
+  drawing = false;
+  dusterDragging = false;
+  currentStroke = [];
+  shapeStart = null;
+  renderDuster();
+  redraw();
+  saveBoard();
+}
+
+function redraw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  for (const stroke of strokes) {
+    if (stroke.type === "freehand") {
+      drawStroke(stroke.points, stroke.size, stroke.smooth, stroke.color || "#007bff");
+    } else {
+      drawShape(stroke.start.x, stroke.start.y, stroke.end.x, stroke.end.y, stroke.type, stroke.size, stroke.color || "#007bff");
+    }
+  }
+  if (drawing && mode === 'draw' && geometryMode === "freehand" && currentStroke.length > 1) {
+    drawStroke(currentStroke, penSize, smooth, penColor);
+  }
+  renderOCRChars();
+}
+
+function drawStroke(points, size, smoothStroke, color="#222") {
+  ctx.save();
+  ctx.lineJoin = "round"; ctx.lineCap = "round";
+  ctx.lineWidth = size; ctx.strokeStyle = color;
+  ctx.beginPath();
+  if (smoothStroke && points.length > 2) {
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length-2; i++) {
+      let xc = (points[i].x + points[i + 1].x) / 2;
+      let yc = (points[i].y + points[i + 1].y) / 2;
+      ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+    }
+    ctx.quadraticCurveTo(points[points.length-2].x, points[points.length-2].y, points[points.length-1].x, points[points.length-1].y);
+  } else {
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i=1;i<points.length;i++) ctx.lineTo(points[i].x, points[i].y);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+function drawShape(x1, y1, x2, y2, type, size, color) {
+  ctx.save();
+  ctx.lineWidth = size;
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+  if (type === "line" || type === "ruler") { ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); }
+  else if (type === "rectangle") { ctx.rect(x1, y1, x2 - x1, y2 - y1); }
+  else if (type === "circle") {
+    let r = Math.hypot(x2 - x1, y2 - y1); ctx.arc(x1, y1, r, 0, Math.PI * 2);
+  }
+  else if (type === "protractor") {
+    let r = Math.hypot(x2-x1, y2-y1);
+    ctx.arc(x1, y1, r, 0, Math.PI, false);
+    for (let a=0; a<=180; a+=10) {
+      let rad = a * Math.PI / 180;
+      let tx = x1 + Math.cos(rad) * r;
+      let ty = y1 - Math.sin(rad) * r;
+      ctx.moveTo(x1, y1); ctx.lineTo(tx, ty);
+    }
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+function drawShapePreview(x1, y1, x2, y2, type, size, color) { drawShape(x1, y1, x2, y2, type, size, color); }
+function clearCanvas() {
+  strokes = [];
+  currentStroke = [];
+  ocrChars = [];
+  redraw();
+  saveBoard();
+}
+function undoCanvas() {
+  strokes.pop();
+  redraw();
+  saveBoard();
+}
+function saveImage() {
+  redraw();
+  const link = document.createElement('a');
+  link.download = 'whiteboard.png';
+  link.href = canvas.toDataURL();
+  link.click();
+}
+function saveBoard() {
+  localStorage.setItem("seamlessWhiteboard", JSON.stringify({strokes, ocrChars}));
+  document.getElementById('saveMsg').textContent = "Saved! Students can now view this board.";
+  setTimeout(()=>document.getElementById('saveMsg').textContent="",2000);
+}
+function eraseAt(x, y) {
+  for (let i = strokes.length - 1; i >= 0; i--) {
+    const stroke = strokes[i];
+    if (stroke.type === "freehand" && stroke.points.some(pt => Math.hypot(pt.x - x, pt.y - y) < 25)) {
+      strokes.splice(i,1); redraw(); saveBoard(); return;
+    } else if (stroke.type !== "freehand" && isShapeUnderPointer(stroke, x, y)) {
+      strokes.splice(i,1); redraw(); saveBoard(); return;
+    }
+  }
+  ocrChars = ocrChars.filter(f => Math.hypot(f.x-x, f.y-y) > 30);
+  renderOCRChars();
+  saveBoard();
+}
+function isShapeUnderPointer(stroke, x, y) {
+  if (stroke.type === "line" || stroke.type === "ruler") {
+    const dist = pointLineDist(x, y, stroke.start.x, stroke.start.y, stroke.end.x, stroke.end.y);
+    return dist < 25;
+  } else if (stroke.type === "rectangle") {
+    return x > Math.min(stroke.start.x, stroke.end.x) && x < Math.max(stroke.start.x, stroke.end.x)
+      && y > Math.min(stroke.start.y, stroke.end.y) && y < Math.max(stroke.start.y, stroke.end.y);
+  } else if (stroke.type === "circle" || stroke.type === "protractor") {
+    let r = Math.hypot(stroke.end.x - stroke.start.x, stroke.end.y - stroke.start.y);
+    let dist = Math.hypot(x - stroke.start.x, y - stroke.start.y);
+    if (stroke.type === "circle") return Math.abs(dist - r) < 25;
+    if (stroke.type === "protractor") {
+      let angle = Math.atan2(-(y - stroke.start.y), x - stroke.start.x);
+      return dist <= r+10 && angle >= 0 && angle <= Math.PI+0.1;
+    }
+  }
+  return false;
+}
+function pointLineDist(px, py, x1, y1, x2, y2) {
+  const A = px - x1, B = py - y1, C = x2 - x1, D = y2 - y1;
+  const dot = A * C + B * D, len_sq = C * C + D * D;
+  let param = len_sq !== 0 ? dot / len_sq : -1;
+  let xx, yy;
+  if (param < 0) { xx = x1; yy = y1; }
+  else if (param > 1) { xx = x2; yy = y2; }
+  else { xx = x1 + param * C; yy = y1 + param * D; }
+  return Math.sqrt((px - xx) ** 2 + (py - yy) ** 2);
+}
+function renderDuster(x, y) {
+  let dusterEl = document.getElementById("duster-circle");
+  if (mode === "duster" && dusterDragging) {
+    if (!dusterEl) {
+      dusterEl = document.createElement("div");
+      dusterEl.id = "duster-circle";
+      dusterEl.style.position = "absolute";
+      dusterEl.style.width = "50px";
+      dusterEl.style.height = "50px";
+      dusterEl.style.border = "3px dashed #dc3545";
+      dusterEl.style.borderRadius = "50%";
+      dusterEl.style.background = "rgba(255,200,200,0.2)";
+      dusterEl.style.zIndex = "100";
+      dusterEl.style.pointerEvents = "none";
+      document.getElementById('canvasWrap').appendChild(dusterEl);
+    }
+    dusterEl.style.left = ((x||dusterPos.x)-25) + "px";
+    dusterEl.style.top = ((y||dusterPos.y)-25) + "px";
+  } else if (dusterEl) {
+    dusterEl.remove();
+  }
+}
+
+// Character recognition
+function isClosed(stroke) {
+  if (stroke.length < 8) return false;
+  let first = stroke[0], last = stroke[stroke.length-1];
+  return Math.hypot(first.x-last.x, first.y-last.y)<28;
+}
+function simpleCharRecognition(stroke) {
+  let minX=99999,maxX=-99999,minY=99999,maxY=-99999;
+  stroke.forEach(pt=>{minX=Math.min(minX,pt.x);maxX=Math.max(maxX,pt.x);minY=Math.min(minY,pt.y);maxY=Math.max(maxY,pt.y)});
+  let w = maxX-minX, h = maxY-minY;
+  let aspect = w/h;
+  if (aspect>0.7 && aspect<1.3 && w>30 && h>30) return "O";
+  if (h>w*1.8 && w<35) return "I";
+  if (w>h*1.8 && h<35) return "—";
+  if (w>55 && h>55) return "X";
+  if (w>30 && h>30 && aspect>0.5 && aspect<2 && stroke.length>12) return "S";
+  if (aspect>1.6 && h>35 && stroke[0].y<stroke[stroke.length-1].y) return "L";
+  if (aspect>1.6 && h>35 && stroke[0].y>stroke[stroke.length-1].y) return "V";
+  if (aspect<0.6 && h>45 && stroke[0].x<stroke[stroke.length-1].x) return "C";
+  return null;
+}
+function addOCRChar(char, x, y) {
+  ocrChars.push({char, x, y});
+  renderOCRChars();
+  saveBoard();
+}
+function renderOCRChars() {
+  document.querySelectorAll('.ocr-char').forEach(el=>el.remove());
+  ocrChars.forEach(f => {
+    let el = document.createElement('div');
+    el.className = "ocr-char";
+    el.textContent = f.char;
+    el.style.left = f.x+"px";
+    el.style.top = f.y+"px";
+    el.setAttribute("data-id", f.char+"_"+f.x+"_"+f.y);
+    document.getElementById('canvasWrap').appendChild(el);
+  });
+}
+
+// Moving strokes
+function findStrokeAt(x, y) {
+  for (let i = strokes.length - 1; i >= 0; i--) {
+    const s = strokes[i];
+    if (s.type === "freehand" && s.points.some(pt => Math.hypot(pt.x-x, pt.y-y)<25)) return i;
+    if (s.type !== "freehand" && isShapeUnderPointer(s, x, y)) return i;
+  }
+  return -1;
+}
+
+// Mouse/touch events
+canvas.addEventListener("mousedown", startDraw);
+canvas.addEventListener("mousemove", draw);
+canvas.addEventListener("mouseup", endDraw);
+canvas.addEventListener("mouseleave", endDraw);
+canvas.addEventListener("touchstart", startDraw, {passive:false});
+canvas.addEventListener("touchmove", draw, {passive:false});
+canvas.addEventListener("touchend", endDraw, {passive:false});
+
+// Center canvas
+const canvasWrap = document.getElementById('canvasWrap');
+canvasWrap.scrollLeft = (canvas.width - canvasWrap.clientWidth)/2;
+canvasWrap.scrollTop = (canvas.height - canvasWrap.clientHeight)/2;
+redraw();
+</script>
+<script src="script.js"></script>
+</body>
+</html>

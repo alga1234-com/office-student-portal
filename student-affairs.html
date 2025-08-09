@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Affairs - Office Student Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+    }
+    /* Modern Navbar Styles as in profile.html */
+    .navbar { 
+      background: navy;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      padding: 1rem 2vw;
+    }
+    .navbar-logo { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      color: #fff; 
+      letter-spacing: 2px; 
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    .navbar-logo span {
+      font-size: 12px;
+      font-weight: 400;
+      color: #f5f5f5 !important; 
+      margin-left: 4px;
+    }
+    .navbar-menu { 
+      display: flex; 
+      gap: 2rem; 
+      align-items: center;
+    }
+    .navbar-menu a, .nav-link {
+      text-decoration: none; 
+      color: #e1e0da;
+      font-size: 1rem; 
+      font-weight: 500; 
+      transition: color 0.18s, background 0.18s;
+      border-radius: 4px;
+      padding: 0.3em 0.6em;
+      display: inline-block;
+    }
+    .navbar-menu a:hover,
+    .nav-link:hover {
+      background: #546f81;
+      color: #fff;
+    }
+    .navbar-actions { 
+      display: flex; 
+      gap: 0.7rem; 
+    }
+    .nav-orange { 
+      background: #f97316; 
+      color: #fff; 
+      border: none; 
+      border-radius: 999px; 
+      padding: 0.45em 1.2em; 
+      font-size: 1rem; 
+      font-weight: 600; 
+      cursor: pointer; 
+      margin-left: 0.2em; 
+      transition: background 0.18s; 
+      text-decoration: none; 
+      display: inline-block; 
+    }
+    .nav-orange:hover { background: #ea580c; }
+    .navbar-profile {
+      display: flex; align-items: center; margin-left: 1.2em;
+    }
+    .navbar-profile a {
+      padding: 0;
+      background: none;
+      border: none;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      block-size: 48px;
+    }
+    .navbar-profile .profile-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: #15803d;
+      font-weight: bold;
+    }
+    @media (max-width: 900px) {
+      .navbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0 1rem;
+      }
+      .navbar-logo {
+        justify-content: center;
+        padding: 0.2em 0;
+      }
+      .navbar-menu {
+        justify-content: center;
+        width: 100%;
+        margin: 0.3em 0;
+      }
+      .navbar-profile, .navbar-actions {
+        justify-content: center;
+        margin: 0.3em 0;
+      }
+    }
+    @media (max-width: 600px) { 
+      .navbar-menu { display: none; } 
+    }
+
+    /* All your previous Student Affairs CSS remains unchanged below */
+    main.student-affairs-main {
+      max-width: 1400px;
+      margin: 2rem auto 3rem;
+      padding: 1rem 2rem;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 15px;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .page-header p {
+      font-size: 1.2rem;
+      opacity: 0.95;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    .action-card {
+      background: linear-gradient(135deg, #ffffff, #f8f9ff);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .action-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      border-color: #16a085;
+    }
+    .action-card .icon {
+      font-size: 3rem;
+      color: #16a085;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .action-card h3 {
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      text-align: center;
+    }
+    .action-card p {
+      color: #6c757d;
+      text-align: center;
+      line-height: 1.6;
+    }
+    /* Notifications Panel (acts as popup/modal) */
+    .notifications-panel {
+      display: none; /* Hidden by default; shown on click */
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+    }
+    .notifications-content {
+      background: #fff;
+      border-radius: 10px;
+      padding: 2rem;
+      max-width: 700px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+      margin: auto;
+      position: relative;
+    }
+    .notifications-panel .close-notifications-btn {
+      position: absolute;
+      top: 1.2rem;
+      right: 2rem;
+      background: #dc3545;
+      border: none;
+      color: white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+    .notifications-panel .close-notifications-btn:hover {
+      background: #b71c1c;
+    }
+    .notification-block {
+      margin-bottom:2.5rem;
+      padding-bottom:1.5rem;
+      border-bottom:2px solid #eee;
+    }
+    .notification-block h4 {
+      color:#16a085;
+      margin-bottom:1rem;
+      font-size:1.05rem;
+    }
+    .notification-block-title {
+      font-weight:600;
+      font-size:1.05em;
+    }
+    .notification-block-meta {
+      font-size: 0.95em;
+      color: #888;
+      margin-left: 0.5em;
+    }
+    .action-btn.view-btn {
+      background: #16a085;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.4em 1em;
+      font-size: 0.9em;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: background 0.2s;
+    }
+    .action-btn.view-btn:hover {
+      background: #138d75;
+    }
+    .notification-item {
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 3px solid #16a085;
+    }
+    .notification-item.unread {
+      background: #e8f5e8;
+      border-left-color: #28a745;
+    }
+    .notification-item h4 {
+      margin: 0 0 0.5rem 0;
+      color: #2c3e50;
+      font-size: 1rem;
+    }
+    .notification-item p {
+      margin: 0;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+    .notification-time {
+      font-size: 0.8rem;
+      color: #adb5bd;
+      margin-top: 0.5rem;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #6c757d;
+    }
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    .empty-state h3 {
+      margin-bottom: 0.5rem;
+      color: #495057;
+    }
+    @media (max-width: 768px) {
+      .notifications-content {
+        max-width: 95vw;
+        padding: 1rem;
+      }
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <a href="/" class="navbar-logo">
+      OASIS <b><span>Student Portal</span></b>
+    </a>
+    <div class="navbar-menu">
+      <nav class="nav-horizontal">
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; gap: 1.2em;">
+          <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+          <li><a href="documents.html" class="nav-link">Documents</a></li>
+          <li><a href="medical.html" class="nav-link">Medical</a></li>
+          <li><a href="timetable.html" class="nav-link">Timetable</a></li>
+          <li><a href="adminTools.html" class="nav-link">Admin Tools</a></li>
+          <li><a href="help.html" class="nav-link">Help Desk</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="navbar-profile">
+      <a href="profile.html" title="My Profile">
+        <div class="profile-avatar" id="profileAvatarNavbar">A</div>
+      </a>
+    </div>
+    <div class="navbar-actions">
+      <a href="Login.html" class="nav-orange">Login</a>
+    </div>
+  </nav>
+
+  <main class="student-affairs-main">
+    <div class="page-header">
+      <h1>🎓 Student Affairs Portal</h1>
+      <p>Access your academic schedules, announcements, and student services</p>
+    </div>
+
+    <!-- Quick Actions Dashboard -->
+    <div class="quick-actions">
+      <div class="action-card" onclick="showTimetables()">
+        <div class="icon"><i class="fas fa-calendar-week"></i></div>
+        <h3>📅 Class Timetables</h3>
+        <p>View your published class schedules and academic timetables</p>
+      </div>
+      <div class="action-card" onclick="showAnnouncements()">
+        <div class="icon"><i class="fas fa-bullhorn"></i></div>
+        <h3>📢 Announcements</h3>
+        <p>Stay updated with the latest academic announcements and news</p>
+      </div>
+      <div class="action-card" onclick="showEvents()">
+        <div class="icon"><i class="fas fa-calendar-alt"></i></div>
+        <h3>🎉 Events</h3>
+        <p>Discover upcoming student events and activities</p>
+      </div>
+      <div class="action-card" onclick="window.location.href='.html'">
+        <div class="icon"><i class="fas fa-money-check-alt"></i></div>
+        <h3>🎓Scholorship News</h3>
+        <p>Information about scholarships, bursaries, and financial support</p>
+      </div>
+      <div class="action-card" onclick="window.location.href='.html'">
+        <div class="icon"><i class="fas fa-money-check-alt"></i></div>
+        <h3>💰 Financial Aid</h3>
+        <p>Information about scholarships, bursaries, and financial support</p>
+      </div>
+      <div class="action-card" onclick="window.location.href='studentboard.html'">
+        <div class="icon"><i class="fas fa-graduation-cap"></i></div>
+        <h3>📚 Academic Support</h3>
+        <p>Tutoring services, study groups, and academic resources</p>
+      </div>
+      <div class="action-card" onclick="showNotifications()">
+        <div class="icon"><i class="fas fa-bell"></i></div>
+        <h3>🔔 Notifications</h3>
+        <b><p>View timetables and other updates</p></b>
+      </div>
+    </div>
+
+    <!-- Notifications Panel (popup/modal, hidden by default) -->
+    <div class="notifications-panel" id="notificationsPanel">
+      <div class="notifications-content">
+        <button class="close-notifications-btn" onclick="closeNotifications()" title="Close">&times;</button>
+        <h3 style="margin-bottom:2rem;"><i class="fas fa-bell"></i> Recent Notifications</h3>
+        <div id="notificationsBlocks"></div>
+      </div>
+    </div>
+
+    <!-- Timetable Modal (for viewing individual timetables) -->
+    <div id="timetableModal" class="notifications-panel" style="display:none;">
+      <div class="notifications-content">
+        <button class="close-notifications-btn" onclick="closeTimetableModal()" title="Close">&times;</button>
+        <h3 id="modalTitle" style="margin-bottom:2rem;"><i class="fas fa-calendar-week"></i> Timetable Details</h3>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+    <!-- ...rest of your page as before... -->
+  </main>
+
+  <script>
+    // Navigation
+    function goToModule(moduleName) {
+      const moduleMap = {
+        'Dashboard': 'dashboard.html',
+        'Documents': 'documents.html',
+        'StudentAffairs': 'student-affairs.html',
+        'Results': 'results.html',
+        'Complaints': 'complaints.html',
+        'Medical': 'Medical.html',
+        'Timetables': 'Timetables.html',
+        'AdminTools': 'adminTools.html'
+      };
+      const page = moduleMap[moduleName];
+      if (page) window.location.href = page;
+    }
+
+    // Utility for formatting date
+    function formatDate(dateString) {
+      return new Date(dateString).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // Show notification blocks grouped by timetable, with View button
+    function loadNotificationBlocks() {
+      const notifications = JSON.parse(localStorage.getItem('studentAffairsNotifications')) || [];
+      const timetables = JSON.parse(localStorage.getItem('studentAffairsTimetables')) || [];
+      const blocksDiv = document.getElementById('notificationsBlocks');
+      if (!blocksDiv) return;
+
+      // Group notifications by timetable id
+      const grouped = {};
+      notifications.forEach(notif => {
+        if (!grouped[notif.timetableId]) grouped[notif.timetableId] = [];
+        grouped[notif.timetableId].push(notif);
+      });
+
+      // Prepare block HTML
+      let html = '';
+      Object.keys(grouped).forEach(timetableId => {
+        // Find matching timetable
+        const tt = timetables.find(t => t.id === timetableId);
+        if (!tt) return;
+
+        html += `<div class="notification-block">
+          <h4>
+            <span class="notification-block-title">${tt.title}</span>
+            <span class="notification-block-meta">(${tt.academicPeriod}, ${tt.timetableType})</span>
+            <button class="action-btn view-btn" style="float:right;margin-left:10px;" onclick="viewTimetableFromNotification('${tt.id}')">
+              <i class="fas fa-eye"></i> View Timetable
+            </button>
+          </h4>
+          ${grouped[timetableId].map(notif => `
+            <div class="notification-item ${notif.read ? '' : 'unread'}">
+              <h4>${notif.title}</h4>
+              <p>${notif.message}</p>
+              <div class="notification-time">${formatDate(notif.timestamp)}</div>
+            </div>
+          `).join('')}
+        </div>`;
+      });
+
+      // If no notifications, show empty state
+      if (!html) {
+        html = `<div class="empty-state">
+          <i class="fas fa-bell-slash"></i>
+          <h3>No Notifications</h3>
+          <p>There are no notifications for published timetables.</p>
+        </div>`;
+      }
+
+      blocksDiv.innerHTML = html;
+    }
+
+    // Notifications Card click handler
+    window.showNotifications = () => {
+      loadNotificationBlocks();
+      document.getElementById('notificationsPanel').style.display = 'flex';
+    };
+
+    // Close notifications popup
+    window.closeNotifications = () => {
+      document.getElementById('notificationsPanel').style.display = 'none';
+    };
+
+    // Close notifications popup on background click
+    document.getElementById('notificationsPanel').addEventListener('click', function(e) {
+      if (e.target === this) closeNotifications();
+    });
+
+    // View timetable from notification block
+    window.viewTimetableFromNotification = function(timetableId) {
+      document.getElementById('notificationsPanel').style.display = 'none';
+      showTimetableModal(timetableId);
+    };
+
+    // Show individual timetable modal
+    function showTimetableModal(timetableId) {
+      const timetables = JSON.parse(localStorage.getItem('studentAffairsTimetables')) || [];
+      const tt = timetables.find(t => t.id === timetableId);
+      const modal = document.getElementById('timetableModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalBody = document.getElementById('modalBody');
+      if (!tt) {
+        modalTitle.textContent = 'Timetable Not Found';
+        modalBody.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>Not Found</h3><p>This timetable could not be found.</p></div>';
+        modal.style.display = 'flex';
+        return;
+      }
+      modalTitle.textContent = `${tt.title}`;
+      let bodyHtml = `
+        <div style="background:#f8f9fa;padding:1rem;margin-bottom:1.5rem;border-radius:8px;">
+          <strong>Academic Period:</strong> ${tt.academicPeriod}<br>
+          <strong>Type:</strong> ${tt.timetableType}<br>
+          <strong>Audience:</strong> ${tt.targetAudience}<br>
+          <strong>Published:</strong> ${formatDate(tt.publishDate)}<br>
+        </div>
+        <div style="text-align:center;margin-bottom:1.5rem;">
+          <div style="font-weight:bold;">${tt.generalHeading}</div>
+        </div>
+      `;
+      tt.sections.forEach(section => {
+        bodyHtml += `<div style="margin-bottom:2rem;">
+          <h4 style="color:#16a085;">${section.name}</h4>
+          ${['weekly','common','elective'].map(type => {
+            if (section.shownTables[type] && section.courseData[type]) {
+              return `
+                <div style="margin-bottom:1rem;">
+                  <strong>${type.charAt(0).toUpperCase() + type.slice(1)}:</strong>
+                  <table style="width:100%;border-collapse:collapse;margin-top:0.5rem;background:white;">
+                    <thead>
+                      <tr>${section.tableHeaders[type].map(h => `<th style="padding:8px;background:#16a085;color:white;border:1px solid #dee2e6;">${h}</th>`).join('')}</tr>
+                    </thead>
+                    <tbody>
+                      ${section.courseData[type].map(row => `
+                        <tr>${section.tableHeaders[type].map((_,i) => `<td style="padding:8px;border:1px solid #dee2e6;">${row[i]||''}</td>`).join('')}</tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              `;
+            } else return '';
+          }).join('')}
+        </div>`;
+      });
+      modalBody.innerHTML = bodyHtml;
+      modal.style.display = 'flex';
+    }
+
+    // Close timetable modal
+    window.closeTimetableModal = () => {
+      document.getElementById('timetableModal').style.display = 'none';
+    };
+
+    // Close timetable modal on background click
+    document.getElementById('timetableModal').addEventListener('click', function(e) {
+      if (e.target === this) closeTimetableModal();
+    });
+
+    // Simple notification system (unchanged)
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      const iconMap = {
+        'success': 'check-circle',
+        'error': 'exclamation-triangle',
+        'warning': 'exclamation-circle',
+        'info': 'info-circle'
+      };
+      const colorMap = {
+        'success': '#28a745',
+        'error': '#dc3545',
+        'warning': '#ffc107',
+        'info': '#17a2b8'
+      };
+      notification.innerHTML = `<i class="fas fa-${iconMap[type]}"></i> ${message}`;
+      notification.style.cssText = `
+        position: fixed; bottom: 20px; right: 20px; background: ${colorMap[type]};
+        color: ${type === 'warning' ? '#2c3e50' : 'white'}; padding: 1rem 1.5rem;
+        border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1001;
+        font-weight: 600; max-width: 350px; display: flex; align-items: center; gap: 0.5rem;
+      `;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 4000);
+    }
+
+    // Dummy handlers for other cards
+    window.showTimetables = () => {
+      showNotification('Timetables feature coming soon!', 'info');
+    };
+    window.showAnnouncements = () => {
+      showNotification('Announcements feature coming soon!', 'info');
+    };
+    window.showEvents = () => {
+      showNotification('Events feature coming soon!', 'info');
+    };
+
+    // Initial setup: don't show notifications panel by default
+    document.addEventListener('DOMContentLoaded', function() {
+      // Notification panel only appears on card click
+      showNotification('Welcome to Student Affairs Portal! 🎓', 'success');
+    });
+  </script>
+<script src="script.js"></script>
+</body>
+</html>

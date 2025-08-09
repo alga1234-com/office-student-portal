@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Forgot Password</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f3f6fa; }
+    .container { max-width: 400px; margin: 40px auto; padding: 24px 32px; background: #fff; border-radius: 8px; box-shadow: 0 2px 16px #d6e0ee; }
+    h2 { color: #2859a7; text-align: center; }
+    label { display: block; margin-top: 18px; font-weight: bold; }
+    input[type="email"], input[type="text"], input[type="password"] {
+      width: 100%; padding: 8px; margin-top: 8px; box-sizing: border-box;
+      border: 1px solid #bcd0ed; border-radius: 4px;
+    }
+    button {
+      margin-top: 18px; width: 100%; padding: 10px;
+      background: #2859a7; color: #fff; border: none;
+      border-radius: 4px; cursor: pointer; font-weight: bold;
+    }
+    button:disabled { background: #a3b6d9; cursor: not-allowed; }
+    #forgot-msg { margin-top: 16px; color: #d32f2f; text-align: center; min-height: 24px; }
+    .section { margin-top: 24px; }
+    #codeSection, #pwSection { display: none; }
+    .success { color: #388e3c; }
+    .info { color: #2859a7; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Forgot Password</h2>
+    <form id="forgotForm" onsubmit="return false;">
+      <div class="section" id="emailSection">
+        <label for="reset-email">Enter your registered email:</label>
+        <input type="email" id="reset-email" autocomplete="email" required>
+        <button type="button" id="sendCodeBtn">Send Reset Code</button>
+      </div>
+
+      <div class="section" id="codeSection">
+        <label for="reset-code">Enter the code sent to your email:</label>
+        <input type="text" id="reset-code" autocomplete="one-time-code">
+        <button type="button" id="verifyCodeBtn">Verify Code</button>
+      </div>
+
+      <div class="section" id="pwSection">
+        <label for="new-password">Enter new password:</label>
+        <input type="password" id="new-password" autocomplete="new-password">
+        <button type="button" id="setPwBtn">Set New Password</button>
+      </div>
+      <div id="forgot-msg"></div>
+    </form>
+    <div style="text-align:center; margin-top:20px;">
+      <a href="login.html" class="info">Back to Login</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let resetEmail = '';
+      let verifiedCode = '';
+
+      const sendCodeBtn = document.getElementById('sendCodeBtn');
+      const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+      const setPwBtn = document.getElementById('setPwBtn');
+
+      sendCodeBtn.addEventListener('click', async () => {
+        resetEmail = document.getElementById('reset-email').value.trim();
+
+        if (!resetEmail) {
+          showMsg('Please enter your email.');
+          return;
+        }
+
+        showMsg('');
+        try {
+          const res = await fetch('/api/request-reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: resetEmail })
+          });
+
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+          const data = await res.json();
+
+          if (data.success || data.message === "Reset code sent via email") {
+            document.getElementById('codeSection').style.display = 'block';
+            showMsg('Reset code sent! (check your email)', 'success');
+          } else {
+            showMsg(data.message || "Failed to send reset code.");
+          }
+        } catch (err) {
+          console.error("Send reset code error:", err);
+          showMsg("Network error: could not request code.");
+        }
+      });
+
+      verifyCodeBtn.addEventListener('click', async () => {
+        const code = document.getElementById('reset-code').value.trim();
+        if (!code) {
+          showMsg('Please enter the code.');
+          return;
+        }
+
+        showMsg('');
+        try {
+          const res = await fetch('/api/verify-reset-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+          });
+
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+          const data = await res.json();
+
+          if (data.success) {
+            document.getElementById('pwSection').style.display = 'block';
+            showMsg('Code verified. Enter new password.', 'success');
+            verifiedCode = code;
+          } else {
+            showMsg(data.message || "Invalid code.");
+          }
+        } catch (err) {
+          console.error("Verify code error:", err);
+          showMsg("Network error: could not verify code.");
+        }
+      });
+
+      setPwBtn.addEventListener('click', async () => {
+        const password = document.getElementById('new-password').value;
+
+        if (!password) {
+          showMsg('Please enter a new password.');
+          return;
+        }
+
+        if (!resetEmail || !verifiedCode) {
+          showMsg('Missing email or code. Please restart the process.');
+          return;
+        }
+
+        showMsg('');
+        try {
+          const res = await fetch('/api/reset-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: resetEmail, password, code: verifiedCode })
+          });
+
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+          const data = await res.json();
+
+          if (data.success) {
+            showMsg('Password reset! Redirecting...', 'success');
+            setTimeout(() => window.location.href = 'login.html', 1500);
+          } else {
+            showMsg(data.message || "Failed to reset password.");
+          }
+        } catch (err) {
+          console.error("Reset password error:", err);
+          showMsg("Network error: could not reset password.");
+        }
+      });
+
+      function showMsg(msg, type) {
+        const el = document.getElementById('forgot-msg');
+        el.textContent = msg;
+        el.className = type || '';
+      }
+    });
+  </script>
+<script src="script.js"></script>
+</body>
+</html>

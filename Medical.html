@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Our Health Services Dashboard - Uganda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap for popups and styling -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f6f9fc; font-family: 'Segoe UI', Arial, sans-serif; }
+    .header { background: linear-gradient(90deg,#4CAF50,#2196F3,#f44336,#ff9800); color: #fff; border-radius: 1rem; padding: 2rem 0; margin-bottom: 2rem; text-align: center; font-size: 2.5rem; font-weight: bold; letter-spacing: 2px; }
+    .service-card { border-left: 8px solid; border-radius: 0.5rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.03); background: #fff; }
+    .region-card { background: #f5f5f5; border-radius: 0.5rem; margin-bottom: 1rem; padding: 0.5rem 1rem; }
+    .feedback-card { background: #fff; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.04); margin-bottom: 1rem; padding: 1rem; }
+    .chip { display: inline-block; padding: 0.3em 0.8em; border-radius: 1em; background: #4caf50; color: #fff; font-size: 0.88em; margin-top: 0.5em;}
+    .btn-feedback { margin-top: 0.8em; margin-bottom: 0.8em; }
+    .btn-approve,.btn-edit { margin-top: 1em; }
+    .modal-content { border-radius: 1rem; padding: 2rem; }
+    .center-label { font-weight:bold; color: #2196F3;}
+    .address-label { font-style: italic; color:#888;}
+    .login-box { position:absolute; right:20px; top:20px; }
+  </style>
+</head>
+<nav class="nav-horizontal">
+      <ul>
+        <li><a href="dashboard.html" class="nav-link"> Go to Dashboard</a></li>
+      
+      </ul>
+<body>
+  <!-- Login/Logout/Profile -->
+  <div class="login-box" id="profileBox">
+    <span id="profileName"></span>
+    <button class="btn btn-outline-primary btn-sm" id="loginBtn" onclick="showLoginModal()">Login</button>
+    <button class="btn btn-outline-secondary btn-sm" id="logoutBtn" style="display:none;" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="container my-4">
+    <div class="header">
+      Our Health Services
+    </div>
+    <div class="row">
+      <!-- Service cards (simplified for brevity, region/center list as before) -->
+      <!-- Primary Health Care -->
+      <div class="col-12 col-lg-6">
+        <div class="service-card" style="border-left-color:#4CAF50;">
+          <div class="p-3">
+            <h4 style="color:#4CAF50;">Primary Health Care</h4>
+            <p>GP consultations, preventive screenings, women's and men's health checks.</p>
+            <div class="row">
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>East Region</strong>
+                  <ul class="mb-0">
+                    <li>Mbale Regional Hospital</li>
+                    <li>Tororo District Hospital</li>
+                    <li>Iganga General Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>West Region</strong>
+                  <ul class="mb-0">
+                    <li>Mbarara Referral Hospital</li>
+                    <li>Kabale Regional Hospital</li>
+                    <li>Fort Portal Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>North Region</strong>
+                  <ul class="mb-0">
+                    <li>Gulu Regional Hospital</li>
+                    <li>Lira Regional Hospital</li>
+                    <li>Arua Referral Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>Central Region</strong>
+                  <ul class="mb-0">
+                    <li>Mulago National Hospital</li>
+                    <li>Mengo Hospital</li>
+                    <li>Rubaga Hospital</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-outline-success btn-feedback" onclick="openFeedback('Primary Health Care')">Leave Feedback</button>
+          </div>
+        </div>
+      </div>
+      <!-- Specialist Care -->
+      <div class="col-12 col-lg-6">
+        <div class="service-card" style="border-left-color:#2196F3;">
+          <div class="p-3">
+            <h4 style="color:#2196F3;">Specialist Care</h4>
+            <p>Cardiology, endocrinology, dermatology, pediatrics, adolescent and elderly care.</p>
+            <div class="row">
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>East Region</strong>
+                  <ul class="mb-0">
+                    <li>Mbale Regional Hospital</li>
+                    <li>Tororo District Hospital</li>
+                    <li>Iganga General Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>West Region</strong>
+                  <ul class="mb-0">
+                    <li>Mbarara Referral Hospital</li>
+                    <li>Kabale Regional Hospital</li>
+                    <li>Fort Portal Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>North Region</strong>
+                  <ul class="mb-0">
+                    <li>Gulu Regional Hospital</li>
+                    <li>Lira Regional Hospital</li>
+                    <li>Arua Referral Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>Central Region</strong>
+                  <ul class="mb-0">
+                    <li>Mulago National Hospital</li>
+                    <li>Mengo Hospital</li>
+                    <li>Rubaga Hospital</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-outline-primary btn-feedback" onclick="openFeedback('Specialist Care')">Leave Feedback</button>
+          </div>
+        </div>
+      </div>
+      <!-- Emergency Care -->
+      <div class="col-12 col-lg-6">
+        <div class="service-card" style="border-left-color:#f44336;">
+          <div class="p-3">
+            <h4 style="color:#f44336;">Emergency & Urgent Care</h4>
+            <p>24/7 emergency services, minor injuries, wound care, ambulance and referral services.</p>
+            <div class="row">
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>East Region</strong>
+                  <ul class="mb-0">
+                    <li>Mbale Regional Hospital</li>
+                    <li>Tororo District Hospital</li>
+                    <li>Iganga General Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>West Region</strong>
+                  <ul class="mb-0">
+                    <li>Mbarara Referral Hospital</li>
+                    <li>Kabale Regional Hospital</li>
+                    <li>Fort Portal Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>North Region</strong>
+                  <ul class="mb-0">
+                    <li>Gulu Regional Hospital</li>
+                    <li>Lira Regional Hospital</li>
+                    <li>Arua Referral Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>Central Region</strong>
+                  <ul class="mb-0">
+                    <li>Mulago National Hospital</li>
+                    <li>Mengo Hospital</li>
+                    <li>Rubaga Hospital</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-outline-danger btn-feedback" onclick="openFeedback('Emergency & Urgent Care')">Leave Feedback</button>
+          </div>
+        </div>
+      </div>
+      <!-- Health Education -->
+      <div class="col-12 col-lg-6">
+        <div class="service-card" style="border-left-color:#ff9800;">
+          <div class="p-3">
+            <h4 style="color:#ff9800;">Health Education & Counseling</h4>
+            <p>Nutrition & lifestyle counseling, chronic disease management, smoking cessation, vaccination awareness.</p>
+            <div class="row">
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>East Region</strong>
+                  <ul class="mb-0">
+                    <li>Mbale Regional Hospital</li>
+                    <li>Tororo District Hospital</li>
+                    <li>Iganga General Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>West Region</strong>
+                  <ul class="mb-0">
+                    <li>Mbarara Referral Hospital</li>
+                    <li>Kabale Regional Hospital</li>
+                    <li>Fort Portal Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>North Region</strong>
+                  <ul class="mb-0">
+                    <li>Gulu Regional Hospital</li>
+                    <li>Lira Regional Hospital</li>
+                    <li>Arua Referral Hospital</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="region-card">
+                  <strong>Central Region</strong>
+                  <ul class="mb-0">
+                    <li>Mulago National Hospital</li>
+                    <li>Mengo Hospital</li>
+                    <li>Rubaga Hospital</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-outline-warning btn-feedback" onclick="openFeedback('Health Education & Counseling')">Leave Feedback</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback Section -->
+    <div class="row">
+      <div class="col-12 col-lg-6">
+        <h4 class="mt-4 mb-3">Approved Patient Feedback (by Health Center)</h4>
+        <div id="approved-feedback-list"></div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <h4 class="mt-4 mb-3">Pending Feedback for Approval (Admin)</h4>
+        <div id="pending-feedback-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback Modal Popup -->
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <h5 class="modal-title mb-3" id="feedbackLabel">Leave Feedback for <span id="feedbackService"></span></h5>
+        <form id="feedbackForm" onsubmit="submitFeedback(event)">
+          <input type="hidden" id="feedbackServiceInput">
+          <div class="mb-3">
+            <label for="patientName" class="form-label">Your Name</label>
+            <input type="text" class="form-control" id="patientName" required>
+          </div>
+          <div class="mb-3">
+            <label for="region" class="form-label">Region</label>
+            <select class="form-select" id="region" onchange="renderCenterOptions()" required>
+              <option value="">Select region</option>
+              <option>East</option>
+              <option>West</option>
+              <option>North</option>
+              <option>Central</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="healthCenter" class="form-label">Health Center</label>
+            <select class="form-select" id="healthCenter" required></select>
+          </div>
+          <div class="mb-3">
+            <label for="patientAddress" class="form-label">Your Address (for doctor follow-up)</label>
+            <input type="text" class="form-control" id="patientAddress" required>
+          </div>
+          <div class="mb-3">
+            <label for="patientFeedback" class="form-label">Your Feedback</label>
+            <textarea class="form-control" id="patientFeedback" rows="3" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">Submit</button>
+          <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Feedback Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <h5 class="modal-title mb-3" id="editLabel">Edit Feedback</h5>
+        <form id="editForm" onsubmit="submitEditFeedback(event)">
+          <input type="hidden" id="editId">
+          <div class="mb-3">
+            <label for="editPatientName" class="form-label">Patient Name</label>
+            <input type="text" class="form-control" id="editPatientName" required>
+          </div>
+          <div class="mb-3">
+            <label for="editRegion" class="form-label">Region</label>
+            <select class="form-select" id="editRegion" onchange="renderEditCenterOptions()" required>
+              <option>East</option>
+              <option>West</option>
+              <option>North</option>
+              <option>Central</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="editHealthCenter" class="form-label">Health Center</label>
+            <select class="form-select" id="editHealthCenter" required></select>
+          </div>
+          <div class="mb-3">
+            <label for="editPatientAddress" class="form-label">Patient Address</label>
+            <input type="text" class="form-control" id="editPatientAddress" required>
+          </div>
+          <div class="mb-3">
+            <label for="editFeedback" class="form-label">Feedback</label>
+            <textarea class="form-control" id="editFeedback" rows="3" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approve Feedback Modal -->
+  <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <h5 class="modal-title mb-3" id="approveLabel">Approve Feedback</h5>
+        <div id="approveFeedbackDetails"></div>
+        <button class="btn btn-success btn-approve" id="approveBtn" onclick="approveFeedback()">Approve</button>
+        <button class="btn btn-secondary ms-2" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <h5 class="modal-title mb-3" id="loginLabel">Login</h5>
+        <form id="loginForm" onsubmit="submitLogin(event)">
+          <div class="mb-3">
+            <label for="loginUsername" class="form-label">Username</label>
+            <input type="text" class="form-control" id="loginUsername" required>
+          </div>
+          <div class="mb-3">
+            <label for="loginRole" class="form-label">Role</label>
+            <select class="form-select" id="loginRole" required>
+              <option value="patient">Patient</option>
+              <option value="doctor">Doctor/Admin</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+          <button type="button" class="btn btn-secondary ms-2" data-bs-dismiss="modal">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS for modal handling -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Health center data
+    const healthCenters = {
+      East: ["Mbale Regional Hospital", "Tororo District Hospital", "Iganga General Hospital"],
+      West: ["Mbarara Referral Hospital", "Kabale Regional Hospital", "Fort Portal Hospital"],
+      North: ["Gulu Regional Hospital", "Lira Regional Hospital", "Arua Referral Hospital"],
+      Central: ["Mulago National Hospital", "Mengo Hospital", "Rubaga Hospital"],
+    };
+
+    // Example feedback data
+    let approvedFeedback = [
+      { id: 1, patient: "Sam Okello", service: "Specialist Care", region: "West", center: "Mbarara Referral Hospital", feedback: "Great pediatrician!", address: "Plot 15, Mbarara", doctor: "Dr. Kato" }
+    ];
+    let pendingFeedback = [
+      { id: 2, patient: "John Doe", service: "Primary Health Care", region: "Central", center: "Mulago National Hospital", feedback: "Excellent service and staff.", address: "Kampala Rd, Kampala", doctor: "" },
+      { id: 3, patient: "Mary Jane", service: "Emergency & Urgent Care", region: "East", center: "Mbale Regional Hospital", feedback: "Quick response time.", address: "Mbale Town", doctor: "" }
+    ];
+    let feedbackToApprove = null;
+    let editFeedbackId = null;
+    let profile = { username: "", role: "patient" };
+
+    // Login/Profile logic
+    function showLoginModal() {
+      new bootstrap.Modal(document.getElementById('loginModal')).show();
+    }
+    function submitLogin(event) {
+      event.preventDefault();
+      profile.username = document.getElementById('loginUsername').value;
+      profile.role = document.getElementById('loginRole').value;
+      document.getElementById('profileName').textContent = `Logged in as ${profile.username} (${profile.role})`;
+      document.getElementById('loginBtn').style.display = 'none';
+      document.getElementById('logoutBtn').style.display = '';
+      bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+      renderPendingFeedback();
+    }
+    function logout() {
+      profile = { username: "", role: "patient" };
+      document.getElementById('profileName').textContent = '';
+      document.getElementById('loginBtn').style.display = '';
+      document.getElementById('logoutBtn').style.display = 'none';
+      renderPendingFeedback();
+    }
+
+    // Feedback form health center options
+    function renderCenterOptions() {
+      const region = document.getElementById('region').value;
+      const centerSelect = document.getElementById('healthCenter');
+      centerSelect.innerHTML = "";
+      if (healthCenters[region]) {
+        healthCenters[region].forEach(center => {
+          const opt = document.createElement('option');
+          opt.value = center;
+          opt.textContent = center;
+          centerSelect.appendChild(opt);
+        });
+      }
+    }
+
+    // Edit form health center options
+    function renderEditCenterOptions() {
+      const region = document.getElementById('editRegion').value;
+      const centerSelect = document.getElementById('editHealthCenter');
+      centerSelect.innerHTML = "";
+      if (healthCenters[region]) {
+        healthCenters[region].forEach(center => {
+          const opt = document.createElement('option');
+          opt.value = center;
+          opt.textContent = center;
+          centerSelect.appendChild(opt);
+        });
+      }
+    }
+
+    // Feedback rendering by health center
+    function renderApprovedFeedback() {
+      const container = document.getElementById('approved-feedback-list');
+      let grouped = {};
+      approvedFeedback.forEach(fb => {
+        if (!grouped[fb.center]) grouped[fb.center] = [];
+        grouped[fb.center].push(fb);
+      });
+      container.innerHTML = Object.keys(grouped).map(center => `
+        <div class="mb-3">
+          <div class="center-label">${center}</div>
+          ${grouped[center].map(fb => `
+            <div class="feedback-card">
+              <strong>${fb.patient} (${fb.service} - ${fb.region})</strong>
+              <div>${fb.feedback}</div>
+              <div class="address-label">Patient Address: ${fb.address}</div>
+              ${fb.doctor ? `<div class="address-label">Approved by Doctor: ${fb.doctor}</div>` : ""}
+              <span class="chip">Approved</span>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    function renderPendingFeedback() {
+      const container = document.getElementById('pending-feedback-list');
+      let grouped = {};
+      pendingFeedback.forEach(fb => {
+        if (!grouped[fb.center]) grouped[fb.center] = [];
+        grouped[fb.center].push(fb);
+      });
+      container.innerHTML = Object.keys(grouped).map(center => `
+        <div class="mb-3">
+          <div class="center-label">${center}</div>
+          ${grouped[center].map(fb => `
+            <div class="feedback-card">
+              <strong>${fb.patient} (${fb.service} - ${fb.region})</strong>
+              <div>${fb.feedback}</div>
+              <div class="address-label">Patient Address: ${fb.address}</div>
+              ${profile.role === 'doctor' ? `
+                <button class="btn btn-success btn-sm mt-2" onclick="openApproveFeedback(${fb.id})">Approve</button>
+                <button class="btn btn-primary btn-sm mt-2 ms-2" onclick="openEditFeedback(${fb.id})">Edit/Assign</button>
+              ` : ""}
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    function openFeedback(service) {
+      if (!profile.username) {
+        showLoginModal();
+        return;
+      }
+      document.getElementById('feedbackService').textContent = service;
+      document.getElementById('feedbackServiceInput').value = service;
+      document.getElementById('patientName').value = profile.username;
+      document.getElementById('region').value = '';
+      document.getElementById('healthCenter').innerHTML = '';
+      document.getElementById('patientAddress').value = '';
+      document.getElementById('patientFeedback').value = '';
+      new bootstrap.Modal(document.getElementById('feedbackModal')).show();
+    }
+
+    function submitFeedback(event) {
+      event.preventDefault();
+      const service = document.getElementById('feedbackServiceInput').value;
+      const patient = document.getElementById('patientName').value;
+      const region = document.getElementById('region').value;
+      const center = document.getElementById('healthCenter').value;
+      const address = document.getElementById('patientAddress').value;
+      const feedback = document.getElementById('patientFeedback').value;
+      const id = Date.now();
+      pendingFeedback.push({ id, patient, service, region, center, feedback, address, doctor: "" });
+      renderPendingFeedback();
+      bootstrap.Modal.getInstance(document.getElementById('feedbackModal')).hide();
+    }
+
+    function openEditFeedback(id) {
+      editFeedbackId = id;
+      const fb = pendingFeedback.find(fb => fb.id === id);
+      document.getElementById('editId').value = id;
+      document.getElementById('editPatientName').value = fb.patient;
+      document.getElementById('editRegion').value = fb.region;
+      renderEditCenterOptions();
+      document.getElementById('editHealthCenter').value = fb.center;
+      document.getElementById('editPatientAddress').value = fb.address;
+      document.getElementById('editFeedback').value = fb.feedback;
+      new bootstrap.Modal(document.getElementById('editModal')).show();
+    }
+
+    function submitEditFeedback(event) {
+      event.preventDefault();
+      const id = Number(document.getElementById('editId').value);
+      const patient = document.getElementById('editPatientName').value;
+      const region = document.getElementById('editRegion').value;
+      const center = document.getElementById('editHealthCenter').value;
+      const address = document.getElementById('editPatientAddress').value;
+      const feedback = document.getElementById('editFeedback').value;
+      const idx = pendingFeedback.findIndex(fb => fb.id === id);
+      if (idx > -1) {
+        pendingFeedback[idx] = { ...pendingFeedback[idx], patient, region, center, address, feedback };
+        renderPendingFeedback();
+      }
+      bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+    }
+
+    function openApproveFeedback(id) {
+      feedbackToApprove = pendingFeedback.find(fb => fb.id === id);
+      document.getElementById('approveFeedbackDetails').innerHTML = `
+        <strong>${feedbackToApprove.patient} (${feedbackToApprove.service} - ${feedbackToApprove.region})</strong>
+        <div>${feedbackToApprove.feedback}</div>
+        <div class="address-label">Patient Address: ${feedbackToApprove.address}</div>
+        <div class="mb-2"><label>Doctor Name:</label> <input type="text" id="doctorName" class="form-control" value="${profile.username}" /></div>
+      `;
+      new bootstrap.Modal(document.getElementById('approveModal')).show();
+    }
+
+    function approveFeedback() {
+      if (feedbackToApprove) {
+        feedbackToApprove.doctor = document.getElementById('doctorName').value || "";
+        approvedFeedback.push(feedbackToApprove);
+        pendingFeedback = pendingFeedback.filter(fb => fb.id !== feedbackToApprove.id);
+        renderApprovedFeedback();
+        renderPendingFeedback();
+        feedbackToApprove = null;
+      }
+      bootstrap.Modal.getInstance(document.getElementById('approveModal')).hide();
+    }
+
+    // Initial render
+    renderApprovedFeedback();
+    renderPendingFeedback();
+  </script>
+<script src="script.js"></script>
+</body>
+</html>

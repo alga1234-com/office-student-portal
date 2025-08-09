@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OASIS Student Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --navy: #1a2656;
+      --orange: #ff9800;
+      --danger: #e53935;
+      --green: #22c55e;
+      --white: #fff;
+      --card-bg: #ffffffee;
+      --card-hover: #fff7e6;
+      --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --border-radius: 14px;
+      --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+      --footer-bg: #222c38;
+    }
+    html, body {
+      height: 100%;
+    }
+    body {
+      background: #f5f7fa;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* NAVBAR */
+    .navbar {
+      width: 100vw;
+      min-width: 320px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      border-bottom: 1px solid #e5e7eb;
+      background: var(--navy, #1a2656);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    }
+    .navbar-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.8rem 2vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-orange {
+      background: var(--orange, #ff9800);
+      color: #fff;
+      border-radius: 999px;
+      padding: 0.45em 1.2em;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-right: 1.6rem;
+      letter-spacing: 1px;
+      display: inline-block;
+      border: none;
+    }
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 1.7rem;
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+    .nav-link {
+      text-decoration: none;
+      color: #e1e0da;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.34em 0.8em;
+      border-radius: 4px;
+      transition: color 0.18s, background 0.18s;
+      display: inline-block;
+    }
+    .nav-link.active,
+    .nav-link:hover {
+      background: #546f81;
+      color: #fff;
+    }
+    .help-btn {
+      background: none;
+      color: #e1e0da;
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-left: 0.7rem;
+      border-radius: 4px;
+      padding: 0.34em 0.8em;
+      cursor: pointer;
+      transition: color 0.18s, background 0.18s;
+    }
+    .help-btn:hover {
+      background: #546f81;
+      color: #fff;
+    }
+    .login-btn {
+      background: none;
+      color: #fff;
+      border: 1.5px solid #fff;
+      border-radius: 999px;
+      padding: 0.38em 1.1em;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-left: 1.3rem;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, border 0.18s;
+    }
+    .login-btn:hover {
+      background: #fff;
+      color: var(--navy, #1a2656);
+      border-color: #ff9800;
+    }
+
+    @media (max-width: 800px) {
+      .navbar-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.3rem;
+        padding: 0.8rem 3vw;
+      }
+      .nav-menu {
+        justify-content: flex-start;
+        gap: 1rem;
+        margin: 0.5rem 0;
+        flex-wrap: wrap;
+      }
+      .login-btn {
+        align-self: flex-end;
+        margin-left: 0;
+        margin-top: 0.6rem;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .navbar-content {
+        padding: 0.5rem 1vw;
+      }
+      .nav-menu {
+        gap: 0.3rem;
+        flex-wrap: wrap;
+        font-size: 0.97rem;
+      }
+      .nav-orange {
+        font-size: 0.95rem;
+        margin-right: 0.5rem;
+        padding: 0.35em 0.7em;
+      }
+      .login-btn {
+        font-size: 0.95rem;
+        padding: 0.3em 0.7em;
+      }
+    }
+
+    /* BANNER CARD SECTION */
+    .banner-card-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      margin: 0;
+      padding-top: 100px; /* Offset for navbar */
+      padding-bottom: 18px;
+      background: linear-gradient(90deg, #16a085 85%, #3498db 100%);
+    }
+    .banner-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      padding: 1.2em 2.1em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 62px;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 8px;
+    }
+    .banner-card-content {
+      font-size: 1.17rem;
+      font-weight: 700;
+      color: #144d57;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7em;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      text-align: center;
+      line-height: 1.7;
+      letter-spacing: 0.01em;
+    }
+    .banner-card-content .oasis {
+      color: #127b6b;
+      font-weight: 800;
+      font-size: 1.11em;
+      margin-right: 0.35em;
+    }
+    .banner-card-content .welcome {
+      color: #0089d1;
+      font-size: 1.04em;
+      font-weight: 700;
+      margin-right: 0.35em;
+    }
+    .banner-card-content .desc {
+      color: #4b5d6e;
+      font-size: 0.99em;
+      font-weight: 500;
+      margin-left: 0.35em;
+    }
+    @media (max-width: 900px) {
+      .banner-card {
+        padding: 1.1em 0.7em;
+      }
+      .banner-card-content {
+        font-size: 1.02rem;
+      }
+    }
+    @media (max-width: 600px) {
+      .banner-card-section {
+        padding-top: 70px;
+      }
+      .banner-card {
+        padding: 0.7em 0.2em;
+        min-height: 45px;
+      }
+      .banner-card-content {
+        font-size: 0.97rem;
+      }
+    }
+    /* CARDS GRID */
+    .admin-panel {
+      width: 1100px;
+      max-width: 97vw;
+      margin: 38px auto 0 auto;
+      padding: 0 12px 40px 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 26px;
+      margin-top: 0;
+      width: 100%;
+    }
+    .admin-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      text-decoration: none;
+      color: #252b38;
+      transition: box-shadow var(--transition), background var(--transition), transform var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5em;
+      min-height: 145px;
+      max-height: 145px;
+      height: 145px;
+      justify-content: space-between;
+      border: 1px solid #e2e7ee;
+      position: relative;
+      padding: 1em 0.8em 0.8em 0.8em;
+    }
+    .admin-card:hover,
+    .admin-card:focus {
+      background: var(--card-hover);
+      box-shadow: 0 6px 24px rgba(45,114,217,0.12), 0 1.5px 4px #dde1e7a8;
+      transform: translateY(-4px) scale(1.025);
+      outline: none;
+    }
+    .admin-card h2 {
+      font-size: 1.07rem;
+      font-weight: 700;
+      margin: 0 0 0.13em 0;
+      color: var(--navy);
+    }
+    .admin-card p {
+      font-size: 0.97rem;
+      color: #394a5e;
+      margin: 0 0 1em 0;
+      flex: 1;
+    }
+    .admin-card button {
+      align-self: flex-end;
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 17px;
+      font-size: 0.96rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+    }
+    .admin-card button:hover {
+      background: #ffd966;
+      color: var(--navy);
+    }
+    @media (max-width: 1200px) {
+      .admin-panel {
+        width: 99vw;
+      }
+    }
+    @media (max-width: 900px) {
+      .admin-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+      }
+      .admin-card {
+        min-height: 130px;
+        max-height: 130px;
+        height: 130px;
+      }
+    }
+    @media (max-width: 600px) {
+      .admin-panel {
+        width: 100vw;
+        padding: 0 3vw;
+      }
+      .admin-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .admin-card {
+        min-height: 100px;
+        max-height: 100px;
+        height: 100px;
+        padding: 0.8em 0.4em 0.7em 0.4em;
+      }
+    }
+    /* FOOTER */
+    footer {
+      background: var(--footer-bg);
+      color: #fff;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 18px 0 14px 0;
+      margin-top: auto;
+      letter-spacing: 0.5px;
+      width: 100vw;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <span class="nav-orange">Student Portal</span>
+      <div class="nav-menu">
+        <a href="dashboard.html" class="nav-link active">Dashboard</a>
+        <a href="documents.html" class="nav-link">Documents</a>
+        <a href="medical.html" class="nav-link">Medical</a>
+        <a href="timetables.html" class="nav-link">Timetable</a>
+        <a href="adminTools.html" class="nav-link">Admin Tools</a>
+        <a href="help.html" class="help-btn">Help Desk</a>
+      </div>
+      <button class="login-btn">Login</button>
+    </div>
+  </nav>
+
+  <!-- BANNER CARD SECTION -->
+  <section class="banner-card-section">
+    <div class="banner-card">
+      <div class="banner-card-content">
+        <span class="oasis">OASIS - Office and Students Integrated System</span><br />
+        <span class="desc">Access all your student services in one place</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- BEAUTIFUL CARDS -->
+  <main class="admin-panel">
+    <div class="admin-grid">
+      <a class="admin-card" tabindex="0" href="user-management.html">
+        <h2>User Management</h2>
+        <p>Manage users, roles, and permissions.</p>
+        <button type="button">Open</button>
+      </a>
+      <a class="admin-card" tabindex="0" href="/admin/documents">
+        <h2>Document Oversight</h2>
+        <p>Review uploaded documents across the portal.</p>
+        <button type="button">Open</button>
+      </a>
+      <a class="admin-card" tabindex="0" href="/admin/settings">
+        <h2>Portal Settings</h2>
+        <p>Configure global portal preferences and options.</p>
+        <button type="button">Open</button>
+      </a>
+      <a class="admin-card" tabindex="0" href="/admin/user-management">
+        <h2>Analytics & Reports</h2>
+        <p>View usage analytics and generate reports.</p>
+        <button type="button">Open</button>
+      </a>
+      <a class="admin-card" tabindex="0" href="/admin/notifications">
+        <h2>Notifications</h2>
+        <p>Send and manage notifications to users.</p>
+        <button type="button">Open</button>
+      </a>
+      <a class="admin-card" tabindex="0" href="/admin/backup">
+        <h2>Backup & Restore</h2>
+        <p>Manage data backups and restore previous states.</p>
+        <button type="button">Open</button>
+      </a>
+      <a class="admin-card" tabindex="0" href="/admin/audit-log">
+        <h2>Audit Log</h2>
+        <p>Review system activity and security logs.</p>
+        <button type="button">Open</button>
+      </a>
+      <a class="admin-card" tabindex="0" href="/admin/support">
+        <h2>Support Tickets</h2>
+        <p>Manage and respond to user support tickets.</p>
+        <button type="button">Open</button>
+      </a>
+      <a class="admin-card" tabindex="0" href="/admin/settings#more">
+        <h2>More Tools</h2>
+        <p>Access additional admin features.</p>
+        <button type="button">Open</button>
+      </a>
+    </div>
+  </main>
+  <footer>
+    All rights reserved MLK$elmedias
+  </footer>
+</body>
+</html>

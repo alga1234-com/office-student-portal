@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teaching Timetables - Office Student Portal</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #008080;
+      --primary-dark: #006064;
+      --highlight: #fffde7;
+      --success-green: #28a745;
+      --warning-orange: #ffc107;
+      --danger-red: #dc3545;
+      --info-blue: #17a2b8;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      --hover-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #2c3e50;
+    }
+
+    /* Navigation consistent with other pages */
+    nav.nav-vector {
+      background: #34495e;
+      padding: 0.5rem 1rem;
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    nav.nav-vector button {
+      background: #2c3e50;
+      border: none;
+      padding: 0.4rem 0.9rem;
+      color: #ecf0f1;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    nav.nav-vector button:hover,
+    nav.nav-vector button:focus {
+      background: #1abc9c;
+      outline: none;
+      color: #fff;
+    }
+
+    nav.nav-vector button.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* Main content styling */
+    main.timetable-main {
+      max-width: 1400px;
+      margin: 2rem auto 3rem;
+      padding: 1rem 2rem;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 15px;
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .page-header p {
+      font-size: 1.2rem;
+      opacity: 0.95;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Publication controls */
+    .publication-controls {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border: 2px solid var(--primary);
+    }
+
+    .publication-controls h3 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .publish-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .publish-option {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .publish-option label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 0.5rem;
+    }
+
+    .publish-option select,
+    .publish-option input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .publish-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .publish-btn {
+      background: linear-gradient(135deg, var(--success-green), #20c997);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .publish-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    .preview-btn {
+      background: linear-gradient(135deg, var(--info-blue), #20c997);
+    }
+
+    /* General Heading Styles */
+    .general-heading-container {
+      text-align: center;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, #f2e8ff, #e8f4fd);
+      border-radius: 15px;
+      padding: 2rem;
+      border: 2px solid var(--primary);
+      position: relative;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--primary-dark);
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(0, 128, 128, 0.1);
+    }
+
+    .general-heading-edit-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      padding: 8px 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .general-heading-edit-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .general-heading-save-btn, .general-heading-cancel-btn {
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      padding: 10px 20px;
+      margin: 15px 8px 0 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
+    }
+
+    .general-heading-save-btn {
+      background: var(--success-green);
+    }
+
+    .general-heading-save-btn:hover {
+      background: #219150;
+      transform: translateY(-2px);
+    }
+
+    .general-heading-cancel-btn {
+      background: var(--danger-red);
+    }
+
+    .general-heading-cancel-btn:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+    }
+
+    .general-heading-input {
+      width: 90%;
+      margin-top: 15px;
+      min-height: 120px;
+      font-size: 1.1rem;
+      padding: 15px;
+      border-radius: 10px;
+      border: 2px solid var(--primary);
+      resize: vertical;
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .general-heading-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
+    }
+
+    .general-heading-title {
+      line-height: 1.8;
+      font-size: 1.2rem;
+    }
+
+    /* Logo */
+    .logo-under-heading {
+      display: block;
+      margin: 1rem auto 2rem auto;
+      max-width: 120px;
+      max-height: 70px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Section Block */
+    .section-block {
+      border: 2px solid #e0e0e0;
+      border-radius: 15px;
+      margin-bottom: 3rem;
+      background: #f8f9ff;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(52, 152, 219, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .section-block:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(52, 152, 219, 0.15);
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Buttons */
+    button {
+      cursor: pointer;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 14px;
+      margin: 0 5px 5px 0;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 128, 128, 0.2);
+    }
+
+    #addSectionBtn {
+      background: linear-gradient(135deg, var(--success-green), #219150);
+      font-size: 16px;
+      padding: 15px 30px;
+      margin-bottom: 2rem;
+      border-radius: 25px;
+    }
+
+    .remove-section-btn {
+      background: var(--danger-red);
+      padding: 8px 15px;
+      font-size: 13px;
+    }
+
+    .remove-section-btn:hover {
+      background: #c0392b;
+    }
+
+    .save-table-btn { 
+      background: linear-gradient(135deg, #8e44ad, #6c3483);
+    }
+    .view-saved-btn { 
+      background: var(--success-green);
+    }
+    .print-btn { 
+      background: linear-gradient(135deg, #16a085, #117a65);
+    }
+    .cancel-btn { 
+      background: #7f8c8d;
+    }
+
+    .action-btn {
+      padding: 6px 12px;
+      margin: 0 3px;
+      font-size: 12px;
+      border-radius: 5px;
+    }
+
+    .edit-btn { 
+      background: var(--warning-orange);
+    }
+    .delete-btn { 
+      background: var(--danger-red);
+    }
+
+    .add-col-row-btn {
+      background: var(--success-green);
+      padding: 8px 15px;
+      font-size: 13px;
+      margin: 0 3px;
+    }
+
+    .edit-head-btn {
+      background: var(--warning-orange);
+      padding: 8px 15px;
+      font-size: 13px;
+      margin: 0 3px;
+    }
+
+    /* Form Styles */
+    .form-container {
+      margin-bottom: 2rem;
+      border: 2px solid #e1e8ed;
+      padding: 1.5rem;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #f0f6ff, #f8f9ff);
+    }
+
+    select, input {
+      padding: 10px 15px;
+      margin: 8px 10px 8px 0;
+      border: 2px solid #e1e8ed;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
+    }
+
+    input.fullwidth { 
+      width: 300px;
+    }
+
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem 0;
+      table-layout: fixed;
+      word-wrap: break-word;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px 10px;
+      text-align: center;
+      vertical-align: middle;
+      position: relative;
+    }
+
+    th {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    td {
+      background: white;
+      transition: background-color 0.3s ease;
+    }
+
+    tbody tr:hover td {
+      background: rgba(0, 128, 128, 0.05);
+    }
+
+    th.resizable {
+      overflow: visible;
+    }
+
+    .resize-handle {
+      position: absolute;
+      right: -2px;
+      top: 0;
+      width: 5px;
+      height: 100%;
+      cursor: ew-resize;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    th:hover .resize-handle {
+      opacity: 1;
+    }
+
+    th.resizing, td.resizing {
+      background: rgba(255, 215, 0, 0.3) !important;
+    }
+
+    /* Section Table Select */
+    .section-table-select {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .section-table-select label {
+      font-weight: 600;
+      margin-right: 20px;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary-dark);
+    }
+
+    .section-table-select input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--primary);
+    }
+
+    /* Tables Container */
+    .tables-container > section {
+      border: 2px solid #e1e8ed;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #fafcff, #f8f9ff);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .tables-container h2 {
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      font-size: 1.4rem;
+      text-align: center;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .inline-actions {
+      display: inline-block;
+      margin: 1rem 0;
+      vertical-align: middle;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      nav.nav-vector {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      nav.nav-vector button {
+        width: 100%;
+        text-align: center;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+      }
+
+      main.timetable-main {
+        margin: 1rem;
+        padding: 1rem;
+      }
+
+      .publish-options {
+        grid-template-columns: 1fr;
+      }
+
+      .publish-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation consistent with other pages -->
+  <nav class="nav-vector">
+    <button data-module="Dashboard" onclick="goToModule('Dashboard')">📊 Got to Dashboard</button>
+    
+    <button data-module="AdminTools" onclick="goToModule('AdminTools')">🔧 Go to Admin Tools</button>
+  </nav>
+
+  <main class="timetable-main">
+    <div class="page-header">
+      <h1>⏰ Teaching Timetables</h1>
+      <p>Create, manage, and publish comprehensive teaching timetables with advanced CRUD operations</p>
+    </div>
+
+    <div class="timetable-container">
+      <!-- Publication Controls -->
+      <div class="publication-controls">
+        <h3><i class="fas fa-share-alt"></i> Publication & Sharing Controls</h3>
+        <div class="publish-options">
+          <div class="publish-option">
+            <label><i class="fas fa-users"></i> Target Audience:</label>
+            <select id="targetAudience">
+              <option value="">Select Audience</option>
+              <option value="all">All Students</option>
+              <option value="undergraduate">Undergraduate Students</option>
+              <option value="postgraduate">Postgraduate Students</option>
+              <option value="faculty">Faculty Members</option>
+              <option value="specific">Specific Programs</option>
+            </select>
+          </div>
+          <div class="publish-option">
+            <label><i class="fas fa-calendar"></i> Academic Period:</label>
+            <select id="academicPeriod">
+              <option value="">Select Period</option>
+              <option value="2025-sem1">Semester 1, 2025</option>
+              <option value="2025-sem2">Semester 2, 2025</option>
+              <option value="2026-sem1">Semester 1, 2026</option>
+            </select>
+          </div>
+          <div class="publish-option">
+            <label><i class="fas fa-tag"></i> Timetable Type:</label>
+            <select id="timetableType">
+              <option value="">Select Type</option>
+              <option value="draft">Draft Version</option>
+              <option value="final">Final Version</option>
+              <option value="revised">Revised Version</option>
+            </select>
+          </div>
+          <div class="publish-option">
+            <label><i class="fas fa-clock"></i> Publish Date:</label>
+            <input type="datetime-local" id="publishDate">
+          </div>
+        </div>
+        <div class="publish-buttons">
+          <button class="publish-btn" onclick="publishToStudentAffairs()">
+            <i class="fas fa-upload"></i> Publish to Student Affairs
+          </button>
+          <button class="publish-btn preview-btn" onclick="previewPublication()">
+            <i class="fas fa-eye"></i> Preview Publication
+          </button>
+          <button class="publish-btn" onclick="schedulePublication()">
+            <i class="fas fa-calendar-plus"></i> Schedule Publication
+          </button>
+        </div>
+      </div>
+
+      <!-- Editable General Heading -->
+      <div class="general-heading-container" id="generalHeadingContainer"></div>
+      
+      <img src="https://via.placeholder.com/120x70/008080/ffffff?text=LOGO" alt="University Logo" class="logo-under-heading">
+      
+      <button id="addSectionBtn">
+        <i class="fas fa-plus"></i> Add Table Section
+      </button>
+      
+      <div id="sectionsContainer"></div>
+    </div>
+  </main>
+
+  <script>
+    // ================== NAVIGATION LOGIC ==================
+    function goToModule(moduleName) {
+      const moduleMap = {
+        'Dashboard': 'dashboard.html',
+        'Documents': 'documents.html',
+        'StudentAffairs': 'student-affairs.html',
+        'Results': 'results.html',
+        'Complaints': 'complaints.html',
+        'Medical': 'Medical.html',
+        'Timetables': 'Timetables.html',
+        'AdminTools': 'adminTools.html'
+      };
+      
+      const page = moduleMap[moduleName];
+      if (page) {
+        window.location.href = page;
+      }
+    }
+
+    // ================== TIMETABLE PUBLICATION SYSTEM ==================
+    class TimetablePublisher {
+      constructor() {
+        this.publishedTimetables = JSON.parse(localStorage.getItem('publishedTimetables')) || [];
+        this.scheduledPublications = JSON.parse(localStorage.getItem('scheduledPublications')) || [];
+      }
+
+      // Publish timetable to Student Affairs portal
+      publishToStudentAffairs() {
+        const targetAudience = document.getElementById('targetAudience').value;
+        const academicPeriod = document.getElementById('academicPeriod').value;
+        const timetableType = document.getElementById('timetableType').value;
+        const publishDate = document.getElementById('publishDate').value;
+
+        if (!targetAudience || !academicPeriod || !timetableType) {
+          showNotification('Please fill in all required publication fields', 'error');
+          return;
+        }
+
+        // Get current timetable data
+        const currentTimetableData = this.getCurrentTimetableData();
+        
+        const publicationData = {
+          id: 'pub_' + Date.now(),
+          title: generalHeading.replace(/<[^>]*>/g, ''),
+          targetAudience,
+          academicPeriod,
+          timetableType,
+          publishDate: publishDate || new Date().toISOString(),
+          sections: currentTimetableData.sections,
+          generalHeading: generalHeading,
+          createdAt: new Date().toISOString(),
+          status: 'published',
+          publishedBy: 'Admin',
+          visibility: 'public'
+        };
+
+        // Save to localStorage for Student Affairs to access
+        this.publishedTimetables.push(publicationData);
+        localStorage.setItem('publishedTimetables', JSON.stringify(this.publishedTimetables));
+
+        // Also save to Student Affairs specific storage
+        const studentAffairsTimetables = JSON.parse(localStorage.getItem('studentAffairsTimetables')) || [];
+        studentAffairsTimetables.push(publicationData);
+        localStorage.setItem('studentAffairsTimetables', JSON.stringify(studentAffairsTimetables));
+
+        // Create notification for Student Affairs
+        this.createStudentAffairsNotification(publicationData);
+
+        showNotification(`Timetable published successfully to Student Affairs portal for ${targetAudience}!`, 'success');
+        
+        // Log publication event
+        this.logPublicationEvent(publicationData);
+      }
+
+      // Get current timetable data from the page
+      getCurrentTimetableData() {
+        return {
+          generalHeading: generalHeading,
+          sections: sections.map(section => ({
+            name: section.name,
+            shownTables: section.shownTables,
+            tableHeaders: section.tableHeaders,
+            courseData: section.courseData
+          }))
+        };
+      }
+
+      // Create notification for Student Affairs portal
+      createStudentAffairsNotification(publicationData) {
+        const notifications = JSON.parse(localStorage.getItem('studentAffairsNotifications')) || [];
+        
+        const notification = {
+          id: 'notif_' + Date.now(),
+          type: 'timetable_published',
+          title: 'New Timetable Published',
+          message: `A new ${publicationData.timetableType} timetable has been published for ${publicationData.targetAudience} - ${publicationData.academicPeriod}`,
+          timetableId: publicationData.id,
+          timestamp: new Date().toISOString(),
+          read: false,
+          priority: 'high'
+        };
+
+        notifications.unshift(notification);
+        localStorage.setItem('studentAffairsNotifications', JSON.stringify(notifications));
+      }
+
+      // Schedule publication for later
+      schedulePublication() {
+        const publishDate = document.getElementById('publishDate').value;
+        
+        if (!publishDate) {
+          showNotification('Please select a publish date and time for scheduling', 'error');
+          return;
+        }
+
+        const scheduleDateTime = new Date(publishDate);
+        if (scheduleDateTime <= new Date()) {
+          showNotification('Scheduled date must be in the future', 'error');
+          return;
+        }
+
+        const scheduledItem = {
+          id: 'sched_' + Date.now(),
+          scheduledDate: publishDate,
+          timetableData: this.getCurrentTimetableData(),
+          publicationSettings: {
+            targetAudience: document.getElementById('targetAudience').value,
+            academicPeriod: document.getElementById('academicPeriod').value,
+            timetableType: document.getElementById('timetableType').value
+          },
+          status: 'scheduled'
+        };
+
+        this.scheduledPublications.push(scheduledItem);
+        localStorage.setItem('scheduledPublications', JSON.stringify(this.scheduledPublications));
+
+        showNotification(`Publication scheduled for ${scheduleDateTime.toLocaleString()}`, 'success');
+      }
+
+      // Preview publication
+      previewPublication() {
+        const currentData = this.getCurrentTimetableData();
+        this.openPreviewModal(currentData);
+      }
+
+      // Open preview modal
+      openPreviewModal(timetableData) {
+        let previewHTML = `
+          <div id="previewModal" class="modal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+            <div class="modal-content" style="background: white; border-radius: 15px; max-width: 90%; max-height: 90%; overflow-y: auto; padding: 2rem;">
+              <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 2px solid #eee; padding-bottom: 1rem;">
+                <h2 style="color: var(--primary); margin: 0;">📅 Timetable Preview</h2>
+                <button onclick="closePreviewModal()" style="background: var(--danger-red); border: none; color: white; border-radius: 50%; width: 40px; height: 40px; font-size: 1.5rem; cursor: pointer;">&times;</button>
+              </div>
+              <div class="preview-content">
+                <div class="publication-info" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+                  <h3>Publication Details:</h3>
+                  <p><strong>Target Audience:</strong> ${document.getElementById('targetAudience').value || 'Not specified'}</p>
+                  <p><strong>Academic Period:</strong> ${document.getElementById('academicPeriod').value || 'Not specified'}</p>
+                  <p><strong>Type:</strong> ${document.getElementById('timetableType').value || 'Not specified'}</p>
+                  <p><strong>Publish Date:</strong> ${document.getElementById('publishDate').value ? new Date(document.getElementById('publishDate').value).toLocaleString() : 'Immediate'}</p>
+                </div>
+                
+                <div class="timetable-preview" style="border: 2px solid var(--primary); border-radius: 10px; padding: 1rem;">
+                  ${this.generatePreviewHTML(timetableData)}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', previewHTML);
+      }
+
+      // Generate preview HTML
+      generatePreviewHTML(timetableData) {
+        let html = `<div class="general-heading" style="text-align: center; margin-bottom: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #f2e8ff, #e8f4fd); border-radius: 10px; border: 2px solid var(--primary); font-weight: bold; color: var(--primary-dark);">${timetableData.generalHeading}</div>`;
+
+        timetableData.sections.forEach(section => {
+          html += `<div class="section-preview" style="margin-bottom: 3rem; border: 1px solid #e9ecef; border-radius: 10px; padding: 1.5rem;">`;
+          html += `<h3 style="color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">${section.name}</h3>`;
+          
+          ['weekly', 'common', 'elective'].forEach(type => {
+            if (section.shownTables[type]) {
+              const typeLabels = {
+                'weekly': 'Weekly Timetable',
+                'common': 'Common Courses',
+                'elective': 'Elective Courses'
+              };
+              
+              html += `<h4 style="color: var(--primary-dark); margin: 1rem 0;">${typeLabels[type]}</h4>`;
+              html += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; border-radius: 5px; overflow: hidden;">`;
+              html += `<thead><tr>${section.tableHeaders[type].map(h => `<th style="border: 1px solid #ddd; padding: 8px; background: var(--primary); color: white;">${h}</th>`).join('')}</tr></thead>`;
+              html += `<tbody>`;
+              
+              section.courseData[type].forEach(row => {
+                html += `<tr>${section.tableHeaders[type].map((_, i) => `<td style="border: 1px solid #ddd; padding: 8px; background: white;">${row[i] || ''}</td>`).join('')}</tr>`;
+              });
+              
+              html += `</tbody></table>`;
+            }
+          });
+          
+          html += `</div>`;
+        });
+
+        return html;
+      }
+
+      // Log publication event
+      logPublicationEvent(publicationData) {
+        const auditLogs = JSON.parse(localStorage.getItem('timetableAuditLogs')) || [];
+        
+        const logEvent = {
+          id: 'log_' + Date.now(),
+          action: 'publish_timetable',
+          user: 'Admin',
+          timestamp: new Date().toISOString(),
+          details: {
+            timetableId: publicationData.id,
+            targetAudience: publicationData.targetAudience,
+            academicPeriod: publicationData.academicPeriod,
+            timetableType: publicationData.timetableType
+          }
+        };
+
+        auditLogs.unshift(logEvent);
+        localStorage.setItem('timetableAuditLogs', JSON.stringify(auditLogs));
+      }
+    }
+
+    // Initialize publisher
+    const timetablePublisher = new TimetablePublisher();
+
+    // Global functions for publication
+    window.publishToStudentAffairs = () => timetablePublisher.publishToStudentAffairs();
+    window.previewPublication = () => timetablePublisher.previewPublication();
+    window.schedulePublication = () => timetablePublisher.schedulePublication();
+
+    // Close preview modal
+    window.closePreviewModal = () => {
+      const modal = document.getElementById('previewModal');
+      if (modal) modal.remove();
+    };
+
+    // ================== EXISTING TIMETABLE LOGIC ==================
+    // General heading logic
+    let generalHeading = localStorage.getItem('generalHeading') ||
+        "APPENDIX 2<br>MAKERERE UNIVERSITY BUSINESS SCHOOL<br>OFFICE OF THE SCHOOL REGISTRAR<br><b>DRAFT TEACHING TIMETABLE FOR COURSES ON THE OLD CURRICULUM FOR SEMESTER ONE ACADEMIC YEAR 2025/2026 AS AT JUNE 18, 2025</b>";
+    
+    let generalHeadingEditMode = false;
+    const generalHeadingContainer = document.getElementById('generalHeadingContainer');
+
+    function renderGeneralHeading() {
+      generalHeadingContainer.innerHTML = "";
+      const div = document.createElement('div');
+      div.className = "general-heading-container";
+      
+      if (generalHeadingEditMode) {
+        const textarea = document.createElement('textarea');
+        textarea.className = "general-heading-input";
+        textarea.value = generalHeading.replace(/<br>/g, "\n").replace(/<b>/g,"").replace(/<\/b>/g,"");
+        div.appendChild(textarea);
+        
+        const saveBtn = document.createElement('button');
+        saveBtn.className = "general-heading-save-btn";
+        saveBtn.innerHTML = '<i class="fas fa-save"></i> Save';
+        saveBtn.onclick = () => {
+          const newContent = textarea.value.trim();
+          if (newContent) {
+            generalHeading = newContent.replace(/\n/g, "<br>");
+            if (generalHeading.includes("DRAFT TEACHING TIMETABLE")) {
+              const lines = generalHeading.split("<br>");
+              const lastLineIndex = lines.findIndex(line => line.includes("DRAFT TEACHING TIMETABLE"));
+              if (lastLineIndex !== -1) {
+                lines[lastLineIndex] = "<b>" + lines[lastLineIndex] + "</b>";
+                generalHeading = lines.join("<br>");
+              }
+            }
+            localStorage.setItem('generalHeading', generalHeading);
+            generalHeadingEditMode = false;
+            renderGeneralHeading();
+            showNotification('Heading updated successfully!', 'success');
+          }
+        };
+        div.appendChild(saveBtn);
+        
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = "general-heading-cancel-btn";
+        cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+        cancelBtn.onclick = () => {
+          generalHeadingEditMode = false;
+          renderGeneralHeading();
+        };
+        div.appendChild(cancelBtn);
+      } else {
+        const titleDiv = document.createElement('div');
+        titleDiv.className = "general-heading-title";
+        titleDiv.innerHTML = generalHeading;
+        div.appendChild(titleDiv);
+        
+        const editBtn = document.createElement('button');
+        editBtn.className = "general-heading-edit-btn";
+        editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+        editBtn.onclick = () => {
+          generalHeadingEditMode = true;
+          renderGeneralHeading();
+        };
+        div.appendChild(editBtn);
+      }
+      
+      generalHeadingContainer.appendChild(div);
+    }
+
+    // Initialize sections
+    function initialSection(sectionNum) {
+      return {
+        name: "Section " + sectionNum,
+        shownTables: { weekly: true, common: false, elective: false },
+        tableHeaders: {
+          weekly: ["Time", "Mon", "Tue", "Wed", "Thu", "Fri"],
+          common: ["Abb", "Code", "Course Name", "Lecturer(s)", "CU", "FAC", "Dept.", "Room"],
+          elective: ["Abb", "Code", "Course Name", "Lecturer(s)", "CU", "FAC", "Dept.", "Room"]
+        },
+        courseData: {
+          weekly: [
+            ["8:00 - 9:00", "Mathematics", "English Literature", "Computer Science", "Physics", "Chemistry"],
+            ["9:00 - 10:00", "Physics", "Biology", "Mathematics", "English", "ICT"],
+            ["10:00 - 11:00", "Break", "Mathematics", "Break", "Chemistry", "English"],
+            ["11:00 - 12:00", "Chemistry", "Physics", "Biology", "Geography", "Free Period"]
+          ],
+          common: [
+            ["GB", "MIB 7101", "Globalization & International Business", "Dr. Amadu Nyanzi", "3", "FMIB", "IBT", "Digital Lab"],
+            ["EC", "MIB 7102", "International Economics", "Prof. Sarah Mensah", "3", "FMIB", "IBT", "Room 101"]
+          ],
+          elective: [
+            ["MC", "MIB 7104", "Managing Cultural Diversity", "Dr. A. Nyanzi", "3", "FMIB", "IBT", "Room 103"],
+            ["MK", "MIB 7105", "International Marketing Strategy", "Dr. A. Mukasa", "3", "FMIB", "IBT", "Room 104"]
+          ]
+        },
+        editState: { weekly: null, common: null, elective: null }
+      };
+    }
+
+    let sections = [initialSection(1)];
+
+    // Render all sections
+    function renderSections() {
+      const container = document.getElementById('sectionsContainer');
+      container.innerHTML = '';
+      
+      sections.forEach((section, idx) => {
+        const div = document.createElement('div');
+        div.className = "section-block";
+        div.id = `section-block-${idx}`;
+
+        // Section title & remove button
+        const titleDiv = document.createElement('div');
+        titleDiv.className = "section-title";
+        titleDiv.innerHTML = `
+          <span><i class="fas fa-table"></i> ${section.name}</span>
+          ${sections.length > 1 ? `<button class="remove-section-btn" data-idx="${idx}"><i class="fas fa-trash"></i> Remove Section</button>` : ""}
+        `;
+        div.appendChild(titleDiv);
+
+        // Table selection checkboxes
+        const selDiv = document.createElement('div');
+        selDiv.className = "section-table-select";
+        selDiv.innerHTML = `
+          <label><input type="checkbox" id="show-weekly-${idx}" ${section.shownTables.weekly?'checked':''}> <i class="fas fa-calendar-week"></i> Weekly Timetable</label>
+          <label><input type="checkbox" id="show-common-${idx}" ${section.shownTables.common?'checked':''}> <i class="fas fa-book"></i> Common Courses</label>
+          <label><input type="checkbox" id="show-elective-${idx}" ${section.shownTables.elective?'checked':''}> <i class="fas fa-star"></i> Elective Courses</label>
+        `;
+        div.appendChild(selDiv);
+
+        // Print button for this section
+        const printDiv = document.createElement('div');
+        printDiv.style.margin = "15px 0";
+        printDiv.innerHTML = `<button class="print-btn" id="printSectionBtn-${idx}"><i class="fas fa-print"></i> Print All Tables</button>`;
+        div.appendChild(printDiv);
+
+        // Tables container
+        const tablesDiv = document.createElement('section');
+        tablesDiv.className = "tables-container";
+        
+        if(section.shownTables.weekly) renderTableWithCrud(idx, section, 'weekly', tablesDiv);
+        if(section.shownTables.common) renderTableWithCrud(idx, section, 'common', tablesDiv);
+        if(section.shownTables.elective) renderTableWithCrud(idx, section, 'elective', tablesDiv);
+        
+        div.appendChild(tablesDiv);
+        container.appendChild(div);
+      });
+
+      // Attach event listeners
+      sections.forEach((section, idx) => {
+        ['weekly', 'common', 'elective'].forEach(type => {
+          const cb = document.getElementById(`show-${type}-${idx}`);
+          if(cb) {
+            cb.onchange = function() {
+              section.shownTables[type] = cb.checked;
+              renderSections();
+            };
+          }
+        });
+
+        const printBtn = document.getElementById(`printSectionBtn-${idx}`);
+        if(printBtn) {
+          printBtn.onclick = () => printVisibleTables(idx, section);
+        }
+      });
+
+      // Remove section buttons
+      Array.from(document.getElementsByClassName('remove-section-btn')).forEach(btn => {
+        btn.onclick = function() {
+          const sidx = +btn.getAttribute('data-idx');
+          if (confirm('Are you sure you want to remove this section?')) {
+            sections.splice(sidx, 1);
+            renderSections();
+            showNotification('Section removed successfully!', 'success');
+          }
+        }
+      });
+    }
+
+    // Render individual table with CRUD operations
+    function renderTableWithCrud(idx, section, type, parent) {
+      const headers = section.tableHeaders[type];
+      const data = section.courseData[type];
+      const editRow = section.editState[type];
+      
+      const typeLabels = {
+        'weekly': 'Weekly Timetable',
+        'common': 'Common Courses',
+        'elective': 'Elective Courses'
+      };
+      
+      const typeIcons = {
+        'weekly': 'calendar-week',
+        'common': 'book',
+        'elective': 'star'
+      };
+
+      let html = `<h2><i class="fas fa-${typeIcons[type]}"></i> ${typeLabels[type]}</h2>`;
+      
+      // Table controls
+      html += `
+        <div class="inline-actions">
+          <button type="button" class="add-col-row-btn" onclick="window._addCol(${idx},'${type}')">
+            <i class="fas fa-columns"></i> Add Column
+          </button>
+          <button type="button" class="add-col-row-btn" onclick="window._addRow(${idx},'${type}')">
+            <i class="fas fa-plus"></i> Add Row
+          </button>
+          <button type="button" class="edit-head-btn" onclick="window._editHead(${idx},'${type}')">
+            <i class="fas fa-edit"></i> Edit Headers
+          </button>
+        </div>
+      `;
+
+      // Table
+      html += `<table><thead><tr>${headers.map(h => `<th class="resizable">${h}</th>`).join('')}<th style="width: 120px;">Actions</th></tr></thead><tbody>`;
+      
+      data.forEach((row, rowIdx) => {
+        html += `<tr>`;
+        headers.forEach((_, i) => html += `<td>${row[i] || ""}</td>`);
+        html += `<td>
+          <button class="action-btn edit-btn" onclick="window._editRow(${idx},'${type}',${rowIdx})" title="Edit Row">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="action-btn delete-btn" onclick="window._deleteRow(${idx},'${type}',${rowIdx})" title="Delete Row">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td></tr>`;
+      });
+      html += `</tbody></table>`;
+
+      // Add/Edit Form
+      html += `<form id="form-${type}-${idx}" class="form-container">
+        <h4><i class="fas fa-${editRow === null ? 'plus' : 'edit'}"></i> ${editRow === null ? 'Add New' : 'Edit'} ${type === 'weekly' ? 'Time Slot' : 'Course'}</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+          ${headers.map((h, i) =>
+            `<input type="text" id="input-${type}-${i}-${idx}" placeholder="${h}" required style="min-width: 150px;" />`
+          ).join('')}
+          <button type="submit" id="addBtn-${type}-${idx}">
+            <i class="fas fa-${editRow === null ? 'plus' : 'save'}"></i> ${editRow === null ? "Add" : "Update"}
+          </button>
+          ${editRow !== null ? `<button type="button" id="cancelEditBtn-${type}-${idx}" class="cancel-btn">
+            <i class="fas fa-times"></i> Cancel
+          </button>` : ""}
+        </div>
+      </form>`;
+
+      // Save button
+      html += `<div style="margin-top: 15px; text-align: center;">
+        <button id="saveBtn-${type}-${idx}" class="save-table-btn">
+          <i class="fas fa-save"></i> Save ${typeLabels[type]}
+        </button>
+      </div>`;
+
+      const sectionDiv = document.createElement('section');
+      sectionDiv.innerHTML = html;
+      parent.appendChild(sectionDiv);
+
+      // Initialize table and form after DOM insertion
+      setTimeout(() => {
+        const table = sectionDiv.querySelector("table");
+        if (table) makeTableResizable(table);
+
+        // CRUD form events
+        const form = document.getElementById(`form-${type}-${idx}`);
+        if(form) {
+          form.onsubmit = function(e) {
+            e.preventDefault();
+            const vals = [];
+            for(let i = 0; i < headers.length; i++) {
+              vals.push(form.querySelector(`#input-${type}-${i}-${idx}`).value.trim());
+            }
+            
+            if(section.editState[type] === null) {
+              section.courseData[type].push(vals);
+              showNotification('Row added successfully!', 'success');
+            } else {
+              section.courseData[type][section.editState[type]] = vals;
+              section.editState[type] = null;
+              showNotification('Row updated successfully!', 'success');
+            }
+            renderSections();
+          };
+
+          // Pre-fill form if editing
+          if(editRow !== null) {
+            for(let i = 0; i < headers.length; i++) {
+              const input = form.querySelector(`#input-${type}-${i}-${idx}`);
+              if(input) input.value = data[editRow][i] || "";
+            }
+            
+            const cancelBtn = document.getElementById(`cancelEditBtn-${type}-${idx}`);
+            if(cancelBtn) {
+              cancelBtn.onclick = function(e) {
+                e.preventDefault();
+                section.editState[type] = null;
+                renderSections();
+              };
+            }
+          }
+        }
+
+        // Save button
+        const saveBtn = document.getElementById(`saveBtn-${type}-${idx}`);
+        if(saveBtn) {
+          saveBtn.onclick = () => {
+            const saveObj = {
+              courseData: section.courseData[type],
+              tableHeaders: section.tableHeaders[type],
+              sectionName: section.name,
+              type,
+              timestamp: new Date().toISOString()
+            };
+            localStorage.setItem(`timetable_${type}_section${idx}`, JSON.stringify(saveObj));
+            showNotification(`${typeLabels[type]} saved successfully!`, 'success');
+          };
+        }
+      }, 50);
+    }
+
+    // Make table columns resizable
+    function makeTableResizable(table) {
+      const ths = table.querySelectorAll("th");
+      let startX, startWidth, colIndex;
+      let resizing = false;
+
+      ths.forEach(function(th, i) {
+        if (!th.querySelector('.resize-handle')) {
+          const handle = document.createElement("div");
+          handle.className = "resize-handle";
+          handle.addEventListener("mousedown", function(e) {
+            startX = e.pageX;
+            startWidth = th.offsetWidth;
+            colIndex = i;
+            resizing = true;
+            
+            th.classList.add("resizing");
+            table.querySelectorAll("tr").forEach(row => {
+              if (row.children[i]) row.children[i].classList.add("resizing");
+            });
+            
+            document.body.style.cursor = "ew-resize";
+            document.addEventListener("mousemove", resizeHandler);
+            document.addEventListener("mouseup", stopHandler);
+            e.preventDefault();
+            e.stopPropagation();
+          });
+          th.appendChild(handle);
+        }
+      });
+
+      function resizeHandler(e) {
+        if (!resizing) return;
+        const dx = e.pageX - startX;
+        const newWidth = Math.max(startWidth + dx, 50);
+        ths[colIndex].style.width = newWidth + "px";
+      }
+
+      function stopHandler() {
+        resizing = false;
+        document.body.style.cursor = "";
+        
+        ths.forEach(th => th.classList.remove("resizing"));
+        table.querySelectorAll("tr").forEach(row => {
+          if (row.children[colIndex]) row.children[colIndex].classList.remove("resizing");
+        });
+        
+        document.removeEventListener("mousemove", resizeHandler);
+        document.removeEventListener("mouseup", stopHandler);
+      }
+    }
+
+    // CRUD Operations
+    window._addCol = (idx, type) => {
+      const header = prompt('Enter new column name:');
+      if (!header || !header.trim()) return;
+      
+      sections[idx].tableHeaders[type].push(header.trim());
+      sections[idx].courseData[type].forEach(row => row.push(''));
+      renderSections();
+      showNotification('Column added successfully!', 'success');
+    };
+
+    window._addRow = (idx, type) => {
+      const len = sections[idx].tableHeaders[type].length;
+      sections[idx].courseData[type].push(Array(len).fill(''));
+      renderSections();
+      showNotification('Empty row added!', 'success');
+    };
+
+    window._editHead = (idx, type) => {
+      const headers = sections[idx].tableHeaders[type];
+      for(let i = 0; i < headers.length; i++) {
+        const newH = prompt(`Edit column ${i + 1} name:`, headers[i]);
+        if(typeof newH === "string" && newH.trim() !== "") {
+          sections[idx].tableHeaders[type][i] = newH.trim();
+        }
+      }
+      renderSections();
+      showNotification('Headers updated successfully!', 'success');
+    };
+
+    window._editRow = (idx, type, rowIdx) => {
+      sections[idx].editState[type] = rowIdx;
+      renderSections();
+    };
+
+    window._deleteRow = (idx, type, rowIdx) => {
+      if(confirm("Are you sure you want to delete this row?")) {
+        sections[idx].courseData[type].splice(rowIdx, 1);
+        if(sections[idx].editState[type] === rowIdx) {
+          sections[idx].editState[type] = null;
+        }
+        renderSections();
+        showNotification('Row deleted successfully!', 'success');
+      }
+    };
+
+    // Print functionality with the general heading included
+    function printVisibleTables(idx, section) {
+      let html = `<html><head><title>Print Timetables - ${section.name}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .general-heading { 
+            text-align: center; 
+            font-size: 14px; 
+            font-weight: bold; 
+            margin: 20px 0 30px 0; 
+            padding: 15px;
+            border: 2px solid #000;
+            background: #f8f9ff;
+            line-height: 1.8;
+          }
+          h2, h3 { 
+            text-align: center; 
+            color: #2c3e50; 
+            margin: 20px 0 15px 0;
+            font-size: 16px;
+          }
+          table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 15px 0 30px 0; 
+            font-size: 11px;
+          }
+          th, td { 
+            border: 1px solid #333; 
+            padding: 6px 4px; 
+            text-align: center; 
+            word-wrap: break-word;
+          }
+          th { 
+            background-color: #e6f0ff; 
+            font-weight: bold;
+          }
+          .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 25px 0 20px 0;
+            padding: 10px;
+            border-bottom: 2px solid #000;
+          }
+          @page { 
+            margin: 1cm; 
+            size: A4;
+          }
+        </style></head><body>`;
+
+      // Include the general heading in print
+      html += `<div class="general-heading">${generalHeading}</div>`;
+      html += `<div class="section-title">${section.name}</div>`;
+
+      const typeLabels = {
+        'weekly': 'Weekly Timetable',
+        'common': 'Common Courses', 
+        'elective': 'Elective Courses'
+      };
+
+      ['weekly', 'common', 'elective'].forEach(type => {
+        if(section.shownTables[type]) {
+          html += `<h3>${typeLabels[type]}</h3><table><thead><tr>${
+            section.tableHeaders[type].map(h => `<th>${h}</th>`).join('')
+          }</tr></thead><tbody>`;
+          
+          (section.courseData[type] || []).forEach(row => {
+            html += '<tr>' + section.tableHeaders[type].map((_, i) => 
+              `<td>${row[i] !== undefined ? row[i] : ''}</td>`
+            ).join('') + '</tr>';
+          });
+          html += '</tbody></table>';
+        }
+      });
+
+      html += '</body></html>';
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+        showNotification('Print dialog opened!', 'info');
+      }, 500);
+    }
+
+    // Add section functionality
+    document.getElementById('addSectionBtn').onclick = () => {
+      sections.push(initialSection(sections.length + 1));
+      renderSections();
+      showNotification('New section added successfully!', 'success');
+    };
+
+    // Notification system
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      
+      const iconMap = {
+        'success': 'check-circle',
+        'error': 'exclamation-triangle',
+        'warning': 'exclamation-circle',
+        'info': 'info-circle'
+      };
+      
+      const colorMap = {
+        'success': '#28a745',
+        'error': '#dc3545',
+        'warning': '#ffc107',
+        'info': '#17a2b8'
+      };
+      
+      notification.innerHTML = `<i class="fas fa-${iconMap[type]}"></i> ${message}`;
+      notification.style.cssText = `
+        position: fixed; bottom: 20px; right: 20px; background: ${colorMap[type]}; 
+        color: ${type === 'warning' ? '#2c3e50' : 'white'}; padding: 1rem 1.5rem; 
+        border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1001; 
+        font-weight: 600; max-width: 350px; display: flex; align-items: center; gap: 0.5rem;
+      `;
+      
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 4000);
+    }
+
+    // Initialize everything
+    document.addEventListener('DOMContentLoaded', function() {
+      renderGeneralHeading();
+      renderSections();
+      showNotification('Timetable system ready! Create and publish your schedules.', 'success');
+      
+      // Check for scheduled publications
+      const now = new Date();
+      timetablePublisher.scheduledPublications.forEach((item, idx) => {
+        if (new Date(item.scheduledDate) <= now && item.status === 'scheduled') {
+          // Auto-publish scheduled items
+          item.status = 'published';
+          showNotification(`Scheduled timetable published automatically!`, 'info');
+        }
+      });
+    });
+  </script>
+<script src="script.js"></script>
+</body>
+</html>
